@@ -3,6 +3,6 @@
 
 typedef struct word_info_t word_info_t;
 
-word_info_t** createWordInfo(int curr_size, int max_size);
+//word_info_t** createWordInfo(int curr_size, int max_size);
 
 #endif

@@ -3,6 +3,6 @@
 
 typedef struct inverted_index_t inverted_index_t;
 
-inverted_index_t* createInvertedIndex(char* word);
+//inverted_index_t* createInvertedIndex(char* word);
 
 #endif

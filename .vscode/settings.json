@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "libraries.h": "c"
+        "libraries.h": "c",
+        "document_info.h": "c"
     }
 }

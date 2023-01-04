@@ -9,7 +9,7 @@ struct inverted_index_t {
                             // ainda nao tenho certeza se eh isso mesmo tbm
 };
 
-inverted_index_t* createInvertedIndex(char* word) {
+/*inverted_index_t* createInvertedIndex(char* word) {
     inverted_index_t* index = malloc(sizeof(inverted_index_t));
 
     index->word = word;
@@ -20,4 +20,4 @@ inverted_index_t* createInvertedIndex(char* word) {
     index->info = createWordInfo(index->curr_size, index->max_size);
 
     return index;
-}
+}*/
