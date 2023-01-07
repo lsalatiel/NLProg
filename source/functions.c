@@ -16,3 +16,14 @@ void CheckDataFilesPath(int argc) {
         exit(1);
     }
 }
+
+void PrintFileError() {
+    RedTextColour();
+    printf("ERROR: Could not open the file.\n");
+    DefaultTextColour();
+}
+
+void FreeAndNull(void* pointer) {
+    free(pointer);
+    pointer = NULL;
+}

@@ -16,4 +16,7 @@ void RedTextColour();
  */
 void CheckDataFilesPath(int argc);
 
+void PrintFileError();
+void FreeAndNull(void* pointer);
+
 #endif
