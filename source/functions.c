@@ -16,9 +16,3 @@ void CheckDataFilesPath(int argc) {
         exit(1);
     }
 }
-
-void resetString(char* name) {
-    for(size_t i = 0; i < strlen(name); i++) {
-        name[i] = '\0';
-    }
-}
