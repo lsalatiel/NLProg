@@ -18,5 +18,6 @@ void CheckDataFilesPath(int argc);
 
 void PrintFileError();
 void FreeAndNull(void* pointer);
+bool EndOfFile(char character);
 
 #endif

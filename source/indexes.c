@@ -12,9 +12,13 @@ struct Indexes {
 Indexes* ReadTrainFile(Indexes* indexes, char** argv) {
     FILE* train = fopen(argv[1], "r");
     if (!train) {
+        FreeIndexes(indexes);
         PrintFileError();
         exit(1);
     }
+
+    indexes->documents = ReadDocuments(indexes->documents, train, indexes->documents_size, indexes->documents_alloc);
+    // indexes->words =
 
     fclose(train);
 

@@ -27,3 +27,11 @@ void FreeAndNull(void* pointer) {
     free(pointer);
     pointer = NULL;
 }
+
+bool EndOfFile(char character) {
+    if (character == '\0' || character == '\n' || character == '\r') {
+        return true;
+    } else {
+        return false;
+    }
+}
