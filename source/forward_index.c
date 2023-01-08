@@ -43,7 +43,9 @@ ForwardIndex** ReadDocuments(ForwardIndex** documents, FILE* train, int* documen
     char* buffer = malloc(BUFFER_SIZE * sizeof(char));
 
     for (int x = 0; fgets(buffer, BUFFER_SIZE, train) && !EndOfFile(buffer[0]); x++) {
-        if (x == *documents_alloc) {
+        *documents_size = x + 1;
+
+        if (*documents_size > *documents_alloc) {
             *documents_alloc *= 2;
             documents = ReallocDocuments(documents, documents_alloc);
         }
