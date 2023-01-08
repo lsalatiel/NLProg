@@ -3,4 +3,7 @@
 
 typedef struct DocumentInfo DocumentInfo;
 
+DocumentInfo* AllocateDocumentsInfo();
+void FreeDocumentsInfo(DocumentInfo* info);
+
 #endif

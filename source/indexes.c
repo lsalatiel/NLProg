@@ -9,22 +9,6 @@ struct Indexes {
     int* words_alloc;
 };
 
-Indexes* ReadTrainFile(Indexes* indexes, char** argv) {
-    FILE* train = fopen(argv[1], "r");
-    if (!train) {
-        FreeIndexes(indexes);
-        PrintFileError();
-        exit(1);
-    }
-
-    indexes->documents = ReadDocuments(indexes->documents, train, indexes->documents_size, indexes->documents_alloc);
-    // indexes->words =
-
-    fclose(train);
-
-    return indexes;
-}
-
 Indexes* AllocateIndexes(Indexes* indexes) {
     indexes = malloc(sizeof(Indexes));
 
@@ -48,6 +32,22 @@ Indexes* AllocateIndexes(Indexes* indexes) {
     return indexes;
 }
 
+Indexes* ReadTrainFile(Indexes* indexes, char** argv) {
+    FILE* train = fopen(argv[1], "r");
+    if (!train) {
+        FreeIndexes(indexes);
+        PrintFileError();
+        exit(1);
+    }
+
+    indexes->documents = ReadDocuments(indexes->documents, train, indexes->documents_size, indexes->documents_alloc);
+    // indexes->words =
+
+    fclose(train);
+
+    return indexes;
+}
+
 void FreeIndexes(Indexes* indexes) {
     for (int x = 0; x < *indexes->documents_alloc; x++) {
         FreeDocuments(indexes->documents[x]);
@@ -65,3 +65,21 @@ void FreeIndexes(Indexes* indexes) {
     FreeAndNull(indexes->words_alloc);
     FreeAndNull(indexes);
 }
+
+// void ReadInfo(Indexes* indexes) {
+//     FILE* file;
+
+//     char* file_name;
+
+//     for(int i = 0; i < indexes->documents_size; i++) {
+//         file_name = GetFileName(indexes->documents[i]);
+
+//         file = fopen(file_name, "r");
+
+//         if(file == NULL) {
+//             PrintFileError();
+//             continue;
+//         }
+
+//     }
+// }
