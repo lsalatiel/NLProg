@@ -6,10 +6,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "functions.h"
-#include "word_info.h"
+
 #include "document_info.h"
-#include "inverted_index.h"
 #include "forward_index.h"
+#include "functions.h"
+#include "indexes.h"
+#include "inverted_index.h"
+#include "word_info.h"
+
+#define BUFFER_SIZE 64
+#define STARTER_ALLOC 16
 
 #endif

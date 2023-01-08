@@ -1,7 +1,15 @@
 #include "libraries.h"
 
-typedef struct {
+struct DocumentInfo {
     int word_index;
-    int frequency;
+    int word_frequency;
     int tf_idf;
-} document_info;
+};
+
+DocumentInfo* AllocateDocumentsInfo() {
+    return calloc(sizeof(DocumentInfo), 1);
+}
+
+void FreeDocumentsInfo(DocumentInfo* info) {
+    FreeAndNull(info);
+}

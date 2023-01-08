@@ -1,99 +1,75 @@
 #include "libraries.h"
 
-#define MAX_FILE_NAME_LENGTH 200
-#define MAX_CLASS_NAME_LENGTH 4
-
-struct forward_index_t {
+struct ForwardIndex {
+    int index;
     char* name;
     char* class;
-    int curr_size;
-    int max_size;
-    document_info_t** info;
+    DocumentInfo** info;
+    int* info_size;
+    int* info_alloc;
 };
 
+ForwardIndex* AllocateDocuments() {
+    ForwardIndex* document = NULL;
 
-// essa funcao talvez tenha que ficar em outra struct qeu tenha um array de forward e um de inverted index tipo a do spotfes que tu tinha falado
-// mas fora isso, por enquanto ela ta armazenando o nome e a classe de todos os arquivos certin
-forward_index_t** readDocumentsAndCreateForwardIndexes(FILE* file) {
-    if(file == NULL) {
-        return NULL;
+    document = calloc(sizeof(ForwardIndex), 1);
+    document->info = malloc(STARTER_ALLOC * sizeof(DocumentInfo*));
+    document->info_size = malloc(sizeof(int));
+    document->info_alloc = malloc(sizeof(int));
+    *document->info_size = 0;
+    *document->info_alloc = STARTER_ALLOC;
+
+    for (int x = 0; x < STARTER_ALLOC; x++) {
+        document->info[x] = AllocateDocumentsInfo();
     }
 
-    int curr_size = 0;
-    int max_size = 10;
+    return document;
+}
 
-    forward_index_t** forward_indexes = initializeForwardIndexes(max_size);
+void FreeDocuments(ForwardIndex* documents) {
+    for (int x = 0; x < *documents->info_alloc; x++) {
+        FreeDocumentsInfo(documents->info[x]);
+    }
 
-    char name[MAX_FILE_NAME_LENGTH];
-    name[0] = '\0';
-    char class[MAX_CLASS_NAME_LENGTH];
-    class[0] = '\0';
+    FreeAndNull(documents->name);
+    FreeAndNull(documents->class);
+    FreeAndNull(documents->info);
+    FreeAndNull(documents->info_size);
+    FreeAndNull(documents->info_alloc);
+    FreeAndNull(documents);
+}
 
-    while(!feof(file)) {
-        resetString(name);
-        resetString(class);
+ForwardIndex** ReadDocuments(ForwardIndex** documents, FILE* train, int* documents_size, int* documents_alloc) {
+    char* buffer = malloc(BUFFER_SIZE * sizeof(char));
 
-        fscanf(file, "%s", name);
-        if(name[0] == '\0')
-            break;
-    
-        fscanf(file, "%s", class);
-
-        if(curr_size == max_size) {
-            max_size *= 2;
-            forward_indexes = reallocForwardIndexes(forward_indexes, curr_size, max_size);
+    for (int x = 0; fgets(buffer, BUFFER_SIZE, train) && !EndOfFile(buffer[0]); x++) {
+        if (x == *documents_alloc) {
+            *documents_alloc *= 2;
+            documents = ReallocDocuments(documents, documents_alloc);
         }
 
-        //forward_indexes[curr_size] = malloc(sizeof(forward_index_t)); ou a gente da malloc aqui toda hora ou da tudo de uma vez na funcao de realloc
-            
-        createForwardIndex(forward_indexes[curr_size], name, class);
-
-        curr_size++;
+        documents[x]->index = x;
+        documents[x]->name = strdup(strtok(buffer, " "));
+        documents[x]->class = strdup(strtok(NULL, "\n"));
     }
 
-    printDocuments(forward_indexes, curr_size);
+    FreeAndNull(buffer);
 
-    return forward_indexes;
+    return documents;
 }
 
-forward_index_t** initializeForwardIndexes(int max_size) {
-    forward_index_t** forward_indexes = malloc(max_size * sizeof(forward_index_t*));
+ForwardIndex** ReallocDocuments(ForwardIndex** documents, int* documents_alloc) {
+    ForwardIndex** new = NULL;
+    new = realloc(documents, *documents_alloc * sizeof(ForwardIndex*));
+    documents = new;
 
-    for(int i = 0; i < max_size; i++) {
-        forward_indexes[i] = malloc(sizeof(forward_index_t));
+    for (int x = *documents_alloc / 2; x < *documents_alloc; x++) {
+        documents[x] = AllocateDocuments();
     }
 
-    return forward_indexes;
+    return documents;
 }
 
-void createForwardIndex(forward_index_t* document, char* name, char* class) {
-    document->name = strdup(name);
-    document->class = strdup(class);
-}
-
-forward_index_t** reallocForwardIndexes(forward_index_t** forward_indexes, int curr_size, int max_size) {
-    forward_indexes = realloc(forward_indexes, max_size * sizeof(forward_index_t*));
-
-    for(int i = curr_size; i < max_size; i++) {
-        forward_indexes[i] = malloc(sizeof(forward_index_t));
-    }
-
-    return forward_indexes;
-}
-
-void printDocuments(forward_index_t** forward_indexes, int curr_size) {
-    for(int i = 0; i < curr_size; i++) {
-        printf("%s\n", forward_indexes[i]->name);
-        printf("%s\n\n", forward_indexes[i]->class);
-    }
-}
-
-void freeForwardIndexes(forward_index_t** forward_indexes, int curr_size) {
-    for(int i = 0; i < curr_size; i++) {
-        free(forward_indexes[i]->name);
-        free(forward_indexes[i]->class);
-        free(forward_indexes[i]);
-    }
-
-    free(forward_indexes);
+char* GetFileName(ForwardIndex* document) {
+    return document->name;
 }

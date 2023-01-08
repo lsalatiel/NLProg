@@ -17,8 +17,21 @@ void CheckDataFilesPath(int argc) {
     }
 }
 
-void resetString(char* name) {
-    for(size_t i = 0; i < strlen(name); i++) {
-        name[i] = '\0';
+void PrintFileError() {
+    RedTextColour();
+    printf("ERROR: Could not open the file.\n");
+    DefaultTextColour();
+}
+
+void FreeAndNull(void* pointer) {
+    free(pointer);
+    pointer = NULL;
+}
+
+bool EndOfFile(char character) {
+    if (character == '\0' || character == '\n' || character == '\r') {
+        return true;
+    } else {
+        return false;
     }
 }

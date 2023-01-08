@@ -1,17 +1,14 @@
 #include "libraries.h"
 
 int main(int argc, char** argv) {
-    CheckDataFilesPath(argc);
+    // CheckDataFilesPath(argc);
 
-    FILE* file_in = fopen(argv[1], "r");    // path to the train.txt
-    FILE* file_out = fopen(argv[2], "wb");  // name of the file that will be stored the information in binary
+    argv[1] = "datasets/tiny/train.txt";
 
-    forward_index_t** documents = readDocumentsAndCreateForwardIndexes(file_in);
-
-    freeForwardIndexes(documents, 15);
-
-    fclose(file_in);
-    fclose(file_out);
+    Indexes* indexes = NULL;
+    indexes = AllocateIndexes(indexes);
+    indexes = ReadTrainFile(indexes, argv);
+    FreeIndexes(indexes);
 
     return EXIT_SUCCESS;
 }

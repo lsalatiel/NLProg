@@ -16,9 +16,8 @@ void RedTextColour();
  */
 void CheckDataFilesPath(int argc);
 
-/**
- * @brief puts a '\0' in all characters of the string
- */
-void resetString(char* name);
+void PrintFileError();
+void FreeAndNull(void* pointer);
+bool EndOfFile(char character);
 
 #endif

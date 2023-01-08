@@ -28,5 +28,4 @@ $(TARGET): $(OBJECTS)
 
 clean:
 	-rm -f -r objects
-	-rm -f *.o
 	-rm -f $(TARGET)
