@@ -66,20 +66,54 @@ void FreeIndexes(Indexes* indexes) {
     FreeAndNull(indexes);
 }
 
-// void ReadInfo(Indexes* indexes) {
-//     FILE* file;
+void ReadInfo(Indexes* indexes) {
+    FILE* file;
 
-//     char* file_name;
+    char* file_name = NULL;
 
-//     for(int i = 0; i < indexes->documents_size; i++) {
-//         file_name = GetFileName(indexes->documents[i]);
+    AllocateWordInfoArray(indexes->words, indexes->documents_size);
 
-//         file = fopen(file_name, "r");
+    for(int i = 0; i < indexes->documents_size; i++) {
+        file_name = GetFileName(indexes->documents[i]);
 
-//         if(file == NULL) {
-//             PrintFileError();
-//             continue;
-//         }
+        file = fopen(file_name, "r");
 
-//     }
-// }
+        if(file == NULL) {
+            continue;
+        }
+
+        indexes = CreateIndexesFromFile(indexes, file, i);
+    }
+}
+
+Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index) {
+    char* word;
+
+    int word_index = 0;
+
+    if(file == NULL) {
+        return;
+    }
+
+    while(!feof(file)) {
+        if(*indexes->words_size == *indexes->words_alloc) {
+            *indexes->words_alloc *= 2;
+            ReallocWords(indexes->words, *indexes->words_alloc);
+        }
+
+        fscanf(file, "%s", word);
+        // as funcoes de baixo (fora a getwordindex(euacho)) nao estao completas
+        indexes->words = AddDocumentFrequencyToInvertedIndex(indexes->words, word_index, document_index);
+        
+        word_index = GetWordIndex(indexes->words, word, indexes->words_size); // returns -1 if word does exist
+        if(word_index != -1) {
+            continue;
+        }
+
+        StoreWordInvertedIndex(indexes->words, word, indexes->words_size);
+        
+        *indexes->words_size++;
+    }
+
+    return indexes;
+}

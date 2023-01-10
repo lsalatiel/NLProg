@@ -20,4 +20,6 @@ void PrintFileError();
 void FreeAndNull(void* pointer);
 bool EndOfFile(char character);
 
+int CompareString(const void* a, const void* b);
+
 #endif
