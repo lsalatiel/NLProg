@@ -9,6 +9,10 @@ WordInfo* AllocateWordInfo(WordInfo* info);
 
 void FreeWordInfo(WordInfo* info);
 
-WordInfo* AddDocumentFrequency(WordInfo** info, int document_index);
+WordInfo** AddWordInfo(WordInfo** info_array, int info_size, int document_index);
+
+WordInfo* AddDocumentFrequency(WordInfo* info);
+
+int GetDocumentIndexInfo(WordInfo* info);
 
 #endif

@@ -26,8 +26,19 @@ void FreeWordInfo(WordInfo* info) {
     FreeAndNull(info);
 }
 
-WordInfo* AddDocumentFrequency(WordInfo** info, int document_index) {
-    
+WordInfo** AddWordInfo(WordInfo** info_array, int info_size, int document_index) {
+    info_array[info_size]->document_index = document_index;
+    info_array[info_size]->document_frequency++;
+
+    return info_array;
+}
+
+WordInfo* AddDocumentFrequency(WordInfo* info) {
+    info->document_frequency++;
 
     return info;
+}
+
+int GetDocumentIndexInfo(WordInfo* info) {
+    return info->document_index;
 }

@@ -8,6 +8,7 @@ int main(int argc, char** argv) {
     Indexes* indexes = NULL;
     indexes = AllocateIndexes(indexes);
     indexes = ReadTrainFile(indexes, argv);
+    indexes = ReadInfo(indexes);
     FreeIndexes(indexes);
 
     return EXIT_SUCCESS;

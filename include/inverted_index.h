@@ -5,14 +5,17 @@ typedef struct InvertedIndex InvertedIndex;
 
 InvertedIndex* AllocateWords();
 
-InvertedIndex* AllocateWordInfoArray(InvertedIndex* word, int size);
+InvertedIndex* AllocateWordInfoArray(InvertedIndex** words, int words_size, int max_size);
 
-void FreeWords(InvertedIndex* words);
+InvertedIndex** ReallocWords(InvertedIndex** words, int* words_alloc);
+
+void FreeWord(InvertedIndex* word);
 
 int GetWordIndex(InvertedIndex** words, char* word, int size);
 
-InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int index);
+InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int word_index, int document_index);
 
-InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int index, int document_index);
+InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int word_index, int document_index);
+
 
 #endif

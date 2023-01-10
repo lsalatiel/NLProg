@@ -14,21 +14,28 @@ InvertedIndex* AllocateWords() {
     return word;
 }
 
-InvertedIndex* AllocateWordInfoArray(InvertedIndex* word, int size) {
-    // word->info_size = 0;
-    // word->info_alloc = size;
+InvertedIndex* AllocateWordInfoArray(InvertedIndex** words, int words_size, int max_size) {
+    words[words_size]->info_size = 0;
+    words[words_size]->info_alloc = max_size;
     
-    word->info = malloc(size * sizeof(WordInfo*));
+    words[words_size]->info = malloc(max_size * sizeof(WordInfo*));
 
-    for (int i = 0; i < size; i++) {
-        word->info[i] = AllocateWordInfo(word->info[i]);
+    for (int i = 0; i < max_size; i++) {
+        words[words_size]->info[i] = AllocateWordInfo(words[words_size]->info[i]);
     }
 
-    return word;
+    return words[words_size];
 }
 
-void FreeWords(InvertedIndex* words) {
-    FreeAndNull(words);
+void FreeWord(InvertedIndex* word) {
+    for(int i = 0; i < word->info_alloc; i++) {
+        FreeWordInfo(word->info[i]);
+    }
+
+    FreeAndNull(word->info);
+
+    FreeAndNull(word->word);
+    FreeAndNull(word);
 }
 
 InvertedIndex** ReallocWords(InvertedIndex** words, int* words_alloc) {
@@ -44,16 +51,16 @@ InvertedIndex** ReallocWords(InvertedIndex** words, int* words_alloc) {
 }
 
 
-InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int index) {
-    if(words[index]->info_size == words[index]->info_alloc) {
-        words[index]->info_alloc *= 2;
-        words[index]->info = ReallocWordInfo(words[index]->info, words[index]->info_alloc);
-    }
+InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int word_index, int document_index) {
+    // if(words[word_index]->info_size == words[word_index]->info_alloc) {
+    //     words[word_index]->info_alloc *= 2;
+    //     words[word_index]->info = ReallocWordInfo(words[word_index]->info, words[word_index]->info_alloc);
+    // }
     
-    words[index] = strdup(word);
-    words[index]->info_size++;
+    words[word_index]->word = strdup(word);
+    words[word_index]->info = AddWordInfo(words[word_index]->info, words[word_index]->info_size, document_index);
 
-
+    //words[word_index]->info_size++;
 
     return words;
 }
@@ -75,7 +82,7 @@ InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int in
 
 int GetWordIndex(InvertedIndex** words, char* word, int size) {
     for(int i = 0; i < size; i++) {
-        if(strcmp(words[i]->word, word))
+        if(strcmp(words[i]->word, word) == 0)
             return i;
     }
 
@@ -83,5 +90,7 @@ int GetWordIndex(InvertedIndex** words, char* word, int size) {
 }
 
 InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int word_index, int document_index) {
-    words[word_index]->info = AddDocumentFrequency(words[word_index]->info, document_index);
+    words[word_index]->info[document_index] = AddDocumentFrequency(words[word_index]->info[document_index]);
+
+    return words;
 }
