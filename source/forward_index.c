@@ -26,17 +26,17 @@ ForwardIndex* AllocateDocuments() {
     return document;
 }
 
-void FreeDocuments(ForwardIndex* documents) {
-    for (int x = 0; x < *documents->info_alloc; x++) {
-        FreeDocumentsInfo(documents->info[x]);
+void FreeDocument(ForwardIndex* document) {
+    for (int x = 0; x < *document->info_alloc; x++) {
+        FreeDocumentsInfo(document->info[x]);
     }
 
-    FreeAndNull(documents->name);
-    FreeAndNull(documents->class);
-    FreeAndNull(documents->info);
-    FreeAndNull(documents->info_size);
-    FreeAndNull(documents->info_alloc);
-    FreeAndNull(documents);
+    FreeAndNull(document->name);
+    FreeAndNull(document->class);
+    FreeAndNull(document->info);
+    FreeAndNull(document->info_size);
+    FreeAndNull(document->info_alloc);
+    FreeAndNull(document);
 }
 
 ForwardIndex** ReadDocuments(ForwardIndex** documents, FILE* train, int* documents_size, int* documents_alloc) {

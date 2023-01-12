@@ -8,23 +8,23 @@ struct InvertedIndex {
     int info_alloc;
 };
 
-InvertedIndex* AllocateWords() {
+InvertedIndex* AllocateWord() {
     InvertedIndex* word = calloc(sizeof(InvertedIndex), 1);
 
     return word;
 }
 
-InvertedIndex* AllocateWordInfoArray(InvertedIndex** words, int words_size, int max_size) {
+InvertedIndex** AllocateWordInfoArray(InvertedIndex** words, int words_size, int max_size) {
     words[words_size]->info_size = 0;
-    words[words_size]->info_alloc = max_size;
+    words[words_size]->info_alloc = STARTER_ALLOC;
     
-    words[words_size]->info = malloc(max_size * sizeof(WordInfo*));
+    words[words_size]->info = malloc(STARTER_ALLOC * sizeof(WordInfo*));
 
-    for (int i = 0; i < max_size; i++) {
+    for (int i = 0; i < STARTER_ALLOC; i++) {
         words[words_size]->info[i] = AllocateWordInfo(words[words_size]->info[i]);
     }
 
-    return words[words_size];
+    return words;
 }
 
 void FreeWord(InvertedIndex* word) {
@@ -50,20 +50,15 @@ InvertedIndex** ReallocWords(InvertedIndex** words, int* words_alloc) {
     return words;
 }
 
-
-InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int word_index, int document_index) {
-    // if(words[word_index]->info_size == words[word_index]->info_alloc) {
-    //     words[word_index]->info_alloc *= 2;
-    //     words[word_index]->info = ReallocWordInfo(words[word_index]->info, words[word_index]->info_alloc);
-    // }
-    
+InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int word_index, int document_index) {    
     words[word_index]->word = strdup(word);
     words[word_index]->info = AddWordInfo(words[word_index]->info, words[word_index]->info_size, document_index);
 
-    //words[word_index]->info_size++;
+    words[word_index]->info_size++;
 
     return words;
 }
+
 
 // bool IsRepeatedWord(InvertedIndex** words, char* word, int size) {
 //     char* search = (char*)bsearch(word, words, size, sizeof(char), CompareStringToInvertedIndex);
@@ -90,7 +85,28 @@ int GetWordIndex(InvertedIndex** words, char* word, int size) {
 }
 
 InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int word_index, int document_index) {
-    words[word_index]->info[document_index] = AddDocumentFrequency(words[word_index]->info[document_index]);
+    if(words[word_index]->info_size == words[word_index]->info_alloc) {
+        words[word_index]->info_alloc *= 2;
+        words[word_index]->info = ReallocWordInfoArray(words[word_index]->info, words[word_index]->info_size, words[word_index]->info_alloc);
+    }
+    
+    for(int i = 0; i < words[word_index]->info_size; i++) {
+        if(GetDocumentIndexInfo(words[word_index]->info[i]) == document_index) {
+            words[word_index]->info[i] = AddDocumentFrequency(words[word_index]->info[i]);
+            return words;
+        }
+    }
+    
+    words[word_index]->info = AddWordInfo(words[word_index]->info, words[word_index]->info_size, document_index);
+    words[word_index]->info_size++;
 
     return words;
+}
+
+InvertedIndex* StoreTf_idfFromfWord(InvertedIndex* word, int document_quantity) {
+    for(int i = 0; i < word->info_size; i++) {
+        word->info[i] = StoreTf_idfFromInfo(word->info[i], document_quantity, word->info_size); // somatorio dos frequency;
+    }
+
+    return word;
 }

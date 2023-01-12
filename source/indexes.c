@@ -41,7 +41,6 @@ Indexes* ReadTrainFile(Indexes* indexes, char** argv) {
     }
 
     indexes->documents = ReadDocuments(indexes->documents, train, indexes->documents_size, indexes->documents_alloc);
-    // indexes->words =
 
     fclose(train);
 
@@ -69,13 +68,12 @@ void FreeIndexes(Indexes* indexes) {
 Indexes* ReadInfo(Indexes* indexes) {
     FILE* file;
 
-    //char* file_name = NULL;
-    char file_name[200];
-    char path[300];
+    char* file_name;
+    char path[MAX_FILE_PATH_LENGTH];
 
     for(int i = 0; i < *indexes->documents_size; i++) {
-        //file_name = GetFileName(indexes->documents[i]);
-        strcpy(file_name, GetFileName(indexes->documents[i]));
+        file_name = GetFileName(indexes->documents[i]);
+        //strcpy(file_name, GetFileName(indexes->documents[i]));
 
         sprintf(path, "datasets/tiny/%s", file_name);
 
@@ -90,12 +88,16 @@ Indexes* ReadInfo(Indexes* indexes) {
         fclose(file);
     }
 
+    indexes = StoreTf_idfFromIndexes(indexes);
+
+    //indexes = CreateForwardIndexesFromInvertedIndexes(indexes);
+
     return indexes;
 }
 
 Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index) {
-    //char* word;
-    char word[200];
+    char word[1000];
+    word[0] = '\0';
     int word_index = 0;
 
     if(file == NULL) {
@@ -108,8 +110,13 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index)
             indexes->words = ReallocWords(indexes->words, indexes->words_alloc);
         }
 
+        word[0] = '\0';
+
         fscanf(file, "%s", word);
-        // as funcoes de baixo (fora a getwordindex(euacho)) nao estao completas
+
+        if(word[0] == '\0' || word[0] == ' ' || word[0] == '\n' || word[0] == '\t') {
+            continue;
+        }
         
         word_index = GetWordIndex(indexes->words, word, *indexes->words_size); // returns -1 if word does exist
         if(word_index != -1) {
@@ -117,10 +124,26 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index)
             continue;
         }
         // allocates space for the word info array (only for new words)
-        AllocateWordInfoArray(indexes->words, *indexes->words_size, *indexes->documents_size); // poderia ser documents_size - document_index pra alocar menos espaco
+        indexes->words = AllocateWordInfoArray(indexes->words, *indexes->words_size, *indexes->documents_size);
         indexes->words = StoreWordInvertedIndex(indexes->words, word, *indexes->words_size, document_index);
         (*indexes->words_size)++;
     }
 
     return indexes;
 }
+
+Indexes* StoreTf_idfFromIndexes(Indexes* indexes) {
+    for(int i = 0; i < *indexes->words_size; i++) {
+        indexes->words[i] = StoreTf_idfFromfWord(indexes->words[i], *indexes->documents_size);
+    }
+
+    return indexes;
+}
+
+// Indexes* CreateForwardIndexesFromInvertedIndexes(Indexes* indexes) {
+//     for(int i = 0; i < indexes->documents_size; i++) {
+//         for(int j = 0; j < indexes->words_size; j++) {
+            
+//         }
+//     }
+// }
