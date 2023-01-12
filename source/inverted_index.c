@@ -14,7 +14,7 @@ InvertedIndex* AllocateWord() {
     return word;
 }
 
-InvertedIndex** AllocateWordInfoArray(InvertedIndex** words, int words_size, int max_size) {
+InvertedIndex** AllocateWordInfoArray(InvertedIndex** words, int words_size) {
     words[words_size]->info_size = 0;
     words[words_size]->info_alloc = STARTER_ALLOC;
     
@@ -44,7 +44,7 @@ InvertedIndex** ReallocWords(InvertedIndex** words, int* words_alloc) {
     words = new;
 
     for (int x = *words_alloc / 2; x < *words_alloc; x++) {
-        words[x] = AllocateWords();
+        words[x] = AllocateWord();
     }
 
     return words;
@@ -58,22 +58,6 @@ InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int wo
 
     return words;
 }
-
-
-// bool IsRepeatedWord(InvertedIndex** words, char* word, int size) {
-//     char* search = (char*)bsearch(word, words, size, sizeof(char), CompareStringToInvertedIndex);
-
-//     if(search == NULL) {
-//         return false;
-//     }
-//     return true;
-// }
-
-// int CompareStringToInvertedIndex(const void* a, const void* b) {
-//     InvertedIndex* b1 = (InvertedIndex*)b;
-
-//     return strcmp((char*)a, b1->word);
-// }
 
 int GetWordIndex(InvertedIndex** words, char* word, int size) {
     for(int i = 0; i < size; i++) {

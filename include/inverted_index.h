@@ -18,7 +18,7 @@ InvertedIndex* AllocateWord();
  * @param max_size 
  * @return InvertedIndex** 
  */
-InvertedIndex** AllocateWordInfoArray(InvertedIndex** words, int words_size, int max_size);
+InvertedIndex** AllocateWordInfoArray(InvertedIndex** words, int words_size);
 
 /**
  * @brief reallocates space for the information of an inverted index array

@@ -8,7 +8,7 @@ typedef struct ForwardIndex ForwardIndex;
  * 
  * @return ForwardIndex* 
  */
-ForwardIndex* AllocateDocuments();
+ForwardIndex* AllocateDocument();
 
 /**
  * @brief frees memory allocated for a single document

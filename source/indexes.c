@@ -25,8 +25,8 @@ Indexes* AllocateIndexes(Indexes* indexes) {
     *indexes->words_alloc = STARTER_ALLOC;
 
     for (int x = 0; x < STARTER_ALLOC; x++) {
-        indexes->documents[x] = AllocateDocuments();
-        indexes->words[x] = AllocateWords();
+        indexes->documents[x] = AllocateDocument();
+        indexes->words[x] = AllocateWord();
     }
 
     return indexes;
@@ -49,7 +49,7 @@ Indexes* ReadTrainFile(Indexes* indexes, char** argv) {
 
 void FreeIndexes(Indexes* indexes) {
     for (int x = 0; x < *indexes->documents_alloc; x++) {
-        FreeDocuments(indexes->documents[x]);
+        FreeDocument(indexes->documents[x]);
     }
 
     for (int x = 0; x < *indexes->words_alloc; x++) {
@@ -124,7 +124,7 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index)
             continue;
         }
         // allocates space for the word info array (only for new words)
-        indexes->words = AllocateWordInfoArray(indexes->words, *indexes->words_size, *indexes->documents_size);
+        indexes->words = AllocateWordInfoArray(indexes->words, *indexes->words_size);
         indexes->words = StoreWordInvertedIndex(indexes->words, word, *indexes->words_size, document_index);
         (*indexes->words_size)++;
     }

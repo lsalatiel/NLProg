@@ -9,7 +9,7 @@ struct ForwardIndex {
     int* info_alloc;
 };
 
-ForwardIndex* AllocateDocuments() {
+ForwardIndex* AllocateDocument() {
     ForwardIndex* document = NULL;
 
     document = calloc(sizeof(ForwardIndex), 1);
@@ -66,7 +66,7 @@ ForwardIndex** ReallocDocuments(ForwardIndex** documents, int* documents_alloc) 
     documents = new;
 
     for (int x = *documents_alloc / 2; x < *documents_alloc; x++) {
-        documents[x] = AllocateDocuments();
+        documents[x] = AllocateDocument();
     }
 
     return documents;
