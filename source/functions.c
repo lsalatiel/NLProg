@@ -35,3 +35,14 @@ bool EndOfFile(char character) {
         return false;
     }
 }
+
+float CalculateTf_idf(int frequency, int document_quantity, int word_appearance) {
+    float tf = frequency;
+
+    float x = (1 + document_quantity) / (1 + word_appearance);
+    float idf = log(x) + 1;
+
+    float tf_idf = tf * idf;
+
+    return tf_idf;
+}

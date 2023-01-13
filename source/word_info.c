@@ -49,19 +49,19 @@ int GetDocumentIndexInfo(WordInfo* info) {
     return info->document_index;
 }
 
-WordInfo* StoreTf_idfFromInfo(WordInfo* info, int document_quantity, int word_appearance) {
-    info->tf_idf = CalculateTf_idf(info, document_quantity, word_appearance);   
+WordInfo* StoreTf_idfFromInfo(WordInfo* info, int document_quantity, int word_appearance) { // word_appearance = how many documents the word showed up
+    info->tf_idf = CalculateTf_idf(info->document_frequency, document_quantity, word_appearance);   
 
     return info;
 }
 
-float CalculateTf_idf(WordInfo* info, int document_quantity, int word_appearance) {
-    float tf = info->document_frequency;
+// float CalculateTf_idf(int frequency, int document_quantity, int word_appearance) {
+//     float tf = frequency;
 
-    float x = (1 + document_quantity) / (1 + word_appearance);
-    float idf = log(x) + 1;
+//     float x = (1 + document_quantity) / (1 + word_appearance);
+//     float idf = log(x) + 1;
 
-    float tf_idf = tf * idf;
+//     float tf_idf = tf * idf;
 
-    return tf_idf;
-}
+//     return tf_idf;
+// }

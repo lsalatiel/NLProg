@@ -20,7 +20,7 @@ ForwardIndex* AllocateDocument() {
     *document->info_alloc = STARTER_ALLOC;
 
     for (int x = 0; x < STARTER_ALLOC; x++) {
-        document->info[x] = AllocateDocumentsInfo();
+        document->info[x] = AllocateDocumentInfo(document->info[x]);
     }
 
     return document;
@@ -28,7 +28,7 @@ ForwardIndex* AllocateDocument() {
 
 void FreeDocument(ForwardIndex* document) {
     for (int x = 0; x < *document->info_alloc; x++) {
-        FreeDocumentsInfo(document->info[x]);
+        FreeDocumentInfo(document->info[x]);
     }
 
     FreeAndNull(document->name);
@@ -74,4 +74,46 @@ ForwardIndex** ReallocDocuments(ForwardIndex** documents, int* documents_alloc) 
 
 char* GetFileName(ForwardIndex* document) {
     return document->name;
+}
+
+ForwardIndex* StoreWordInfoForwardIndex(ForwardIndex* document, int word_index) {
+    // cada palavra nova eh uma posicao nova do array de info
+    if(*document->info_size == *document->info_alloc) {
+        *document->info_alloc *= 2;
+        document->info = ReallocDocumentInfoArray(document->info, *document->info_size, *document->info_alloc);
+    }
+
+    document->info = AddDocumentInfo(document->info, *document->info_size, word_index);
+    (*document->info_size)++;
+
+    return document;
+}
+
+ForwardIndex* AddWordFrequencyToForwardIndex(ForwardIndex* document, int word_index) {
+    for(int i = 0; i < *document->info_size; i++) {
+        if(GetWordIndexInfo(document->info[i]) == word_index) {
+            document->info[i] = AddWordFrequency(document->info[i]);
+            break;
+        }
+    }
+
+    return document;
+}
+
+ForwardIndex** StoreTf_idfFromDocuments(ForwardIndex** documents, int word_index, int document_quantity, int word_appearance) {    
+    int i = 0, j = 0, word_check = 0;
+
+    for(i = 0; i < document_quantity; i++) {
+        for(j = 0; j < *documents[i]->info_size; j++) {
+            if(GetWordIndexInfo(documents[i]->info[j]) == word_index) {
+                documents[i]->info[j] = StoreTf_idfFromDocumentInfo(documents[i]->info[j], document_quantity, word_appearance);
+                word_check++;
+                break;
+            }
+        }
+        if(word_check == word_appearance) // word_appearance = how many documents the word showed up
+            break;
+    }
+
+    return documents;
 }

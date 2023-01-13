@@ -40,4 +40,7 @@ bool EndOfFile(char character);
 
 int CompareString(const void* a, const void* b);
 
+
+float CalculateTf_idf(int frequency, int document_quantity, int word_appearance);
+
 #endif

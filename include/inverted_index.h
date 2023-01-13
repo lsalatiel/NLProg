@@ -76,4 +76,9 @@ InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int w
  */
 InvertedIndex* StoreTf_idfFromfWord(InvertedIndex* word, int document_quantity);
 
+
+bool WordInDocument(InvertedIndex* word, int document_index);
+
+int GetWordInfoSize(InvertedIndex* word);
+
 #endif

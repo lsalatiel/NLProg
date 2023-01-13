@@ -45,4 +45,10 @@ ForwardIndex** ReallocDocuments(ForwardIndex** documents, int* documents_alloc);
  */
 char* GetFileName(ForwardIndex* document);
 
+ForwardIndex* StoreWordInfoForwardIndex(ForwardIndex* document, int word_index);
+
+ForwardIndex* AddWordFrequencyToForwardIndex(ForwardIndex* document, int word_index);
+
+ForwardIndex** StoreTf_idfFromDocuments(ForwardIndex** documents, int word_index, int document_quantity, int word_appearance);
+
 #endif

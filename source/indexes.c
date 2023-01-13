@@ -90,8 +90,6 @@ Indexes* ReadInfo(Indexes* indexes) {
 
     indexes = StoreTf_idfFromIndexes(indexes);
 
-    //indexes = CreateForwardIndexesFromInvertedIndexes(indexes);
-
     return indexes;
 }
 
@@ -118,14 +116,20 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index)
             continue;
         }
         
-        word_index = GetWordIndex(indexes->words, word, *indexes->words_size); // returns -1 if word does exist
+        word_index = GetWordIndex(indexes->words, word, *indexes->words_size); // returns -1 if word does not exist
         if(word_index != -1) {
+            // se a palavra nao eh nova ela pode ter aparecido no documento ou nao
             indexes->words = AddDocumentFrequencyToInvertedIndex(indexes->words, word_index, document_index);
+            if(WordInDocument(indexes->words[word_index], document_index)) {
+                indexes->documents[document_index] = AddWordFrequencyToForwardIndex(indexes->documents[document_index], word_index); // prototipo***
+            }
             continue;
         }
         // allocates space for the word info array (only for new words)
         indexes->words = AllocateWordInfoArray(indexes->words, *indexes->words_size);
         indexes->words = StoreWordInvertedIndex(indexes->words, word, *indexes->words_size, document_index);
+        // p essa funcao o *indexes->words_size vai servir como indice da word
+        indexes->documents[document_index] = StoreWordInfoForwardIndex(indexes->documents[document_index], *indexes->words_size); // prototipo*** realloc here
         (*indexes->words_size)++;
     }
 
@@ -133,17 +137,15 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index)
 }
 
 Indexes* StoreTf_idfFromIndexes(Indexes* indexes) {
-    for(int i = 0; i < *indexes->words_size; i++) {
+    int i = 0;
+    int word_appearance = 0;
+
+    for(i = 0; i < *indexes->words_size; i++) {
         indexes->words[i] = StoreTf_idfFromfWord(indexes->words[i], *indexes->documents_size);
+
+        word_appearance = GetWordInfoSize(indexes->words[i]);
+        indexes->documents = StoreTf_idfFromDocuments(indexes->documents, i, *indexes->documents_size, word_appearance);
     }
 
     return indexes;
 }
-
-// Indexes* CreateForwardIndexesFromInvertedIndexes(Indexes* indexes) {
-//     for(int i = 0; i < indexes->documents_size; i++) {
-//         for(int j = 0; j < indexes->words_size; j++) {
-            
-//         }
-//     }
-// }

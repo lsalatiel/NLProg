@@ -72,6 +72,6 @@ WordInfo* StoreTf_idfFromInfo(WordInfo* info, int document_quantity, int word_ap
  * @param word_appearance 
  * @return float 
  */
-float CalculateTf_idf(WordInfo* info, int document_quantity, int word_appearance);
+//float CalculateTf_idf(WordInfo* info, int document_quantity, int word_appearance);
 
 #endif

@@ -89,8 +89,21 @@ InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int w
 
 InvertedIndex* StoreTf_idfFromfWord(InvertedIndex* word, int document_quantity) {
     for(int i = 0; i < word->info_size; i++) {
-        word->info[i] = StoreTf_idfFromInfo(word->info[i], document_quantity, word->info_size); // somatorio dos frequency;
+        word->info[i] = StoreTf_idfFromInfo(word->info[i], document_quantity, word->info_size); // info_size = somatorio dos frequency;
     }
 
     return word;
+}
+
+bool WordInDocument(InvertedIndex* word, int document_index) {
+    for(int i = 0; i < word->info_size; i++) {
+        if(GetDocumentIndexInfo(word->info[i]) == document_index)
+            return true;
+    }
+
+    return false;
+}
+
+int GetWordInfoSize(InvertedIndex* word) {
+    return word->info_size;
 }
