@@ -119,17 +119,22 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index)
         word_index = GetWordIndex(indexes->words, word, *indexes->words_size); // returns -1 if word does not exist
         if(word_index != -1) {
             // se a palavra nao eh nova ela pode ter aparecido no documento ou nao
-            indexes->words = AddDocumentFrequencyToInvertedIndex(indexes->words, word_index, document_index);
-            if(WordInDocument(indexes->words[word_index], document_index)) {
-                indexes->documents[document_index] = AddWordFrequencyToForwardIndex(indexes->documents[document_index], word_index); // prototipo***
+            if(WordInDocument(indexes->words[word_index], document_index == true)) {
+                indexes->documents[document_index] = AddWordFrequencyToForwardIndex(indexes->documents[document_index], word_index);
             }
+            else {
+                // pq caralhos o word_index ta mundando quando entra na funcao
+                indexes->documents[document_index] = StoreWordInfoForwardIndex(indexes->documents[document_index], word_index);
+            }
+
+            indexes->words = AddDocumentFrequencyToInvertedIndex(indexes->words, word_index, document_index);
             continue;
         }
         // allocates space for the word info array (only for new words)
         indexes->words = AllocateWordInfoArray(indexes->words, *indexes->words_size);
         indexes->words = StoreWordInvertedIndex(indexes->words, word, *indexes->words_size, document_index);
         // p essa funcao o *indexes->words_size vai servir como indice da word
-        indexes->documents[document_index] = StoreWordInfoForwardIndex(indexes->documents[document_index], *indexes->words_size); // prototipo*** realloc here
+        indexes->documents[document_index] = StoreWordInfoForwardIndex(indexes->documents[document_index], *indexes->words_size);
         (*indexes->words_size)++;
     }
 
