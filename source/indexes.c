@@ -123,7 +123,6 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index)
                 indexes->documents[document_index] = AddWordFrequencyToForwardIndex(indexes->documents[document_index], word_index);
             }
             else {
-                // pq caralhos o word_index ta mundando quando entra na funcao
                 indexes->documents[document_index] = StoreWordInfoForwardIndex(indexes->documents[document_index], word_index);
             }
 
