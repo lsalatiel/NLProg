@@ -39,7 +39,7 @@ void FreeWordInfo(WordInfo* info);
 WordInfo** AddWordInfo(WordInfo** info_array, int info_size, int document_index);
 
 /**
- * @brief updates the frequency_document variable (add one)
+ * @brief updates the document_frequency variable (adds one)
  * 
  * @param info 
  * @return WordInfo* 
@@ -55,7 +55,7 @@ WordInfo* AddDocumentFrequency(WordInfo* info);
 int GetDocumentIndexInfo(WordInfo* info);
 
 /**
- * @brief stores tf_idf of each word in a specific document
+ * @brief stores tf_idf of a word in a specific document to the word_info
  * 
  * @param info 
  * @param document_quantity 
@@ -65,13 +65,11 @@ int GetDocumentIndexInfo(WordInfo* info);
 WordInfo* StoreTf_idfFromInfo(WordInfo* info, int document_quantity, int word_appearance);
 
 /**
- * @brief calculates the tf_idf of each word in a specific document
+ * @brief saves a word_info structure in a binary file
  * 
  * @param info 
- * @param document_quantity 
- * @param word_appearance 
- * @return float 
+ * @param file 
  */
-//float CalculateTf_idf(WordInfo* info, int document_quantity, int word_appearance);
+void SaveWordInfoInBinary(WordInfo* info, FILE* file);
 
 #endif

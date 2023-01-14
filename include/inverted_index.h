@@ -76,9 +76,30 @@ InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int w
  */
 InvertedIndex* StoreTf_idfFromfWord(InvertedIndex* word, int document_quantity);
 
-
+/**
+ * @brief checks if a certain word is in a specific document
+ * 
+ * @param word 
+ * @param document_index 
+ * @return true 
+ * @return false 
+ */
 bool WordInDocument(InvertedIndex* word, int document_index);
 
+/**
+ * @brief returns the size of the word info array
+ * 
+ * @param word 
+ * @return int 
+ */
 int GetWordInfoSize(InvertedIndex* word);
+
+/**
+ * @brief saves a inverted index in a binary file
+ * 
+ * @param word 
+ * @param file 
+ */
+void SaveInvertedIndexInBinary(InvertedIndex* word, FILE* file);
 
 #endif

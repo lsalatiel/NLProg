@@ -53,4 +53,12 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index)
  */
 Indexes* StoreTf_idfFromIndexes(Indexes* indexes);
 
+/**
+ * @brief saves indexes in a binary file
+ * 
+ * @param indexes 
+ * @param file_name 
+ */
+void SaveIndexesInBinary(Indexes* indexes, char* file_name);
+
 #endif

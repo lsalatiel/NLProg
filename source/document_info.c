@@ -54,3 +54,13 @@ DocumentInfo* StoreTf_idfFromDocumentInfo(DocumentInfo* info, int document_quant
 
     return info;
 }
+
+void SaveDocumentInfoInBinary(DocumentInfo* info, FILE* file) {
+    if(file == NULL) {
+        return;
+    }
+    
+    fwrite(&info->word_index, 1, sizeof(int), file);
+    fwrite(&info->word_frequency, 1, sizeof(int), file);
+    fwrite(&info->tf_idf, 1, sizeof(float), file);
+}

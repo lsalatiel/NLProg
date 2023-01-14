@@ -45,10 +45,41 @@ ForwardIndex** ReallocDocuments(ForwardIndex** documents, int* documents_alloc);
  */
 char* GetFileName(ForwardIndex* document);
 
+/**
+ * @brief stores the information of a single forward index
+ * 
+ * @param document 
+ * @param word_index 
+ * @return ForwardIndex* 
+ */
 ForwardIndex* StoreWordInfoForwardIndex(ForwardIndex* document, int word_index);
 
+/**
+ * @brief stores information of a word that is already stored in the document_info array
+ * 
+ * @param document 
+ * @param word_index 
+ * @return ForwardIndex* 
+ */
 ForwardIndex* AddWordFrequencyToForwardIndex(ForwardIndex* document, int word_index);
 
+/**
+ * @brief stores tf_idf of a word stored in the document_info array
+ * 
+ * @param documents 
+ * @param word_index 
+ * @param document_quantity 
+ * @param word_appearance 
+ * @return ForwardIndex** 
+ */
 ForwardIndex** StoreTf_idfFromDocuments(ForwardIndex** documents, int word_index, int document_quantity, int word_appearance);
+
+/**
+ * @brief saves a forward index in a binary file
+ * 
+ * @param document 
+ * @param file 
+ */
+void SaveForwardIndexInBinary(ForwardIndex* document, FILE* file);
 
 #endif

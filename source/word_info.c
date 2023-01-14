@@ -65,3 +65,13 @@ WordInfo* StoreTf_idfFromInfo(WordInfo* info, int document_quantity, int word_ap
 
 //     return tf_idf;
 // }
+
+void SaveWordInfoInBinary(WordInfo* info, FILE* file) {
+    if(file == NULL) {
+        return;
+    }
+    
+    fwrite(&info->document_index, 1, sizeof(int), file);
+    fwrite(&info->document_frequency, 1, sizeof(int), file);
+    fwrite(&info->tf_idf, 1, sizeof(float), file);
+}

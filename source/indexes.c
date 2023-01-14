@@ -75,7 +75,7 @@ Indexes* ReadInfo(Indexes* indexes) {
         file_name = GetFileName(indexes->documents[i]);
         //strcpy(file_name, GetFileName(indexes->documents[i]));
 
-        sprintf(path, "datasets/tiny/%s", file_name);
+        sprintf(path, "datasets/medium-large/%s", file_name);
 
         file = fopen(path, "r");
 
@@ -152,4 +152,30 @@ Indexes* StoreTf_idfFromIndexes(Indexes* indexes) {
     }
 
     return indexes;
+}
+
+void SaveIndexesInBinary(Indexes* indexes, char* file_name) {
+    FILE* file = fopen(file_name, "wb");
+
+    if(file == NULL) {
+        printf("ERROR: could not create binary file\n");
+        return;
+    }
+    
+    // writing documents
+    fwrite(indexes->documents_size, 1, sizeof(int), file);
+    fwrite(indexes->documents_alloc, 1, sizeof(int), file);
+
+    for(int i = 0; i < *indexes->documents_size; i++) {
+        SaveForwardIndexInBinary(indexes->documents[i], file);
+    }
+    
+    // writing words
+    fwrite(indexes->words_size, 1, sizeof(int), file);
+    fwrite(indexes->words_alloc, 1, sizeof(int), file);
+
+    for(int i = 0; i < *indexes->words_size; i++) {
+        SaveInvertedIndexInBinary(indexes->words[i], file);
+    }
+
 }

@@ -117,3 +117,19 @@ ForwardIndex** StoreTf_idfFromDocuments(ForwardIndex** documents, int word_index
 
     return documents;
 }
+
+void SaveForwardIndexInBinary(ForwardIndex* document, FILE* file) {
+    if(file == NULL) {
+        return;
+    }
+    
+    fwrite(&document->index, 1, sizeof(int), file);
+    fwrite(document->name, 1, sizeof(char), file);
+    fwrite(document->class, 1, sizeof(char), file);
+    fwrite(document->info_size, 1, sizeof(int), file);
+    fwrite(document->info_alloc, 1, sizeof(int), file);
+    
+    for(int i = 0; i < *document->info_size; i++) {
+        SaveDocumentInfoInBinary(document->info[i], file);
+    }
+}

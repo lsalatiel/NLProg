@@ -53,6 +53,7 @@ InvertedIndex** ReallocWords(InvertedIndex** words, int* words_alloc) {
 InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int word_index, int document_index) {    
     words[word_index]->word = strdup(word);
     words[word_index]->info = AddWordInfo(words[word_index]->info, words[word_index]->info_size, document_index);
+    words[word_index]->index = word_index;
 
     words[word_index]->info_size++;
 
@@ -82,6 +83,7 @@ InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int w
     }
     
     words[word_index]->info = AddWordInfo(words[word_index]->info, words[word_index]->info_size, document_index);
+    words[word_index]->index = word_index;
     words[word_index]->info_size++;
 
     return words;
@@ -106,4 +108,19 @@ bool WordInDocument(InvertedIndex* word, int document_index) {
 
 int GetWordInfoSize(InvertedIndex* word) {
     return word->info_size;
+}
+
+void SaveInvertedIndexInBinary(InvertedIndex* word, FILE* file) {
+    if(file == NULL) {
+        return;
+    }
+    
+    fwrite(&word->index, 1, sizeof(int), file);
+    fwrite(word->word, 1, sizeof(char), file);
+    fwrite(&word->info_size, 1, sizeof(int), file);
+    fwrite(&word->info_alloc, 1, sizeof(int), file);
+    
+    for(int i = 0; i < word->info_size; i++) {
+        SaveWordInfoInBinary(word->info[i], file);
+    }
 }
