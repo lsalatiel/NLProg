@@ -20,8 +20,8 @@ WordInfo** ReallocWordInfoArray(WordInfo** info_array, int curr_size, int max_si
     WordInfo** new;
     new = realloc(info_array, max_size * sizeof(WordInfo*));
     info_array = new;
-    
-    for(int i = curr_size; i < max_size; i++) {
+
+    for (int i = curr_size; i < max_size; i++) {
         info_array[i] = AllocateWordInfo(info_array[i]);
     }
 
@@ -49,8 +49,8 @@ int GetDocumentIndexInfo(WordInfo* info) {
     return info->document_index;
 }
 
-WordInfo* StoreTf_idfFromInfo(WordInfo* info, int document_quantity, int word_appearance) { // word_appearance = how many documents the word showed up
-    info->tf_idf = CalculateTf_idf(info->document_frequency, document_quantity, word_appearance);   
+WordInfo* StoreTf_idfFromInfo(WordInfo* info, int document_quantity, int word_appearance) {  // word_appearance = how many documents the word showed up
+    info->tf_idf = CalculateTf_idf(info->document_frequency, document_quantity, word_appearance);
 
     return info;
 }
@@ -67,10 +67,10 @@ WordInfo* StoreTf_idfFromInfo(WordInfo* info, int document_quantity, int word_ap
 // }
 
 void SaveWordInfoInBinary(WordInfo* info, FILE* file) {
-    if(file == NULL) {
+    if (file == NULL) {
         return;
     }
-    
+
     fwrite(&info->document_index, 1, sizeof(int), file);
     fwrite(&info->document_frequency, 1, sizeof(int), file);
     fwrite(&info->tf_idf, 1, sizeof(float), file);

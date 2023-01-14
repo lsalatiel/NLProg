@@ -26,6 +26,9 @@ $(CLIENT).o: $(CLI)
 $(TARGET): $(OBJECTS)
 	$(CC) $(INCLUDE_PATHS) $(OBJECTS) $(LIBS) -o $@
 
+	@ mkdir -p bin
+
 clean:
+	-rm -f -r bin
 	-rm -f -r objects
 	-rm -f $(TARGET)

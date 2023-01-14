@@ -78,7 +78,7 @@ char* GetFileName(ForwardIndex* document) {
 
 ForwardIndex* StoreWordInfoForwardIndex(ForwardIndex* document, int word_index) {
     // cada palavra nova eh uma posicao nova do array de info
-    if(*document->info_size == *document->info_alloc) {
+    if (*document->info_size == *document->info_alloc) {
         *document->info_alloc *= 2;
         document->info = ReallocDocumentInfoArray(document->info, *document->info_size, *document->info_alloc);
     }
@@ -90,8 +90,8 @@ ForwardIndex* StoreWordInfoForwardIndex(ForwardIndex* document, int word_index) 
 }
 
 ForwardIndex* AddWordFrequencyToForwardIndex(ForwardIndex* document, int word_index) {
-    for(int i = 0; i < *document->info_size; i++) {
-        if(GetWordIndexInfo(document->info[i]) == word_index) {
+    for (int i = 0; i < *document->info_size; i++) {
+        if (GetWordIndexInfo(document->info[i]) == word_index) {
             document->info[i] = AddWordFrequency(document->info[i]);
             break;
         }
@@ -100,18 +100,19 @@ ForwardIndex* AddWordFrequencyToForwardIndex(ForwardIndex* document, int word_in
     return document;
 }
 
-ForwardIndex** StoreTf_idfFromDocuments(ForwardIndex** documents, int word_index, int document_quantity, int word_appearance) {    
-    int i = 0, j = 0, word_check = 0;
+ForwardIndex** StoreTf_idfFromDocuments(ForwardIndex** documents, int word_index, int document_quantity, int word_appearance) {
+    int word_check = 0;
 
-    for(i = 0; i < document_quantity; i++) {
-        for(j = 0; j < *documents[i]->info_size; j++) {
-            if(GetWordIndexInfo(documents[i]->info[j]) == word_index) {
+    for (int i = 0; i < document_quantity; i++) {
+        for (int j = 0; j < *documents[i]->info_size; j++) {
+            if (GetWordIndexInfo(documents[i]->info[j]) == word_index) {
                 documents[i]->info[j] = StoreTf_idfFromDocumentInfo(documents[i]->info[j], document_quantity, word_appearance);
                 word_check++;
                 break;
             }
         }
-        if(word_check == word_appearance) // word_appearance = how many documents the word showed up
+        
+        if (word_check == word_appearance)  // word_appearance = how many documents the word showed up
             break;
     }
 
@@ -119,17 +120,17 @@ ForwardIndex** StoreTf_idfFromDocuments(ForwardIndex** documents, int word_index
 }
 
 void SaveForwardIndexInBinary(ForwardIndex* document, FILE* file) {
-    if(file == NULL) {
+    if (file == NULL) {
         return;
     }
-    
+
     fwrite(&document->index, 1, sizeof(int), file);
     fwrite(document->name, 1, sizeof(char), file);
     fwrite(document->class, 1, sizeof(char), file);
     fwrite(document->info_size, 1, sizeof(int), file);
     fwrite(document->info_alloc, 1, sizeof(int), file);
-    
-    for(int i = 0; i < *document->info_size; i++) {
+
+    for (int i = 0; i < *document->info_size; i++) {
         SaveDocumentInfoInBinary(document->info[i], file);
     }
 }

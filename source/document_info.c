@@ -24,8 +24,8 @@ DocumentInfo** ReallocDocumentInfoArray(DocumentInfo** info_array, int curr_size
     DocumentInfo** new;
     new = realloc(info_array, max_size * sizeof(DocumentInfo*));
     info_array = new;
-    
-    for(int i = curr_size; i < max_size; i++) {
+
+    for (int i = curr_size; i < max_size; i++) {
         info_array[i] = AllocateDocumentInfo(info_array[i]);
     }
 
@@ -56,10 +56,10 @@ DocumentInfo* StoreTf_idfFromDocumentInfo(DocumentInfo* info, int document_quant
 }
 
 void SaveDocumentInfoInBinary(DocumentInfo* info, FILE* file) {
-    if(file == NULL) {
+    if (file == NULL) {
         return;
     }
-    
+
     fwrite(&info->word_index, 1, sizeof(int), file);
     fwrite(&info->word_frequency, 1, sizeof(int), file);
     fwrite(&info->tf_idf, 1, sizeof(float), file);

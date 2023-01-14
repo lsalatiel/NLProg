@@ -17,7 +17,6 @@ InvertedIndex* AllocateWord() {
 InvertedIndex** AllocateWordInfoArray(InvertedIndex** words, int words_size) {
     words[words_size]->info_size = 0;
     words[words_size]->info_alloc = STARTER_ALLOC;
-    
     words[words_size]->info = malloc(STARTER_ALLOC * sizeof(WordInfo*));
 
     for (int i = 0; i < STARTER_ALLOC; i++) {
@@ -28,12 +27,11 @@ InvertedIndex** AllocateWordInfoArray(InvertedIndex** words, int words_size) {
 }
 
 void FreeWord(InvertedIndex* word) {
-    for(int i = 0; i < word->info_alloc; i++) {
+    for (int i = 0; i < word->info_alloc; i++) {
         FreeWordInfo(word->info[i]);
     }
 
     FreeAndNull(word->info);
-
     FreeAndNull(word->word);
     FreeAndNull(word);
 }
@@ -50,7 +48,7 @@ InvertedIndex** ReallocWords(InvertedIndex** words, int* words_alloc) {
     return words;
 }
 
-InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int word_index, int document_index) {    
+InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int word_index, int document_index) {
     words[word_index]->word = strdup(word);
     words[word_index]->info = AddWordInfo(words[word_index]->info, words[word_index]->info_size, document_index);
     words[word_index]->index = word_index;
@@ -61,8 +59,8 @@ InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int wo
 }
 
 int GetWordIndex(InvertedIndex** words, char* word, int size) {
-    for(int i = 0; i < size; i++) {
-        if(strcmp(words[i]->word, word) == 0)
+    for (int i = 0; i < size; i++) {
+        if (strcmp(words[i]->word, word) == 0)
             return i;
     }
 
@@ -70,18 +68,18 @@ int GetWordIndex(InvertedIndex** words, char* word, int size) {
 }
 
 InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int word_index, int document_index) {
-    if(words[word_index]->info_size == words[word_index]->info_alloc) {
+    if (words[word_index]->info_size == words[word_index]->info_alloc) {
         words[word_index]->info_alloc *= 2;
         words[word_index]->info = ReallocWordInfoArray(words[word_index]->info, words[word_index]->info_size, words[word_index]->info_alloc);
     }
-    
-    for(int i = 0; i < words[word_index]->info_size; i++) {
-        if(GetDocumentIndexInfo(words[word_index]->info[i]) == document_index) {
+
+    for (int i = 0; i < words[word_index]->info_size; i++) {
+        if (GetDocumentIndexInfo(words[word_index]->info[i]) == document_index) {
             words[word_index]->info[i] = AddDocumentFrequency(words[word_index]->info[i]);
             return words;
         }
     }
-    
+
     words[word_index]->info = AddWordInfo(words[word_index]->info, words[word_index]->info_size, document_index);
     words[word_index]->index = word_index;
     words[word_index]->info_size++;
@@ -90,16 +88,16 @@ InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int w
 }
 
 InvertedIndex* StoreTf_idfFromfWord(InvertedIndex* word, int document_quantity) {
-    for(int i = 0; i < word->info_size; i++) {
-        word->info[i] = StoreTf_idfFromInfo(word->info[i], document_quantity, word->info_size); // info_size = somatorio dos frequency;
+    for (int i = 0; i < word->info_size; i++) {
+        word->info[i] = StoreTf_idfFromInfo(word->info[i], document_quantity, word->info_size);  // info_size = somatorio dos frequency;
     }
 
     return word;
 }
 
 bool WordInDocument(InvertedIndex* word, int document_index) {
-    for(int i = 0; i < word->info_size; i++) {
-        if(GetDocumentIndexInfo(word->info[i]) == document_index)
+    for (int i = 0; i < word->info_size; i++) {
+        if (GetDocumentIndexInfo(word->info[i]) == document_index)
             return true;
     }
 
@@ -111,16 +109,16 @@ int GetWordInfoSize(InvertedIndex* word) {
 }
 
 void SaveInvertedIndexInBinary(InvertedIndex* word, FILE* file) {
-    if(file == NULL) {
+    if (file == NULL) {
         return;
     }
-    
+
     fwrite(&word->index, 1, sizeof(int), file);
     fwrite(word->word, 1, sizeof(char), file);
     fwrite(&word->info_size, 1, sizeof(int), file);
     fwrite(&word->info_alloc, 1, sizeof(int), file);
-    
-    for(int i = 0; i < word->info_size; i++) {
+
+    for (int i = 0; i < word->info_size; i++) {
         SaveWordInfoInBinary(word->info[i], file);
     }
 }

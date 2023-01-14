@@ -71,15 +71,15 @@ Indexes* ReadInfo(Indexes* indexes) {
     char* file_name;
     char path[MAX_FILE_PATH_LENGTH];
 
-    for(int i = 0; i < *indexes->documents_size; i++) {
+    for (int i = 0; i < *indexes->documents_size; i++) {
         file_name = GetFileName(indexes->documents[i]);
-        //strcpy(file_name, GetFileName(indexes->documents[i]));
+        // strcpy(file_name, GetFileName(indexes->documents[i]));
 
         sprintf(path, "datasets/medium-large/%s", file_name);
 
         file = fopen(path, "r");
 
-        if(file == NULL) {
+        if (file == NULL) {
             continue;
         }
 
@@ -98,12 +98,12 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index)
     word[0] = '\0';
     int word_index = 0;
 
-    if(file == NULL) {
+    if (file == NULL) {
         return NULL;
     }
 
-    while(!feof(file)) {
-        if(*indexes->words_size == *indexes->words_alloc) {
+    while (!feof(file)) {
+        if (*indexes->words_size == *indexes->words_alloc) {
             *indexes->words_alloc *= 2;
             indexes->words = ReallocWords(indexes->words, indexes->words_alloc);
         }
@@ -112,17 +112,16 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index)
 
         fscanf(file, "%s", word);
 
-        if(word[0] == '\0' || word[0] == ' ' || word[0] == '\n' || word[0] == '\t') {
+        if (word[0] == '\0' || word[0] == ' ' || word[0] == '\n' || word[0] == '\t') {
             continue;
         }
-        
-        word_index = GetWordIndex(indexes->words, word, *indexes->words_size); // returns -1 if word does not exist
-        if(word_index != -1) {
+
+        word_index = GetWordIndex(indexes->words, word, *indexes->words_size);  // returns -1 if word does not exist
+        if (word_index != -1) {
             // se a palavra nao eh nova ela pode ter aparecido no documento ou nao
-            if(WordInDocument(indexes->words[word_index], document_index == true)) {
+            if (WordInDocument(indexes->words[word_index], document_index == true)) {
                 indexes->documents[document_index] = AddWordFrequencyToForwardIndex(indexes->documents[document_index], word_index);
-            }
-            else {
+            } else {
                 indexes->documents[document_index] = StoreWordInfoForwardIndex(indexes->documents[document_index], word_index);
             }
 
@@ -141,10 +140,9 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index)
 }
 
 Indexes* StoreTf_idfFromIndexes(Indexes* indexes) {
-    int i = 0;
     int word_appearance = 0;
 
-    for(i = 0; i < *indexes->words_size; i++) {
+    for (int i = 0; i < *indexes->words_size; i++) {
         indexes->words[i] = StoreTf_idfFromfWord(indexes->words[i], *indexes->documents_size);
 
         word_appearance = GetWordInfoSize(indexes->words[i]);
@@ -154,28 +152,37 @@ Indexes* StoreTf_idfFromIndexes(Indexes* indexes) {
     return indexes;
 }
 
-void SaveIndexesInBinary(Indexes* indexes, char* file_name) {
-    FILE* file = fopen(file_name, "wb");
+void SaveIndexesInBinary(Indexes* indexes, char* argv) {
+    int argv_size = 0;
+    argv_size = strlen(argv);
+    char* file_name = NULL;
+    file_name = malloc(sizeof(char) * (argv_size + 5));
+    strcpy(file_name, "bin/");
+    strcat(file_name, argv);
 
-    if(file == NULL) {
-        printf("ERROR: could not create binary file\n");
+    FILE* file = fopen(file_name, "wb");
+    FreeAndNull(file_name);
+
+    if (file == NULL) {
+        printf("ERROR: could not create binary file.\n");
         return;
     }
-    
+
     // writing documents
     fwrite(indexes->documents_size, 1, sizeof(int), file);
     fwrite(indexes->documents_alloc, 1, sizeof(int), file);
 
-    for(int i = 0; i < *indexes->documents_size; i++) {
+    for (int i = 0; i < *indexes->documents_size; i++) {
         SaveForwardIndexInBinary(indexes->documents[i], file);
     }
-    
+
     // writing words
     fwrite(indexes->words_size, 1, sizeof(int), file);
     fwrite(indexes->words_alloc, 1, sizeof(int), file);
 
-    for(int i = 0; i < *indexes->words_size; i++) {
+    for (int i = 0; i < *indexes->words_size; i++) {
         SaveInvertedIndexInBinary(indexes->words[i], file);
     }
 
+    fclose(file);
 }

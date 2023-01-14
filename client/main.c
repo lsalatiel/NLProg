@@ -3,8 +3,8 @@
 int main(int argc, char** argv) {
     // CheckDataFilesPath(argc);
 
-    argv[1] = "datasets/medium-large/train.txt";
-    argv[2] = "au.bin";
+    argv[1] = "datasets/tiny/train.txt";
+    argv[2] = "lulu.bin";
 
     Indexes* indexes = NULL;
     indexes = AllocateIndexes(indexes);
