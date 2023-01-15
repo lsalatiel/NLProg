@@ -156,8 +156,8 @@ void SaveIndexesInBinary(Indexes* indexes, char* argv) {
     int argv_size = 0;
     argv_size = strlen(argv);
     char* file_name = NULL;
-    file_name = malloc(sizeof(char) * (argv_size + 5));
-    strcpy(file_name, "bin/");
+    file_name = malloc(sizeof(char) * (argv_size + 8));
+    strcpy(file_name, "binary/");
     strcat(file_name, argv);
 
     FILE* file = fopen(file_name, "wb");
