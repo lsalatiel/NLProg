@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include "libraries.h"
 
 int main() {
     printf("prog3\n");

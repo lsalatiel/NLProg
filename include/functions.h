@@ -48,4 +48,20 @@ bool EndOfFile(char character);
  */
 float CalculateTf_idf(int frequency, int document_quantity, int word_appearance);
 
+void ClearTerminal();
+
+/**
+ * @brief lê um número inteiro e verifica se está contido entre um intervalo definido pelos parâmetros
+ * @param min_range o menor valor de um intervalo fechado
+ * @param max_range o maior valor de um intervalo fechado
+ * @return um número válido ou uma mensagem de erro pedindo o input novamente
+ */
+int GetValidIntegerInput(int min_range, int max_range);
+
+/**
+ * @brief exibe o menu
+ * @return a opção escolhida no menu
+ */
+int SetUpMainMenu();
+
 #endif
