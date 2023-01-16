@@ -5,7 +5,7 @@
             "name": "nlprog",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/nlprog",
+            "program": "${workspaceFolder}/nlprog1",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

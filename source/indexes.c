@@ -75,7 +75,7 @@ Indexes* ReadInfo(Indexes* indexes) {
         file_name = GetFileName(indexes->documents[i]);
         // strcpy(file_name, GetFileName(indexes->documents[i]));
 
-        sprintf(path, "datasets/medium-large/%s", file_name);
+        sprintf(path, "datasets/tiny/%s", file_name);
 
         file = fopen(path, "r");
 
