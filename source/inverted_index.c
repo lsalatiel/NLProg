@@ -9,9 +9,7 @@ struct InvertedIndex {
 };
 
 InvertedIndex* AllocateWord() {
-    InvertedIndex* word = calloc(sizeof(InvertedIndex), 1);
-
-    return word;
+    return calloc(sizeof(InvertedIndex), 1);
 }
 
 InvertedIndex** AllocateWordInfoArray(InvertedIndex** words, int words_size) {
@@ -20,7 +18,7 @@ InvertedIndex** AllocateWordInfoArray(InvertedIndex** words, int words_size) {
     words[words_size]->info = malloc(STARTER_ALLOC * sizeof(WordInfo*));
 
     for (int i = 0; i < STARTER_ALLOC; i++) {
-        words[words_size]->info[i] = AllocateWordInfo(words[words_size]->info[i]);
+        words[words_size]->info[i] = AllocateWordInfo();
     }
 
     return words;
@@ -108,17 +106,45 @@ int GetWordInfoSize(InvertedIndex* word) {
     return word->info_size;
 }
 
-void SaveInvertedIndexInBinary(InvertedIndex* word, FILE* file) {
+void WriteInvertedIndexInBinaryFile(InvertedIndex* word, FILE* file) {
     if (file == NULL) {
         return;
     }
 
-    fwrite(&word->index, 1, sizeof(int), file);
-    fwrite(word->word, 1, sizeof(char), file);
-    fwrite(&word->info_size, 1, sizeof(int), file);
-    fwrite(&word->info_alloc, 1, sizeof(int), file);
+    fwrite(&word->index, sizeof(int), 1, file);
+    int word_size = strlen(word->word) + 1;
+    fwrite(&word_size, sizeof(int), 1, file);
+    fwrite(word->word, sizeof(char), word_size, file);
+    fwrite(&word->info_size, sizeof(int), 1, file);
+    fwrite(&word->info_alloc, sizeof(int), 1, file);
 
     for (int i = 0; i < word->info_size; i++) {
-        SaveWordInfoInBinary(word->info[i], file);
+        WriteWordInfoInBinaryFile(word->info[i], file);
     }
+}
+
+InvertedIndex* ReadInvertedIndexFromBinaryFile(InvertedIndex* word, FILE* file) {
+    if (file == NULL) {
+        return NULL;
+    }
+
+    fread(&word->index, sizeof(int), 1, file);
+    int word_size = 0;
+    fread(&word_size, sizeof(int), 1, file);
+    word->word = malloc(word_size * sizeof(char));
+    fread(word->word, sizeof(char), word_size, file);
+    fread(&word->info_size, sizeof(int), 1, file);
+    fread(&word->info_alloc, sizeof(int), 1, file);
+
+    word->info = malloc(word->info_alloc * sizeof(WordInfo*));
+
+    for (int i = 0; i < word->info_alloc; i++) {
+        word->info[i] = AllocateWordInfo();
+    }
+
+    for (int i = 0; i < word->info_size; i++) {
+        ReadWordInfoFromBinaryFile(word->info[i], file);
+    }
+
+    return word;
 }

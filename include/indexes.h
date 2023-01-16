@@ -14,11 +14,9 @@ Indexes* ReadTrainFile(Indexes* indexes, char** argv);
 
 /**
  * @brief allocates memory for the inverted and forward indexes
- *
- * @param indexes
  * @return Indexes*
  */
-Indexes* AllocateIndexes(Indexes* indexes);
+Indexes* AllocateIndexes();
 
 /**
  * @brief frees memory from indexes
@@ -59,6 +57,8 @@ Indexes* StoreTf_idfFromIndexes(Indexes* indexes);
  * @param indexes
  * @param file_name
  */
-void SaveIndexesInBinary(Indexes* indexes, char* file_name);
+void WriteIndexesInBinaryFile(Indexes* indexes, char* file_name);
+
+Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* file_name);
 
 #endif

@@ -9,7 +9,8 @@ struct Indexes {
     int* words_alloc;
 };
 
-Indexes* AllocateIndexes(Indexes* indexes) {
+Indexes* AllocateIndexes() {
+    Indexes* indexes = NULL;
     indexes = malloc(sizeof(Indexes));
 
     indexes->documents = malloc(STARTER_ALLOC * sizeof(ForwardIndex*));
@@ -152,16 +153,14 @@ Indexes* StoreTf_idfFromIndexes(Indexes* indexes) {
     return indexes;
 }
 
-void SaveIndexesInBinary(Indexes* indexes, char* argv) {
-    int argv_size = 0;
-    argv_size = strlen(argv);
-    char* file_name = NULL;
-    file_name = malloc(sizeof(char) * (argv_size + 8));
-    strcpy(file_name, "binary/");
-    strcat(file_name, argv);
+void WriteIndexesInBinaryFile(Indexes* indexes, char* file_name) {
+    char* binary_file_name = NULL;
+    binary_file_name = malloc(sizeof(char) * (strlen(file_name) + 8));
+    strcpy(binary_file_name, "binary/");
+    strcat(binary_file_name, file_name);
 
-    FILE* file = fopen(file_name, "wb");
-    FreeAndNull(file_name);
+    FILE* file = fopen(binary_file_name, "wb");
+    FreeAndNull(binary_file_name);
 
     if (file == NULL) {
         printf("ERROR: could not create binary file.\n");
@@ -169,20 +168,67 @@ void SaveIndexesInBinary(Indexes* indexes, char* argv) {
     }
 
     // writing documents
-    fwrite(indexes->documents_size, 1, sizeof(int), file);
-    fwrite(indexes->documents_alloc, 1, sizeof(int), file);
+    fwrite(indexes->documents_size, sizeof(int), 1, file);
+    fwrite(indexes->documents_alloc, sizeof(int), 1, file);
 
     for (int i = 0; i < *indexes->documents_size; i++) {
-        SaveForwardIndexInBinary(indexes->documents[i], file);
+        WriteForwardIndexInBinaryFile(indexes->documents[i], file);
     }
 
     // writing words
-    fwrite(indexes->words_size, 1, sizeof(int), file);
-    fwrite(indexes->words_alloc, 1, sizeof(int), file);
+    fwrite(indexes->words_size, sizeof(int), 1, file);
+    fwrite(indexes->words_alloc, sizeof(int), 1, file);
 
     for (int i = 0; i < *indexes->words_size; i++) {
-        SaveInvertedIndexInBinary(indexes->words[i], file);
+        WriteInvertedIndexInBinaryFile(indexes->words[i], file);
     }
 
     fclose(file);
+}
+
+Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* file_name) {
+    char* binary_file_name = NULL;
+    binary_file_name = malloc(sizeof(char) * (strlen(file_name) + 8));
+    strcpy(binary_file_name, "binary/");
+    strcat(binary_file_name, file_name);
+
+    FILE* file = fopen(binary_file_name, "rb");
+    FreeAndNull(binary_file_name);
+
+    if (file == NULL) {
+        printf("ERROR: could not open binary file.\n");
+        return NULL;
+    }
+
+    // reading documents
+    fread(indexes->documents_size, sizeof(int), 1, file);
+    fread(indexes->documents_alloc, sizeof(int), 1, file);
+
+    int alloc = STARTER_ALLOC;
+    for (int i = 0; i < *indexes->documents_size; i++) {
+        if (i == alloc) {
+            alloc *= 2;
+            indexes->documents = ReallocDocuments(indexes->documents, &alloc);
+        }
+
+        ReadForwardIndexFromBinaryFile(indexes->documents[i], file);
+    }
+
+    // reading words
+    fread(indexes->words_size, sizeof(int), 1, file);
+    fread(indexes->words_alloc, sizeof(int), 1, file);
+
+    alloc = STARTER_ALLOC;
+    for (int i = 0; i < *indexes->words_size; i++) {
+        if (i == alloc) {
+            alloc *= 2;
+            indexes->words = ReallocWords(indexes->words, &alloc);
+        }
+
+        ReadInvertedIndexFromBinaryFile(indexes->words[i], file);
+    }
+
+    fclose(file);
+
+    return indexes;
 }

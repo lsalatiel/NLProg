@@ -9,7 +9,7 @@ typedef struct WordInfo WordInfo;
  * @param info
  * @return WordInfo*
  */
-WordInfo* AllocateWordInfo(WordInfo* info);
+WordInfo* AllocateWordInfo();
 
 /**
  * @brief reallocates space fora a word info array
@@ -70,6 +70,8 @@ WordInfo* StoreTf_idfFromInfo(WordInfo* info, int document_quantity, int word_ap
  * @param info
  * @param file
  */
-void SaveWordInfoInBinary(WordInfo* info, FILE* file);
+void WriteWordInfoInBinaryFile(WordInfo* info, FILE* file);
+
+void ReadWordInfoFromBinaryFile(WordInfo* info, FILE* file);
 
 #endif

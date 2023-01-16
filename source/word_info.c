@@ -6,9 +6,10 @@ struct WordInfo {
     float tf_idf;
 };
 
-WordInfo* AllocateWordInfo(WordInfo* info) {
-    info = calloc(sizeof(WordInfo), 1);
+WordInfo* AllocateWordInfo() {
+    WordInfo* info = NULL;
 
+    info = malloc(sizeof(WordInfo));
     info->document_index = -1;
     info->document_frequency = 0;
     info->tf_idf = -1;
@@ -22,7 +23,7 @@ WordInfo** ReallocWordInfoArray(WordInfo** info_array, int curr_size, int max_si
     info_array = new;
 
     for (int i = curr_size; i < max_size; i++) {
-        info_array[i] = AllocateWordInfo(info_array[i]);
+        info_array[i] = AllocateWordInfo();
     }
 
     return info_array;
@@ -66,12 +67,22 @@ WordInfo* StoreTf_idfFromInfo(WordInfo* info, int document_quantity, int word_ap
 //     return tf_idf;
 // }
 
-void SaveWordInfoInBinary(WordInfo* info, FILE* file) {
+void WriteWordInfoInBinaryFile(WordInfo* info, FILE* file) {
     if (file == NULL) {
         return;
     }
 
-    fwrite(&info->document_index, 1, sizeof(int), file);
-    fwrite(&info->document_frequency, 1, sizeof(int), file);
-    fwrite(&info->tf_idf, 1, sizeof(float), file);
+    fwrite(&info->document_index, sizeof(int), 1, file);
+    fwrite(&info->document_frequency, sizeof(int), 1, file);
+    fwrite(&info->tf_idf, sizeof(float), 1, file);
+}
+
+void ReadWordInfoFromBinaryFile(WordInfo* info, FILE* file) {
+    if (file == NULL) {
+        return;
+    }
+
+    fread(&info->document_index, sizeof(int), 1, file);
+    fread(&info->document_frequency, sizeof(int), 1, file);
+    fread(&info->tf_idf, sizeof(float), 1, file);
 }

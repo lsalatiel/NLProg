@@ -100,6 +100,8 @@ int GetWordInfoSize(InvertedIndex* word);
  * @param word
  * @param file
  */
-void SaveInvertedIndexInBinary(InvertedIndex* word, FILE* file);
+void WriteInvertedIndexInBinaryFile(InvertedIndex* word, FILE* file);
+
+InvertedIndex* ReadInvertedIndexFromBinaryFile(InvertedIndex* word, FILE* file);
 
 #endif

@@ -7,10 +7,10 @@ int main(int argc, char** argv) {
     argv[2] = "lulu.bin";
 
     Indexes* indexes = NULL;
-    indexes = AllocateIndexes(indexes);
+    indexes = AllocateIndexes();
     indexes = ReadTrainFile(indexes, argv);
     indexes = ReadInfo(indexes);
-    SaveIndexesInBinary(indexes, argv[2]);
+    WriteIndexesInBinaryFile(indexes, argv[2]);
     FreeIndexes(indexes);
 
     return EXIT_SUCCESS;

@@ -1,6 +1,12 @@
 #include "libraries.h"
 
-int main() {
+int main(int argc, char** argv) {
+    argv[1] = "lulu.bin";
+
+    Indexes* indexes = NULL;
+    indexes = AllocateIndexes();
+    indexes = ReadIndexesFromBinaryFile(indexes, argv[1]);
+
     while (ONLINE) {
         switch (SetUpMainMenu()) {
             case 1:
@@ -16,6 +22,7 @@ int main() {
 
                 break;
             case 5:
+                FreeIndexes(indexes);
                 return 0;
         }
     }

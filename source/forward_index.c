@@ -20,7 +20,7 @@ ForwardIndex* AllocateDocument() {
     *document->info_alloc = STARTER_ALLOC;
 
     for (int x = 0; x < STARTER_ALLOC; x++) {
-        document->info[x] = AllocateDocumentInfo(document->info[x]);
+        document->info[x] = AllocateDocumentInfo();
     }
 
     return document;
@@ -111,7 +111,7 @@ ForwardIndex** StoreTf_idfFromDocuments(ForwardIndex** documents, int word_index
                 break;
             }
         }
-        
+
         if (word_check == word_appearance)  // word_appearance = how many documents the word showed up
             break;
     }
@@ -119,18 +119,50 @@ ForwardIndex** StoreTf_idfFromDocuments(ForwardIndex** documents, int word_index
     return documents;
 }
 
-void SaveForwardIndexInBinary(ForwardIndex* document, FILE* file) {
+void WriteForwardIndexInBinaryFile(ForwardIndex* document, FILE* file) {
     if (file == NULL) {
         return;
     }
 
-    fwrite(&document->index, 1, sizeof(int), file);
-    fwrite(document->name, 1, sizeof(char), file);
-    fwrite(document->class, 1, sizeof(char), file);
-    fwrite(document->info_size, 1, sizeof(int), file);
-    fwrite(document->info_alloc, 1, sizeof(int), file);
+    fwrite(&document->index, sizeof(int), 1, file);
+    int name_size = strlen(document->name) + 1;
+    fwrite(&name_size, sizeof(int), 1, file);
+    fwrite(document->name, sizeof(char), name_size, file);
+    int class_size = strlen(document->class) + 1;
+    fwrite(&class_size, sizeof(int), 1, file);
+    fwrite(document->class, sizeof(char), class_size, file);
+    fwrite(document->info_size, sizeof(int), 1, file);
+    fwrite(document->info_alloc, sizeof(int), 1, file);
 
     for (int i = 0; i < *document->info_size; i++) {
-        SaveDocumentInfoInBinary(document->info[i], file);
+        WriteDocumentInfoInBinaryFile(document->info[i], file);
     }
+}
+
+ForwardIndex* ReadForwardIndexFromBinaryFile(ForwardIndex* document, FILE* file) {
+    if (file == NULL) {
+        return NULL;
+    }
+
+    fread(&document->index, sizeof(int), 1, file);
+    int name_size;
+    fread(&name_size, sizeof(int), 1, file);
+    document->name = malloc(name_size * sizeof(char));
+    fread(document->name, sizeof(char), name_size, file);
+    int class_size;
+    fread(&class_size, sizeof(int), 1, file);
+    document->class = malloc(class_size * sizeof(char));
+    fread(document->class, sizeof(char), class_size, file);
+    fread(document->info_size, sizeof(int), 1, file);
+    fread(document->info_alloc, sizeof(int), 1, file);
+
+    if (*document->info_alloc > STARTER_ALLOC) {
+        document->info = ReallocDocumentInfoArray(document->info, STARTER_ALLOC, *document->info_alloc);
+    }
+
+    for (int i = 0; i < *document->info_size; i++) {
+        ReadDocumentInfoFromBinaryFile(document->info[i], file);
+    }
+
+    return document;
 }

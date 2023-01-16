@@ -69,6 +69,8 @@ DocumentInfo* StoreTf_idfFromDocumentInfo(DocumentInfo* info, int document_quant
  * @param info
  * @param file
  */
-void SaveDocumentInfoInBinary(DocumentInfo* info, FILE* file);
+void WriteDocumentInfoInBinaryFile(DocumentInfo* info, FILE* file);
+
+void ReadDocumentInfoFromBinaryFile(DocumentInfo* info, FILE* file);
 
 #endif

@@ -80,6 +80,8 @@ ForwardIndex** StoreTf_idfFromDocuments(ForwardIndex** documents, int word_index
  * @param document
  * @param file
  */
-void SaveForwardIndexInBinary(ForwardIndex* document, FILE* file);
+void WriteForwardIndexInBinaryFile(ForwardIndex* document, FILE* file);
+
+ForwardIndex* ReadForwardIndexFromBinaryFile(ForwardIndex* document, FILE* file);
 
 #endif
