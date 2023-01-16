@@ -108,12 +108,8 @@ ForwardIndex** StoreTf_idfFromDocuments(ForwardIndex** documents, int word_index
             if (GetWordIndexInfo(documents[i]->info[j]) == word_index) {
                 documents[i]->info[j] = StoreTf_idfFromDocumentInfo(documents[i]->info[j], document_quantity, word_appearance);
                 word_check++;
-                break;
             }
         }
-
-        if (word_check == word_appearance)  // word_appearance = how many documents the word showed up
-            break;
     }
 
     return documents;

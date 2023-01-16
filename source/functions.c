@@ -55,13 +55,19 @@ void ClearTerminal() {
 
 int GetValidIntegerInput(int min_range, int max_range) {
     while (ONLINE) {
-        char buffer[BUFFER_SIZE];
+        char* buffer = NULL;
+        size_t len = 0;
+        ssize_t read;
 
-        if (fgets(buffer, BUFFER_SIZE, stdin) != NULL) {
+        read = getline(&buffer, &len, stdin);
+        if (read != -1) {
+            buffer[read - 1] = '\0';
+
             if (buffer[0] >= '0' && buffer[0] <= '9') {
                 int input = atoi(buffer);
 
                 if (input >= min_range && input <= max_range) {
+                    FreeAndNull(buffer);
                     DefaultTextColour();
                     ClearTerminal();
                     return input;
