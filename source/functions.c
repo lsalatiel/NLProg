@@ -42,9 +42,7 @@ float CalculateTf_idf(int frequency, int document_quantity, int word_appearance)
     float x = (1 + document_quantity) / (1 + word_appearance);
     float idf = log(x) + 1;
 
-    float tf_idf = tf * idf;
-
-    return tf_idf;
+    return tf * idf;
 }
 
 void ClearTerminal() {
@@ -76,17 +74,17 @@ int GetValidIntegerInput(int min_range, int max_range) {
         }
 
         RedTextColour();
-        printf("• ERRO: Opção inválida. Tente novamente: ");
+        printf("• ERROR: Invalid option. Try again: ");
     }
 }
 
 int SetUpMainMenu() {
-    printf("1 | Buscar notícias\n");
-    printf("2 | Classificar notícias\n");
-    printf("3 | Relatório de palavra\n");
-    printf("4 | Relatório de documentos\n");
-    printf("5 | Sair do programa\n\n");
-    printf("Digite a opção desejada: ");
+    printf("1 | Search news\n");
+    printf("2 | Sort news\n");
+    printf("3 | Word relatory\n");
+    printf("4 | Document relatory\n");
+    printf("5 | Quit program\n\n");
+    printf("Enter an option: ");
 
     return GetValidIntegerInput(1, 5);
 }
