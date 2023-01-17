@@ -50,6 +50,10 @@ int GetDocumentIndexInfo(WordInfo* info) {
     return info->document_index;
 }
 
+float GetTFIDFInfo(WordInfo* info) {
+    return info->tf_idf;
+}
+
 WordInfo* StoreTf_idfFromInfo(WordInfo* info, int document_quantity, int word_appearance) {  // word_appearance = how many documents the word showed up
     info->tf_idf = CalculateTf_idf(info->document_frequency, document_quantity, word_appearance);
 

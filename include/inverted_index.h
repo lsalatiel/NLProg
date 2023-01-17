@@ -104,4 +104,11 @@ void WriteInvertedIndexInBinaryFile(InvertedIndex* word, FILE* file);
 
 InvertedIndex* ReadInvertedIndexFromBinaryFile(InvertedIndex* word, FILE* file);
 
+void SortWords(InvertedIndex** words, int words_size);
+InvertedIndex* SearchWords(char* input, InvertedIndex** words, int words_size);
+int CompareWords(const void* a, const void* b);
+int CompareWords2(const void* a, const void* b);
+int GetDocumentIndexFromWord(InvertedIndex* word, int j);
+float GetTFIDFFromWord(InvertedIndex* word, int j);
+
 #endif

@@ -88,3 +88,33 @@ int SetUpMainMenu() {
 
     return GetValidIntegerInput(1, 5);
 }
+
+char** GetUserSearchInput(int* query_size) {
+    char* line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    read = getline(&line, &len, stdin);
+
+    if (read == -1) {
+        printf("Error reading input\n");
+        return NULL;
+    }
+
+    char** res = NULL;
+    char* p = strtok(line, " ");
+    int n_spaces = 0;
+
+    while (p) {
+        res = realloc(res, sizeof(char*) * ++n_spaces);
+        if (res == NULL) {
+            printf("Error allocating memory\n");
+            return NULL;
+        }
+        res[n_spaces - 1] = strdup(p);
+        p = strtok(NULL, " ");
+    }
+
+    FreeAndNull(line);
+    *query_size = n_spaces;
+    return res;
+}

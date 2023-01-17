@@ -232,3 +232,36 @@ Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* file_name) {
 
     return indexes;
 }
+
+void SearchAndSortNews(Indexes* indexes, int num_results) {
+    int* query_size = NULL;
+    query_size = malloc(sizeof(int));
+    char** query_words = NULL;
+    query_words = GetUserSearchInput(query_size);
+
+    SortWords(indexes->words, *indexes->words_size);
+
+    for (int i = 0; i < *query_size; i++) {
+        InvertedIndex* word_index = SearchWords(query_words[i], indexes->words, *indexes->words_size);
+
+        if (word_index != NULL) {
+            int info_size = GetWordInfoSize(word_index);
+            for (int j = 0; j < info_size; j++) {
+                int document_index = GetDocumentIndexFromWord(word_index, j);
+                *GetTFIDFSum(indexes->documents[document_index]) += GetTFIDFFromWord(word_index, j);
+            }
+        }
+    }
+    /*
+        qsort(indexes->documents, *indexes->documents_size, sizeof(ForwardIndex), compare_documents);
+
+        for (int i = 0; i < num_results; i++) {
+            printf("%s, %f\n", indexes->documents[i]->name, indexes->documents[i]->sum_tf_idf);
+        }
+    */
+    for (int i = 0; i < *query_size; i++) {
+        FreeAndNull(query_words[i]);
+    }
+
+    FreeAndNull(query_words);
+}

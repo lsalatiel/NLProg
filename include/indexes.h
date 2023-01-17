@@ -60,5 +60,6 @@ Indexes* StoreTf_idfFromIndexes(Indexes* indexes);
 void WriteIndexesInBinaryFile(Indexes* indexes, char* file_name);
 
 Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* file_name);
+void SearchAndSortNews(Indexes* indexes, int num_results);
 
 #endif

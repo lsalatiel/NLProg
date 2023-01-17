@@ -74,4 +74,6 @@ void WriteWordInfoInBinaryFile(WordInfo* info, FILE* file);
 
 void ReadWordInfoFromBinaryFile(WordInfo* info, FILE* file);
 
+float GetTFIDFInfo(WordInfo* info);
+
 #endif

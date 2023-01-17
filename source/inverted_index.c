@@ -102,6 +102,14 @@ bool WordInDocument(InvertedIndex* word, int document_index) {
     return false;
 }
 
+int GetDocumentIndexFromWord(InvertedIndex* word, int j) {
+    return GetDocumentIndexInfo(word->info[j]);
+}
+
+float GetTFIDFFromWord(InvertedIndex* word, int j) {
+    return GetTFIDFInfo(word->info[j]);
+}
+
 int GetWordInfoSize(InvertedIndex* word) {
     return word->info_size;
 }
@@ -147,4 +155,27 @@ InvertedIndex* ReadInvertedIndexFromBinaryFile(InvertedIndex* word, FILE* file) 
     }
 
     return word;
+}
+
+void SortWords(InvertedIndex** words, int words_size) {
+    qsort(words, words_size, sizeof(InvertedIndex*), CompareWords);
+}
+
+InvertedIndex* SearchWords(char* input, InvertedIndex** words, int words_size) {
+    InvertedIndex search_key;
+    search_key.word = input;
+    InvertedIndex* result = (InvertedIndex*)bsearch(&search_key, words, words_size, sizeof(InvertedIndex), CompareWords2);
+    return result;
+}
+
+int CompareWords(const void* a, const void* b) {
+    InvertedIndex* word_index_a = *(InvertedIndex**)a;
+    InvertedIndex* word_index_b = *(InvertedIndex**)b;
+    return strcmp(word_index_a->word, word_index_b->word);
+}
+
+int CompareWords2(const void* a, const void* b) {
+    InvertedIndex* word_index_a = (InvertedIndex*)a;
+    InvertedIndex* word_index_b = (InvertedIndex*)b;
+    return strcmp(word_index_a->word, word_index_b->word);
 }

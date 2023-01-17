@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     while (ONLINE) {
         switch (SetUpMainMenu()) {
             case 1:
-
+                SearchAndSortNews(indexes, 10);
                 break;
             case 2:
 

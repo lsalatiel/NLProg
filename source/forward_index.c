@@ -7,7 +7,12 @@ struct ForwardIndex {
     DocumentInfo** info;
     int* info_size;
     int* info_alloc;
+    float* sum_tf_idf;
 };
+
+float* GetTFIDFSum(ForwardIndex* document) {
+    return document->sum_tf_idf;
+}
 
 ForwardIndex* AllocateDocument() {
     ForwardIndex* document = NULL;
@@ -161,4 +166,16 @@ ForwardIndex* ReadForwardIndexFromBinaryFile(ForwardIndex* document, FILE* file)
     }
 
     return document;
+}
+
+int compare_documents(const void* a, const void* b) {
+    float* sum_tf_idf_a = ((ForwardIndex*)a)->sum_tf_idf;
+    float* sum_tf_idf_b = ((ForwardIndex*)b)->sum_tf_idf;
+
+    if (*sum_tf_idf_a > *sum_tf_idf_b)
+        return -1;
+    else if (*sum_tf_idf_a < *sum_tf_idf_b)
+        return 1;
+
+    return 0;
 }

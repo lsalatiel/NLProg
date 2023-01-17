@@ -84,4 +84,7 @@ void WriteForwardIndexInBinaryFile(ForwardIndex* document, FILE* file);
 
 ForwardIndex* ReadForwardIndexFromBinaryFile(ForwardIndex* document, FILE* file);
 
+int compare_documents(const void* a, const void* b);
+float* GetTFIDFSum(ForwardIndex* document);
+
 #endif

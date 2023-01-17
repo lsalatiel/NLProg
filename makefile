@@ -1,6 +1,6 @@
 # Define the compiler and the flags
 CC = gcc
-CFLAGS = -g -O0 -Wall -Wextra -lm
+CFLAGS = -g -Wall -Wextra -lm
 
 # Define the directory paths for source, include, client, binary, and objects
 SOURCEDIR = source

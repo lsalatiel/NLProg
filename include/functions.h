@@ -64,4 +64,6 @@ int GetValidIntegerInput(int min_range, int max_range);
  */
 int SetUpMainMenu();
 
+char** GetUserSearchInput(int* query_size);
+
 #endif
