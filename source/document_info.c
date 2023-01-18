@@ -6,7 +6,7 @@ struct DocumentInfo {
     float tf_idf;
 };
 
-DocumentInfo* AllocateDocumentInfo() {
+DocumentInfo* AllocDocumentInfo() {
     DocumentInfo* info = NULL;
     info = malloc(sizeof(DocumentInfo));
     info->word_index = -1;
@@ -26,7 +26,7 @@ DocumentInfo** ReallocDocumentInfoArray(DocumentInfo** info_array, int curr_size
     info_array = new;
 
     for (int i = curr_size; i < max_size; i++) {
-        info_array[i] = AllocateDocumentInfo();
+        info_array[i] = AllocDocumentInfo();
     }
 
     return info_array;
@@ -49,7 +49,7 @@ DocumentInfo* AddWordFrequency(DocumentInfo* info) {
     return info;
 }
 
-DocumentInfo* StoreTf_idfFromDocumentInfo(DocumentInfo* info, int document_quantity, int word_appearance) {
+DocumentInfo* StoreTFIDFFromDocumentInfo(DocumentInfo* info, int document_quantity, int word_appearance) {
     info->tf_idf = CalculateTf_idf(info->word_frequency, document_quantity, word_appearance);
 
     return info;

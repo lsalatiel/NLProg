@@ -1,26 +1,30 @@
 #include "libraries.h"
 
-void DefaultTextColour() {
+void BoldText() {
+    printf("\e[1m");
+}
+
+void DefaultText() {
     printf("\033[0m");
 }
 
-void RedTextColour() {
+void RedText() {
     printf("\033[1;31m");
 }
 
 void CheckDataFilesPath(int argc) {
     if (argc != 3) {
-        RedTextColour();
-        printf("ERROR: Invalid number of arguments.\n");
-        DefaultTextColour();
+        RedText();
+        printf("• ERROR: Invalid number of command line arguments.\n");
+        DefaultText();
         exit(1);
     }
 }
 
 void PrintFileError() {
-    RedTextColour();
-    printf("ERROR: Could not open the file.\n");
-    DefaultTextColour();
+    RedText();
+    printf("• ERROR: File not found.\n");
+    DefaultText();
 }
 
 void FreeAndNull(void* pointer) {
@@ -66,25 +70,23 @@ int GetValidIntegerInput(int min_range, int max_range) {
 
                 if (input >= min_range && input <= max_range) {
                     FreeAndNull(buffer);
-                    DefaultTextColour();
                     ClearTerminal();
+                    DefaultText();
                     return input;
                 }
             }
         }
 
-        RedTextColour();
+        RedText();
         printf("• ERROR: Invalid option. Try again: ");
     }
 }
 
 int SetUpMainMenu() {
-    printf("1 | Search news\n");
-    printf("2 | Sort news\n");
-    printf("3 | Word relatory\n");
-    printf("4 | Document relatory\n");
-    printf("5 | Quit program\n\n");
-    printf("Enter an option: ");
+    PrintArtMenu();
+    BoldText();
+    printf("\n• Enter an option: ");
+    DefaultText();
 
     return GetValidIntegerInput(1, 5);
 }
@@ -96,25 +98,62 @@ char** GetUserSearchInput(int* query_size) {
     read = getline(&line, &len, stdin);
 
     if (read == -1) {
-        printf("Error reading input\n");
+        RedText();
+        printf("• ERROR: Invalid search. Try again: ");
+        DefaultText();
         return NULL;
     }
 
-    char** res = NULL;
-    char* p = strtok(line, " ");
-    int n_spaces = 0;
+    line[read - 1] = '\0';
+    char** result = NULL;
+    char* token = strtok(line, " ");
+    int spaces = 0;
 
-    while (p) {
-        res = realloc(res, sizeof(char*) * ++n_spaces);
-        if (res == NULL) {
-            printf("Error allocating memory\n");
+    while (token) {
+        result = realloc(result, sizeof(char*) * ++spaces);
+
+        if (result == NULL) {
+            RedText();
+            printf("• ERROR: Invalid search. Try again: ");
+            DefaultText();
             return NULL;
         }
-        res[n_spaces - 1] = strdup(p);
-        p = strtok(NULL, " ");
+
+        result[spaces - 1] = strdup(token);
+        token = strtok(NULL, " ");
     }
 
     FreeAndNull(line);
-    *query_size = n_spaces;
-    return res;
+
+    *query_size = spaces;
+    return result;
+}
+
+void ResetUserSearchInput(char** input, int* input_size) {
+    for (int x = 0; x < *input_size; x++) {
+        FreeAndNull(input[x]);
+    }
+
+    FreeAndNull(input_size);
+    FreeAndNull(input);
+}
+
+void PrintArtMenu() {
+    BoldText();
+    printf(" ╔═══╗   ┌─┐┌─┐┌─┐┬─┐┌─┐┬ ┬  ┌┐┌┌─┐┬ ┬┌─┐\n");
+    printf(" █ 1 █   └─┐├┤ ├─┤├┬┘│  ├─┤  │││├┤ │││└─┐\n");
+    printf(" ╚═══╝   └─┘└─┘┴ ┴┴└─└─┘┴ ┴  ┘└┘└─┘└┴┘└─┘\n");
+    printf(" ╔═══╗   ┌─┐┌─┐┬─┐┌┬┐  ┌┐┌┌─┐┬ ┬┌─┐\n");
+    printf(" █ 2 █   └─┐│ │├┬┘ │   │││├┤ │││└─┐\n");
+    printf(" ╚═══╝   └─┘└─┘┴└─ ┴   ┘└┘└─┘└┴┘└─┘\n");
+    printf(" ╔═══╗   ┬ ┬┌─┐┬─┐┌┬┐  ┬─┐┌─┐┬  ┌─┐┌┬┐┌─┐┬─┐┬ ┬\n");
+    printf(" █ 3 █   ││││ │├┬┘ ││  ├┬┘├┤ │  ├─┤ │ │ │├┬┘└┬┘\n");
+    printf(" ╚═══╝   └┴┘└─┘┴└──┴┘  ┴└─└─┘┴─┘┴ ┴ ┴ └─┘┴└─ ┴\n");
+    printf(" ╔═══╗   ┌┬┐┌─┐┌─┐┬ ┬┌┬┐┌─┐┌┐┌┌┬┐  ┬─┐┌─┐┬  ┌─┐┌┬┐┌─┐┬─┐┬ ┬\n");
+    printf(" █ 4 █    │││ ││  │ ││││├┤ │││ │   ├┬┘├┤ │  ├─┤ │ │ │├┬┘└┬┘\n");
+    printf(" ╚═══╝   ─┴┘└─┘└─┘└─┘┴ ┴└─┘┘└┘ ┴   ┴└─└─┘┴─┘┴ ┴ ┴ └─┘┴└─ ┴\n");
+    printf(" ╔═══╗   ┬  ┌─┐┌─┐┬  ┬┌─┐  ┌─┐┬─┐┌─┐┌─┐┬─┐┌─┐┌┬┐\n");
+    printf(" █ 5 █   │  ├┤ ├─┤└┐┌┘├┤   ├─┘├┬┘│ ││ ┬├┬┘├─┤│││\n");
+    printf(" ╚═══╝   ┴─┘└─┘┴ ┴ └┘ └─┘  ┴  ┴└─└─┘└─┘┴└─┴ ┴┴ ┴\n");
+    DefaultText();
 }

@@ -5,110 +5,87 @@ typedef struct InvertedIndex InvertedIndex;
 
 /**
  * @brief allocates space for a single inverted index
- *
- * @return InvertedIndex*
  */
-InvertedIndex* AllocateWord();
+InvertedIndex* AllocWord();
 
 /**
  * @brief allocates and initialize the information of a single inverted index
- *
- * @param words
- * @param words_size
- * @param max_size
- * @return InvertedIndex**
  */
-InvertedIndex** AllocateWordInfoArray(InvertedIndex** words, int words_size);
+InvertedIndex** AllocWordInfoArray(InvertedIndex** words, int words_size);
 
 /**
  * @brief reallocates space for the information of an inverted index array
- *
- * @param words
- * @param words_alloc
- * @return InvertedIndex**
  */
 InvertedIndex** ReallocWords(InvertedIndex** words, int* words_alloc);
 
 /**
  * @brief frees memory allocated for a single word
- *
- * @param word
  */
 void FreeWord(InvertedIndex* word);
 
 /**
  * @brief returns the index of a word in the array if it exists, otherwise it returns -1
- *
- * @param words
- * @param word
- * @param size
- * @return int
  */
 int GetWordIndex(InvertedIndex** words, char* word, int size);
 
 /**
  * @brief stores the word and the information of a single inverted index
- *
- * @param words
- * @param word
- * @param word_index
- * @param document_index
- * @return InvertedIndex**
  */
 InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int word_index, int document_index);
 
 /**
  * @brief stores information of a word that is already stored
- *
- * @param words
- * @param word_index
- * @param document_index
- * @return InvertedIndex**
  */
 InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int word_index, int document_index);
 
 /**
  * @brief stores tf_idf of each word of the inverted index
- *
- * @param word
- * @param document_quantity
- * @return InvertedIndex*
  */
 InvertedIndex* StoreTf_idfFromfWord(InvertedIndex* word, int document_quantity);
 
 /**
  * @brief checks if a certain word is in a specific document
- *
- * @param word
- * @param document_index
- * @return true
- * @return false
  */
 bool WordInDocument(InvertedIndex* word, int document_index);
 
 /**
  * @brief returns the size of the word info array
- *
- * @param word
- * @return int
  */
 int GetWordInfoSize(InvertedIndex* word);
 
 /**
- * @brief saves a inverted index in a binary file
- *
- * @param word
- * @param file
+ * @brief writes an inverted index in a binary file
  */
 void WriteInvertedIndexInBinaryFile(InvertedIndex* word, FILE* file);
 
+/**
+ * @brief reads an inverted index from a binary file
+ */
 InvertedIndex* ReadInvertedIndexFromBinaryFile(InvertedIndex* word, FILE* file);
 
+/**
+ * @brief sorts words array based on alphabetical order
+ */
 void SortWords(InvertedIndex** words, int words_size);
-InvertedIndex* SearchWords(char* input, InvertedIndex** words, int words_size);
+
+/**
+ * @brief search an user given word in the InvertedIndex array
+ */
+InvertedIndex** SearchWords(char* input, InvertedIndex** words, int words_size);
+
+/**
+ * @brief comparison function for qsort()
+ */
 int CompareWords(const void* a, const void* b);
-int CompareWords2(const void* a, const void* b);
+
+/**
+ * @brief returns the document index that a given word appear on
+ */
 int GetDocumentIndexFromWord(InvertedIndex* word, int j);
+
+/**
+ * @brief returns the tf-idf from a word
+ */
 float GetTFIDFFromWord(InvertedIndex* word, int j);
 
 #endif

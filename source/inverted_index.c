@@ -8,17 +8,17 @@ struct InvertedIndex {
     int info_alloc;
 };
 
-InvertedIndex* AllocateWord() {
+InvertedIndex* AllocWord() {
     return calloc(sizeof(InvertedIndex), 1);
 }
 
-InvertedIndex** AllocateWordInfoArray(InvertedIndex** words, int words_size) {
+InvertedIndex** AllocWordInfoArray(InvertedIndex** words, int words_size) {
     words[words_size]->info_size = 0;
     words[words_size]->info_alloc = STARTER_ALLOC;
     words[words_size]->info = malloc(STARTER_ALLOC * sizeof(WordInfo*));
 
     for (int i = 0; i < STARTER_ALLOC; i++) {
-        words[words_size]->info[i] = AllocateWordInfo();
+        words[words_size]->info[i] = AllocWordInfo();
     }
 
     return words;
@@ -40,7 +40,7 @@ InvertedIndex** ReallocWords(InvertedIndex** words, int* words_alloc) {
     words = new;
 
     for (int x = *words_alloc / 2; x < *words_alloc; x++) {
-        words[x] = AllocateWord();
+        words[x] = AllocWord();
     }
 
     return words;
@@ -147,7 +147,7 @@ InvertedIndex* ReadInvertedIndexFromBinaryFile(InvertedIndex* word, FILE* file) 
     word->info = malloc(word->info_alloc * sizeof(WordInfo*));
 
     for (int i = 0; i < word->info_alloc; i++) {
-        word->info[i] = AllocateWordInfo();
+        word->info[i] = AllocWordInfo();
     }
 
     for (int i = 0; i < word->info_size; i++) {
@@ -161,21 +161,21 @@ void SortWords(InvertedIndex** words, int words_size) {
     qsort(words, words_size, sizeof(InvertedIndex*), CompareWords);
 }
 
-InvertedIndex* SearchWords(char* input, InvertedIndex** words, int words_size) {
-    InvertedIndex search_key;
-    search_key.word = input;
-    InvertedIndex* result = (InvertedIndex*)bsearch(&search_key, words, words_size, sizeof(InvertedIndex), CompareWords2);
+InvertedIndex** SearchWords(char* input, InvertedIndex** words, int words_size) {
+    InvertedIndex* search = malloc(sizeof(InvertedIndex));
+    search->word = strdup(input);
+
+    InvertedIndex** result = bsearch(&search, words, words_size, sizeof(InvertedIndex*), CompareWords);
+
+    FreeAndNull(search->word);
+    FreeAndNull(search);
+
     return result;
 }
 
 int CompareWords(const void* a, const void* b) {
-    InvertedIndex* word_index_a = *(InvertedIndex**)a;
-    InvertedIndex* word_index_b = *(InvertedIndex**)b;
-    return strcmp(word_index_a->word, word_index_b->word);
-}
+    const InvertedIndex** x = (const InvertedIndex**)a;
+    const InvertedIndex** y = (const InvertedIndex**)b;
 
-int CompareWords2(const void* a, const void* b) {
-    InvertedIndex* word_index_a = (InvertedIndex*)a;
-    InvertedIndex* word_index_b = (InvertedIndex*)b;
-    return strcmp(word_index_a->word, word_index_b->word);
+    return strcmp((*x)->word, (*y)->word);
 }

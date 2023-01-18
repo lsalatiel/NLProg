@@ -6,7 +6,7 @@ struct WordInfo {
     float tf_idf;
 };
 
-WordInfo* AllocateWordInfo() {
+WordInfo* AllocWordInfo() {
     WordInfo* info = NULL;
 
     info = malloc(sizeof(WordInfo));
@@ -23,7 +23,7 @@ WordInfo** ReallocWordInfoArray(WordInfo** info_array, int curr_size, int max_si
     info_array = new;
 
     for (int i = curr_size; i < max_size; i++) {
-        info_array[i] = AllocateWordInfo();
+        info_array[i] = AllocWordInfo();
     }
 
     return info_array;

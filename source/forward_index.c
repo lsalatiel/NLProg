@@ -10,22 +10,22 @@ struct ForwardIndex {
     float* sum_tf_idf;
 };
 
-float* GetTFIDFSum(ForwardIndex* document) {
-    return document->sum_tf_idf;
+void AddTFIDFToSum(ForwardIndex* document, float add) {
+    *document->sum_tf_idf += add;
 }
 
-ForwardIndex* AllocateDocument() {
+ForwardIndex* AllocDocument() {
     ForwardIndex* document = NULL;
 
     document = calloc(sizeof(ForwardIndex), 1);
     document->info = malloc(STARTER_ALLOC * sizeof(DocumentInfo*));
-    document->info_size = malloc(sizeof(int));
+    document->info_size = calloc(sizeof(int), 1);
     document->info_alloc = malloc(sizeof(int));
-    *document->info_size = 0;
+    document->sum_tf_idf = calloc(sizeof(float), 1);
     *document->info_alloc = STARTER_ALLOC;
 
     for (int x = 0; x < STARTER_ALLOC; x++) {
-        document->info[x] = AllocateDocumentInfo();
+        document->info[x] = AllocDocumentInfo();
     }
 
     return document;
@@ -41,6 +41,7 @@ void FreeDocument(ForwardIndex* document) {
     FreeAndNull(document->info);
     FreeAndNull(document->info_size);
     FreeAndNull(document->info_alloc);
+    FreeAndNull(document->sum_tf_idf);
     FreeAndNull(document);
 }
 
@@ -71,7 +72,7 @@ ForwardIndex** ReallocDocuments(ForwardIndex** documents, int* documents_alloc) 
     documents = new;
 
     for (int x = *documents_alloc / 2; x < *documents_alloc; x++) {
-        documents[x] = AllocateDocument();
+        documents[x] = AllocDocument();
     }
 
     return documents;
@@ -105,13 +106,13 @@ ForwardIndex* AddWordFrequencyToForwardIndex(ForwardIndex* document, int word_in
     return document;
 }
 
-ForwardIndex** StoreTf_idfFromDocuments(ForwardIndex** documents, int word_index, int document_quantity, int word_appearance) {
+ForwardIndex** StoreTFIDFFromDocuments(ForwardIndex** documents, int word_index, int document_quantity, int word_appearance) {
     int word_check = 0;
 
     for (int i = 0; i < document_quantity; i++) {
         for (int j = 0; j < *documents[i]->info_size; j++) {
             if (GetWordIndexInfo(documents[i]->info[j]) == word_index) {
-                documents[i]->info[j] = StoreTf_idfFromDocumentInfo(documents[i]->info[j], document_quantity, word_appearance);
+                documents[i]->info[j] = StoreTFIDFFromDocumentInfo(documents[i]->info[j], document_quantity, word_appearance);
                 word_check++;
             }
         }
@@ -168,14 +169,44 @@ ForwardIndex* ReadForwardIndexFromBinaryFile(ForwardIndex* document, FILE* file)
     return document;
 }
 
-int compare_documents(const void* a, const void* b) {
-    float* sum_tf_idf_a = ((ForwardIndex*)a)->sum_tf_idf;
-    float* sum_tf_idf_b = ((ForwardIndex*)b)->sum_tf_idf;
+void SortTFIDFs(ForwardIndex** documents, int documents_size) {
+    qsort(documents, documents_size, sizeof(ForwardIndex*), CompareTFIDFs);
+}
+
+void ResetTFIDFSums(ForwardIndex** documents, int documents_size) {
+    for (int x = 0; x < documents_size; x++) {
+        *documents[x]->sum_tf_idf = 0.0;
+    }
+}
+
+int CompareTFIDFs(const void* a, const void* b) {
+    float* sum_tf_idf_a = (*(const ForwardIndex**)a)->sum_tf_idf;
+    float* sum_tf_idf_b = (*(const ForwardIndex**)b)->sum_tf_idf;
 
     if (*sum_tf_idf_a > *sum_tf_idf_b)
         return -1;
     else if (*sum_tf_idf_a < *sum_tf_idf_b)
         return 1;
+    else
+        return 0;
+}
 
-    return 0;
+void PrintNewsResults(ForwardIndex** documents) {
+    bool nothingPrinted = true;
+    printf("\n");
+
+    for (int x = 0; x < RESULTS_NUMBER; x++) {
+        if (*documents[x]->sum_tf_idf != 0) {
+            printf("Document name: %s ∙ TF-IDF: %.2f\n", documents[x]->name, *documents[x]->sum_tf_idf);
+            nothingPrinted = false;
+        }
+    }
+
+    if (nothingPrinted) {
+        RedText();
+        printf("No news found.\n");
+        DefaultText();
+    }
+
+    printf("\n");
 }

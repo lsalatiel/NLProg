@@ -3,6 +3,7 @@
 int main(int argc, char** argv) {
     argv[1] = "lulu.bin";
 
+    ClearTerminal();
     Indexes* indexes = NULL;
     indexes = AllocateIndexes();
     indexes = ReadIndexesFromBinaryFile(indexes, argv[1]);
@@ -10,7 +11,7 @@ int main(int argc, char** argv) {
     while (ONLINE) {
         switch (SetUpMainMenu()) {
             case 1:
-                SearchAndSortNews(indexes, 10);
+                SearchAndSortNews(indexes);
                 break;
             case 2:
 

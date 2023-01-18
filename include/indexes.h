@@ -1,65 +1,51 @@
-#ifndef FIRST_PROGRAM_H
-#define FIRST_PROGRAM_H
+#ifndef INDEXES_H
+#define INDEXES_H
 
 typedef struct Indexes Indexes;
 
 /**
  * @brief reads main file which it contains the other files
- *
- * @param indexes
- * @param argv
- * @return Indexes*
  */
 Indexes* ReadTrainFile(Indexes* indexes, char** argv);
 
 /**
  * @brief allocates memory for the inverted and forward indexes
- * @return Indexes*
  */
 Indexes* AllocateIndexes();
 
 /**
  * @brief frees memory from indexes
- *
- * @param indexes
  */
 void FreeIndexes(Indexes* indexes);
 
 /**
  * @brief opens the texts files
- *
- * @param indexes
- * @return Indexes*
  */
 Indexes* ReadInfo(Indexes* indexes);
 
 /**
  * @brief reads the texts files and store the information in the inverted index struct
- *
- * @param indexes
- * @param file
- * @param document_index
- * @return Indexes*
  */
 Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index);
 
 /**
  * @brief stores the tf_idf of each word of the inverted index in the indexes structure
- *
- * @param indexes
- * @return Indexes*
  */
-Indexes* StoreTf_idfFromIndexes(Indexes* indexes);
+Indexes* StoreTFIDFFromIndexes(Indexes* indexes);
 
 /**
- * @brief saves indexes in a binary file
- *
- * @param indexes
- * @param file_name
+ * @brief writes indexes in a binary file
  */
-void WriteIndexesInBinaryFile(Indexes* indexes, char* file_name);
+void WriteIndexesInBinaryFile(Indexes* indexes, char* fileName);
 
-Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* file_name);
-void SearchAndSortNews(Indexes* indexes, int num_results);
+/**
+ * @brief reads indexes in a binary file
+ */
+Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* fileName);
+
+/**
+ * @brief shows the most relevant documents from user given words
+ */
+void SearchAndSortNews(Indexes* indexes);
 
 #endif
