@@ -2,11 +2,11 @@
 
 struct Indexes {
     ForwardIndex** documents;
-    int* documents_size;
-    int* documents_alloc;
+    int* documentsSize;
+    int* documentsAlloc;
     InvertedIndex** words;
-    int* words_size;
-    int* words_alloc;
+    int* wordsSize;
+    int* wordsAlloc;
 };
 
 Indexes* AllocateIndexes() {
@@ -14,14 +14,14 @@ Indexes* AllocateIndexes() {
     indexes = malloc(sizeof(Indexes));
 
     indexes->documents = malloc(STARTER_ALLOC * sizeof(ForwardIndex*));
-    indexes->documents_size = calloc(sizeof(int), 1);
-    indexes->documents_alloc = malloc(sizeof(int));
-    *indexes->documents_alloc = STARTER_ALLOC;
+    indexes->documentsSize = calloc(sizeof(int), 1);
+    indexes->documentsAlloc = malloc(sizeof(int));
+    *indexes->documentsAlloc = STARTER_ALLOC;
 
     indexes->words = malloc(STARTER_ALLOC * sizeof(InvertedIndex*));
-    indexes->words_size = calloc(sizeof(int), 1);
-    indexes->words_alloc = malloc(sizeof(int));
-    *indexes->words_alloc = STARTER_ALLOC;
+    indexes->wordsSize = calloc(sizeof(int), 1);
+    indexes->wordsAlloc = malloc(sizeof(int));
+    *indexes->wordsAlloc = STARTER_ALLOC;
 
     for (int x = 0; x < STARTER_ALLOC; x++) {
         indexes->documents[x] = AllocDocument();
@@ -39,7 +39,7 @@ Indexes* ReadTrainFile(Indexes* indexes, char** argv) {
         exit(1);
     }
 
-    indexes->documents = ReadDocuments(indexes->documents, train, indexes->documents_size, indexes->documents_alloc);
+    indexes->documents = ReadDocuments(indexes->documents, train, indexes->documentsSize, indexes->documentsAlloc);
 
     fclose(train);
 
@@ -47,20 +47,20 @@ Indexes* ReadTrainFile(Indexes* indexes, char** argv) {
 }
 
 void FreeIndexes(Indexes* indexes) {
-    for (int x = 0; x < *indexes->documents_alloc; x++) {
+    for (int x = 0; x < *indexes->documentsAlloc; x++) {
         FreeDocument(indexes->documents[x]);
     }
 
-    for (int x = 0; x < *indexes->words_alloc; x++) {
+    for (int x = 0; x < *indexes->wordsAlloc; x++) {
         FreeWord(indexes->words[x]);
     }
 
     FreeAndNull(indexes->documents);
-    FreeAndNull(indexes->documents_size);
-    FreeAndNull(indexes->documents_alloc);
+    FreeAndNull(indexes->documentsSize);
+    FreeAndNull(indexes->documentsAlloc);
     FreeAndNull(indexes->words);
-    FreeAndNull(indexes->words_size);
-    FreeAndNull(indexes->words_alloc);
+    FreeAndNull(indexes->wordsSize);
+    FreeAndNull(indexes->wordsAlloc);
     FreeAndNull(indexes);
 }
 
@@ -70,7 +70,7 @@ Indexes* ReadInfo(Indexes* indexes) {
     char* fileName;
     char path[MAX_FILE_PATH_LENGTH];
 
-    for (int i = 0; i < *indexes->documents_size; i++) {
+    for (int i = 0; i < *indexes->documentsSize; i++) {
         fileName = GetFileName(indexes->documents[i]);
         // strcpy(fileName, GetFileName(indexes->documents[i]));
 
@@ -92,73 +92,73 @@ Indexes* ReadInfo(Indexes* indexes) {
     return indexes;
 }
 
-Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index) {
+Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int documentIndex) {
     char word[1000];
     word[0] = '\0';
-    int word_index = 0;
+    int wordIndex = 0;
 
     if (file == NULL) {
         return NULL;
     }
 
     while (!feof(file)) {
-        if (*indexes->words_size == *indexes->words_alloc) {
-            *indexes->words_alloc *= 2;
-            indexes->words = ReallocWords(indexes->words, indexes->words_alloc);
+        if (*indexes->wordsSize == *indexes->wordsAlloc) {
+            *indexes->wordsAlloc *= 2;
+            indexes->words = ReallocWords(indexes->words, indexes->wordsAlloc);
         }
 
         word[0] = '\0';
 
         fscanf(file, "%s", word);
 
-        if (word[0] == '\0' || word[0] == ' ' || word[0] == '\n' || word[0] == '\t') {
+        if (EndOfFile(word[0])) {
             continue;
         }
 
-        word_index = GetWordIndex(indexes->words, word, *indexes->words_size);  // returns -1 if word does not exist
-        if (word_index != -1) {
+        wordIndex = GetWordIndex(indexes->words, word, *indexes->wordsSize);  // returns -1 if word does not exist
+        if (wordIndex != -1) {
             // se a palavra nao eh nova ela pode ter aparecido no documento ou nao
-            if (WordInDocument(indexes->words[word_index], document_index == true)) {
-                indexes->documents[document_index] = AddWordFrequencyToForwardIndex(indexes->documents[document_index], word_index);
+            if (WordInDocument(indexes->words[wordIndex], documentIndex == true)) {
+                indexes->documents[documentIndex] = AddWordFrequencyToForwardIndex(indexes->documents[documentIndex], wordIndex);
             } else {
-                indexes->documents[document_index] = StoreWordInfoForwardIndex(indexes->documents[document_index], word_index);
+                indexes->documents[documentIndex] = StoreWordInfoForwardIndex(indexes->documents[documentIndex], wordIndex);
             }
 
-            indexes->words = AddDocumentFrequencyToInvertedIndex(indexes->words, word_index, document_index);
+            indexes->words = AddDocumentFrequencyToInvertedIndex(indexes->words, wordIndex, documentIndex);
             continue;
         }
         // allocates space for the word info array (only for new words)
-        indexes->words = AllocWordInfoArray(indexes->words, *indexes->words_size);
-        indexes->words = StoreWordInvertedIndex(indexes->words, word, *indexes->words_size, document_index);
-        // p essa funcao o *indexes->words_size vai servir como indice da word
-        indexes->documents[document_index] = StoreWordInfoForwardIndex(indexes->documents[document_index], *indexes->words_size);
-        (*indexes->words_size)++;
+        indexes->words = AllocWordInfoArray(indexes->words, *indexes->wordsSize);
+        indexes->words = StoreWordInvertedIndex(indexes->words, word, *indexes->wordsSize, documentIndex);
+        // p essa funcao o *indexes->wordsSize vai servir como indice da word
+        indexes->documents[documentIndex] = StoreWordInfoForwardIndex(indexes->documents[documentIndex], *indexes->wordsSize);
+        (*indexes->wordsSize)++;
     }
 
     return indexes;
 }
 
 Indexes* StoreTFIDFFromIndexes(Indexes* indexes) {
-    int word_appearance = 0;
+    int wordAppearance = 0;
 
-    for (int i = 0; i < *indexes->words_size; i++) {
-        indexes->words[i] = StoreTf_idfFromfWord(indexes->words[i], *indexes->documents_size);
+    for (int i = 0; i < *indexes->wordsSize; i++) {
+        indexes->words[i] = StoreTFIDFFromWord(indexes->words[i], *indexes->documentsSize);
 
-        word_appearance = GetWordInfoSize(indexes->words[i]);
-        indexes->documents = StoreTFIDFFromDocuments(indexes->documents, i, *indexes->documents_size, word_appearance);
+        wordAppearance = GetWordInfoSize(indexes->words[i]);
+        indexes->documents = StoreTFIDFFromDocuments(indexes->documents, i, *indexes->documentsSize, wordAppearance);
     }
 
     return indexes;
 }
 
 void WriteIndexesInBinaryFile(Indexes* indexes, char* fileName) {
-    char* binary_file_name = NULL;
-    binary_file_name = malloc(sizeof(char) * (strlen(fileName) + 8));
-    strcpy(binary_file_name, "binary/");
-    strcat(binary_file_name, fileName);
+    char* binaryFileName = NULL;
+    binaryFileName = malloc(sizeof(char) * (strlen(fileName) + 8));
+    strcpy(binaryFileName, "binary/");
+    strcat(binaryFileName, fileName);
 
-    FILE* file = fopen(binary_file_name, "wb");
-    FreeAndNull(binary_file_name);
+    FILE* file = fopen(binaryFileName, "wb");
+    FreeAndNull(binaryFileName);
 
     if (file == NULL) {
         FreeAndNull(indexes);
@@ -167,18 +167,18 @@ void WriteIndexesInBinaryFile(Indexes* indexes, char* fileName) {
     }
 
     // writing documents
-    fwrite(indexes->documents_size, sizeof(int), 1, file);
-    fwrite(indexes->documents_alloc, sizeof(int), 1, file);
+    fwrite(indexes->documentsSize, sizeof(int), 1, file);
+    fwrite(indexes->documentsAlloc, sizeof(int), 1, file);
 
-    for (int i = 0; i < *indexes->documents_size; i++) {
+    for (int i = 0; i < *indexes->documentsSize; i++) {
         WriteForwardIndexInBinaryFile(indexes->documents[i], file);
     }
 
     // writing words
-    fwrite(indexes->words_size, sizeof(int), 1, file);
-    fwrite(indexes->words_alloc, sizeof(int), 1, file);
+    fwrite(indexes->wordsSize, sizeof(int), 1, file);
+    fwrite(indexes->wordsAlloc, sizeof(int), 1, file);
 
-    for (int i = 0; i < *indexes->words_size; i++) {
+    for (int i = 0; i < *indexes->wordsSize; i++) {
         WriteInvertedIndexInBinaryFile(indexes->words[i], file);
     }
 
@@ -190,13 +190,13 @@ void WriteIndexesInBinaryFile(Indexes* indexes, char* fileName) {
 }
 
 Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* fileName) {
-    char* binary_file_name = NULL;
-    binary_file_name = malloc(sizeof(char) * (strlen(fileName) + 8));
-    strcpy(binary_file_name, "binary/");
-    strcat(binary_file_name, fileName);
+    char* binaryFileName = NULL;
+    binaryFileName = malloc(sizeof(char) * (strlen(fileName) + 8));
+    strcpy(binaryFileName, "binary/");
+    strcat(binaryFileName, fileName);
 
-    FILE* file = fopen(binary_file_name, "rb");
-    FreeAndNull(binary_file_name);
+    FILE* file = fopen(binaryFileName, "rb");
+    FreeAndNull(binaryFileName);
 
     if (file == NULL) {
         FreeAndNull(indexes);
@@ -205,11 +205,11 @@ Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* fileName) {
     }
 
     // reading documents
-    fread(indexes->documents_size, sizeof(int), 1, file);
-    fread(indexes->documents_alloc, sizeof(int), 1, file);
+    fread(indexes->documentsSize, sizeof(int), 1, file);
+    fread(indexes->documentsAlloc, sizeof(int), 1, file);
 
     int alloc = STARTER_ALLOC;
-    for (int i = 0; i < *indexes->documents_size; i++) {
+    for (int i = 0; i < *indexes->documentsSize; i++) {
         if (i == alloc) {
             alloc *= 2;
             indexes->documents = ReallocDocuments(indexes->documents, &alloc);
@@ -219,11 +219,11 @@ Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* fileName) {
     }
 
     // reading words
-    fread(indexes->words_size, sizeof(int), 1, file);
-    fread(indexes->words_alloc, sizeof(int), 1, file);
+    fread(indexes->wordsSize, sizeof(int), 1, file);
+    fread(indexes->wordsAlloc, sizeof(int), 1, file);
 
     alloc = STARTER_ALLOC;
-    for (int i = 0; i < *indexes->words_size; i++) {
+    for (int i = 0; i < *indexes->wordsSize; i++) {
         if (i == alloc) {
             alloc *= 2;
             indexes->words = ReallocWords(indexes->words, &alloc);
@@ -238,38 +238,38 @@ Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* fileName) {
 }
 
 void SearchAndSortNews(Indexes* indexes) {
-    int* query_size = NULL;
-    query_size = malloc(sizeof(int));
-    char** query_words = NULL;
+    int* querySize = NULL;
+    querySize = malloc(sizeof(int));
+    char** queryWords = NULL;
 
     BoldText();
     printf("• Enter your search: ");
     DefaultText();
 
     do {
-        query_words = GetUserSearchInput(query_size);
-    } while (query_words == NULL);
+        queryWords = GetUserSearchInput(querySize);
+    } while (queryWords == NULL);
 
-    SortWords(indexes->words, *indexes->words_size);
+    SortWords(indexes->words, *indexes->wordsSize);
 
-    for (int i = 0; i < *query_size; i++) {
-        InvertedIndex** word_index = SearchWords(query_words[i], indexes->words, *indexes->words_size);
+    for (int i = 0; i < *querySize; i++) {
+        InvertedIndex** wordIndex = SearchWords(queryWords[i], indexes->words, *indexes->wordsSize);
 
-        if (word_index != NULL) {
-            int info_size = GetWordInfoSize(word_index[0]);
+        if (wordIndex != NULL) {
+            int infoSize = GetWordInfoSize(wordIndex[0]);
 
-            for (int j = 0; j < info_size; j++) {
-                int document_index = GetDocumentIndexFromWord(word_index[0], j);
-                AddTFIDFToSum(indexes->documents[document_index], GetTFIDFFromWord(word_index[0], j));
+            for (int j = 0; j < infoSize; j++) {
+                int documentIndex = GetDocumentIndexFromWord(wordIndex[0], j);
+                AddTFIDFToSum(indexes->documents[documentIndex], GetTFIDFFromWord(wordIndex[0], j));
             }
         }
     }
 
-    SortTFIDFs(indexes->documents, *indexes->documents_size);
+    SortTFIDFs(indexes->documents, *indexes->documentsSize);
 
     PrintNewsResults(indexes->documents);
 
-    ResetTFIDFSums(indexes->documents, *indexes->documents_size);
+    ResetTFIDFSums(indexes->documents, *indexes->documentsSize);
 
-    ResetUserSearchInput(query_words, query_size);
+    ResetUserSearchInput(queryWords, querySize);
 }

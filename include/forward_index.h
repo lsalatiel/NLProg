@@ -16,12 +16,12 @@ void FreeDocument(ForwardIndex* document);
 /**
  * @brief reads and stores name and class of documents
  */
-ForwardIndex** ReadDocuments(ForwardIndex** documents, FILE* train, int* documents_size, int* documents_alloc);
+ForwardIndex** ReadDocuments(ForwardIndex** documents, FILE* train, int* documentsSize, int* documentsAlloc);
 
 /**
  * @brief reallocates space for the information of a forward index array
  */
-ForwardIndex** ReallocDocuments(ForwardIndex** documents, int* documents_alloc);
+ForwardIndex** ReallocDocuments(ForwardIndex** documents, int* documentsAlloc);
 
 /**
  * @brief returns the fileName of a document
@@ -31,17 +31,17 @@ char* GetFileName(ForwardIndex* document);
 /**
  * @brief stores the information of a single forward index
  */
-ForwardIndex* StoreWordInfoForwardIndex(ForwardIndex* document, int word_index);
+ForwardIndex* StoreWordInfoForwardIndex(ForwardIndex* document, int wordIndex);
 
 /**
- * @brief stores information of a word that is already stored in the document_info array
+ * @brief stores information of a word that is already stored in the documentInfo array
  */
-ForwardIndex* AddWordFrequencyToForwardIndex(ForwardIndex* document, int word_index);
+ForwardIndex* AddWordFrequencyToForwardIndex(ForwardIndex* document, int wordIndex);
 
 /**
- * @brief stores tf_idf of a word stored in the document_info array
+ * @brief stores TFIDF of a word stored in the documentInfo array
  */
-ForwardIndex** StoreTFIDFFromDocuments(ForwardIndex** documents, int word_index, int document_quantity, int word_appearance);
+ForwardIndex** StoreTFIDFFromDocuments(ForwardIndex** documents, int wordIndex, int documentQuantity, int wordAppearance);
 
 /**
  * @brief writes a forward index in a binary file
@@ -56,7 +56,7 @@ ForwardIndex* ReadForwardIndexFromBinaryFile(ForwardIndex* document, FILE* file)
 /**
  * @brief sorts documents array based on TF-IDF with qsort()
  */
-void SortTFIDFs(ForwardIndex** documents, int documents_size);
+void SortTFIDFs(ForwardIndex** documents, int documentsSize);
 
 /**
  * @brief comparison function to qsort()
@@ -76,6 +76,6 @@ void PrintNewsResults(ForwardIndex** documents);
 /**
  * @brief sets all documents TF-IDFS to zero for a new search
  */
-void ResetTFIDFSums(ForwardIndex** documents, int documents_size);
+void ResetTFIDFSums(ForwardIndex** documents, int documentsSize);
 
 #endif

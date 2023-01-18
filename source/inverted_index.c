@@ -4,28 +4,28 @@ struct InvertedIndex {
     int index;
     char* word;
     WordInfo** info;
-    int info_size;
-    int info_alloc;
+    int infoSize;
+    int infoAlloc;
 };
 
 InvertedIndex* AllocWord() {
     return calloc(sizeof(InvertedIndex), 1);
 }
 
-InvertedIndex** AllocWordInfoArray(InvertedIndex** words, int words_size) {
-    words[words_size]->info_size = 0;
-    words[words_size]->info_alloc = STARTER_ALLOC;
-    words[words_size]->info = malloc(STARTER_ALLOC * sizeof(WordInfo*));
+InvertedIndex** AllocWordInfoArray(InvertedIndex** words, int wordsSize) {
+    words[wordsSize]->infoSize = 0;
+    words[wordsSize]->infoAlloc = STARTER_ALLOC;
+    words[wordsSize]->info = malloc(STARTER_ALLOC * sizeof(WordInfo*));
 
     for (int i = 0; i < STARTER_ALLOC; i++) {
-        words[words_size]->info[i] = AllocWordInfo();
+        words[wordsSize]->info[i] = AllocWordInfo();
     }
 
     return words;
 }
 
 void FreeWord(InvertedIndex* word) {
-    for (int i = 0; i < word->info_alloc; i++) {
+    for (int i = 0; i < word->infoAlloc; i++) {
         FreeWordInfo(word->info[i]);
     }
 
@@ -34,24 +34,24 @@ void FreeWord(InvertedIndex* word) {
     FreeAndNull(word);
 }
 
-InvertedIndex** ReallocWords(InvertedIndex** words, int* words_alloc) {
+InvertedIndex** ReallocWords(InvertedIndex** words, int* wordsAlloc) {
     InvertedIndex** new = NULL;
-    new = realloc(words, *words_alloc * sizeof(InvertedIndex*));
+    new = realloc(words, *wordsAlloc * sizeof(InvertedIndex*));
     words = new;
 
-    for (int x = *words_alloc / 2; x < *words_alloc; x++) {
+    for (int x = *wordsAlloc / 2; x < *wordsAlloc; x++) {
         words[x] = AllocWord();
     }
 
     return words;
 }
 
-InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int word_index, int document_index) {
-    words[word_index]->word = strdup(word);
-    words[word_index]->info = AddWordInfo(words[word_index]->info, words[word_index]->info_size, document_index);
-    words[word_index]->index = word_index;
+InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int wordIndex, int documentIndex) {
+    words[wordIndex]->word = strdup(word);
+    words[wordIndex]->info = AddWordInfo(words[wordIndex]->info, words[wordIndex]->infoSize, documentIndex);
+    words[wordIndex]->index = wordIndex;
 
-    words[word_index]->info_size++;
+    words[wordIndex]->infoSize++;
 
     return words;
 }
@@ -65,37 +65,37 @@ int GetWordIndex(InvertedIndex** words, char* word, int size) {
     return -1;
 }
 
-InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int word_index, int document_index) {
-    if (words[word_index]->info_size == words[word_index]->info_alloc) {
-        words[word_index]->info_alloc *= 2;
-        words[word_index]->info = ReallocWordInfoArray(words[word_index]->info, words[word_index]->info_size, words[word_index]->info_alloc);
+InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int wordIndex, int documentIndex) {
+    if (words[wordIndex]->infoSize == words[wordIndex]->infoAlloc) {
+        words[wordIndex]->infoAlloc *= 2;
+        words[wordIndex]->info = ReallocWordInfoArray(words[wordIndex]->info, words[wordIndex]->infoSize, words[wordIndex]->infoAlloc);
     }
 
-    for (int i = 0; i < words[word_index]->info_size; i++) {
-        if (GetDocumentIndexInfo(words[word_index]->info[i]) == document_index) {
-            words[word_index]->info[i] = AddDocumentFrequency(words[word_index]->info[i]);
+    for (int i = 0; i < words[wordIndex]->infoSize; i++) {
+        if (GetDocumentIndexInfo(words[wordIndex]->info[i]) == documentIndex) {
+            words[wordIndex]->info[i] = AddDocumentFrequency(words[wordIndex]->info[i]);
             return words;
         }
     }
 
-    words[word_index]->info = AddWordInfo(words[word_index]->info, words[word_index]->info_size, document_index);
-    words[word_index]->index = word_index;
-    words[word_index]->info_size++;
+    words[wordIndex]->info = AddWordInfo(words[wordIndex]->info, words[wordIndex]->infoSize, documentIndex);
+    words[wordIndex]->index = wordIndex;
+    words[wordIndex]->infoSize++;
 
     return words;
 }
 
-InvertedIndex* StoreTf_idfFromfWord(InvertedIndex* word, int document_quantity) {
-    for (int i = 0; i < word->info_size; i++) {
-        word->info[i] = StoreTf_idfFromInfo(word->info[i], document_quantity, word->info_size);  // info_size = somatorio dos frequency;
+InvertedIndex* StoreTFIDFFromWord(InvertedIndex* word, int documentQuantity) {
+    for (int i = 0; i < word->infoSize; i++) {
+        word->info[i] = StoreTFIDFFromInfo(word->info[i], documentQuantity, word->infoSize);  // infoSize = somatorio dos frequency;
     }
 
     return word;
 }
 
-bool WordInDocument(InvertedIndex* word, int document_index) {
-    for (int i = 0; i < word->info_size; i++) {
-        if (GetDocumentIndexInfo(word->info[i]) == document_index)
+bool WordInDocument(InvertedIndex* word, int documentIndex) {
+    for (int i = 0; i < word->infoSize; i++) {
+        if (GetDocumentIndexInfo(word->info[i]) == documentIndex)
             return true;
     }
 
@@ -111,7 +111,7 @@ float GetTFIDFFromWord(InvertedIndex* word, int j) {
 }
 
 int GetWordInfoSize(InvertedIndex* word) {
-    return word->info_size;
+    return word->infoSize;
 }
 
 void WriteInvertedIndexInBinaryFile(InvertedIndex* word, FILE* file) {
@@ -120,13 +120,13 @@ void WriteInvertedIndexInBinaryFile(InvertedIndex* word, FILE* file) {
     }
 
     fwrite(&word->index, sizeof(int), 1, file);
-    int word_size = strlen(word->word) + 1;
-    fwrite(&word_size, sizeof(int), 1, file);
-    fwrite(word->word, sizeof(char), word_size, file);
-    fwrite(&word->info_size, sizeof(int), 1, file);
-    fwrite(&word->info_alloc, sizeof(int), 1, file);
+    int wordSize = strlen(word->word) + 1;
+    fwrite(&wordSize, sizeof(int), 1, file);
+    fwrite(word->word, sizeof(char), wordSize, file);
+    fwrite(&word->infoSize, sizeof(int), 1, file);
+    fwrite(&word->infoAlloc, sizeof(int), 1, file);
 
-    for (int i = 0; i < word->info_size; i++) {
+    for (int i = 0; i < word->infoSize; i++) {
         WriteWordInfoInBinaryFile(word->info[i], file);
     }
 }
@@ -137,35 +137,35 @@ InvertedIndex* ReadInvertedIndexFromBinaryFile(InvertedIndex* word, FILE* file) 
     }
 
     fread(&word->index, sizeof(int), 1, file);
-    int word_size = 0;
-    fread(&word_size, sizeof(int), 1, file);
-    word->word = malloc(word_size * sizeof(char));
-    fread(word->word, sizeof(char), word_size, file);
-    fread(&word->info_size, sizeof(int), 1, file);
-    fread(&word->info_alloc, sizeof(int), 1, file);
+    int wordSize = 0;
+    fread(&wordSize, sizeof(int), 1, file);
+    word->word = malloc(wordSize * sizeof(char));
+    fread(word->word, sizeof(char), wordSize, file);
+    fread(&word->infoSize, sizeof(int), 1, file);
+    fread(&word->infoAlloc, sizeof(int), 1, file);
 
-    word->info = malloc(word->info_alloc * sizeof(WordInfo*));
+    word->info = malloc(word->infoAlloc * sizeof(WordInfo*));
 
-    for (int i = 0; i < word->info_alloc; i++) {
+    for (int i = 0; i < word->infoAlloc; i++) {
         word->info[i] = AllocWordInfo();
     }
 
-    for (int i = 0; i < word->info_size; i++) {
+    for (int i = 0; i < word->infoSize; i++) {
         ReadWordInfoFromBinaryFile(word->info[i], file);
     }
 
     return word;
 }
 
-void SortWords(InvertedIndex** words, int words_size) {
-    qsort(words, words_size, sizeof(InvertedIndex*), CompareWords);
+void SortWords(InvertedIndex** words, int wordsSize) {
+    qsort(words, wordsSize, sizeof(InvertedIndex*), CompareWords);
 }
 
-InvertedIndex** SearchWords(char* input, InvertedIndex** words, int words_size) {
+InvertedIndex** SearchWords(char* input, InvertedIndex** words, int wordsSize) {
     InvertedIndex* search = malloc(sizeof(InvertedIndex));
     search->word = strdup(input);
 
-    InvertedIndex** result = bsearch(&search, words, words_size, sizeof(InvertedIndex*), CompareWords);
+    InvertedIndex** result = bsearch(&search, words, wordsSize, sizeof(InvertedIndex*), CompareWords);
 
     FreeAndNull(search->word);
     FreeAndNull(search);

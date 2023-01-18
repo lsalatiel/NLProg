@@ -37,9 +37,9 @@ void FreeAndNull(void* pointer);
 bool EndOfFile(char character);
 
 /**
- * @brief calculates the tf_idf of each word in a specific document
+ * @brief calculates the TFIDF of each word in a specific document
  */
-float CalculateTf_idf(int frequency, int document_quantity, int word_appearance);
+float CalculateTFIDF(int frequency, int documentQuantity, int wordAppearance);
 
 /**
  * @brief clear the terminal for a better exhibition
@@ -48,11 +48,11 @@ void ClearTerminal();
 
 /**
  * @brief reads an integer and checks if it's in an interval defined by parameters
- * @param min_range the lower value from a closed interval
- * @param max_range the higher value from a closed interval
+ * @param minimumRange the lower value from a closed interval
+ * @param maximumRange the higher value from a closed interval
  * @return a valid integer
  */
-int GetValidIntegerInput(int min_range, int max_range);
+int GetValidIntegerInput(int minimumRange, int maximumRange);
 
 /**
  * @brief shows the initial menu and returns the chosen option
@@ -62,12 +62,12 @@ int SetUpMainMenu();
 /**
  * @brief reads a sentence and put every single word in an individual array
  */
-char** GetUserSearchInput(int* query_size);
+char** GetUserSearchInput(int* querySize);
 
 /**
  * @brief frees every pointer used in GetUserSearchInput() function
  */
-void ResetUserSearchInput(char** input, int* input_size);
+void ResetUserSearchInput(char** input, int* inputSize);
 
 /**
  * @brief prints an ascii art for better exhibition

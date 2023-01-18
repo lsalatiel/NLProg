@@ -16,30 +16,30 @@ void FreeDocumentInfo(DocumentInfo* info);
 /**
  * @brief reallocates space fora a document info array
  */
-DocumentInfo** ReallocDocumentInfoArray(DocumentInfo** info_array, int curr_size, int max_size);
+DocumentInfo** ReallocDocumentInfoArray(DocumentInfo** infoArray, int currentSize, int maximumSize);
 
 /**
  * @brief updates the information of a document
  */
-DocumentInfo** AddDocumentInfo(DocumentInfo** info_array, int info_size, int word_index);
+DocumentInfo** AddDocumentInfo(DocumentInfo** infoArray, int infoSize, int wordIndex);
 
 /**
- * @brief returns the word_index of a document_info
+ * @brief returns the wordIndex of a documentInfo
  */
 int GetWordIndexInfo(DocumentInfo* info);
 
 /**
- * @brief updates the word_frequency variable (adds one)
+ * @brief updates the wordFrequency variable (adds one)
  */
 DocumentInfo* AddWordFrequency(DocumentInfo* info);
 
 /**
- * @brief stores tf_idf of a word in a specific document to the document_info
+ * @brief stores TFIDF of a word in a specific document to the documentInfo
  */
-DocumentInfo* StoreTFIDFFromDocumentInfo(DocumentInfo* info, int document_quantity, int word_appearance);
+DocumentInfo* StoreTFIDFFromDocumentInfo(DocumentInfo* info, int documentQuantity, int wordAppearance);
 
 /**
- * @brief writes a document_info structure in a binary file
+ * @brief writes a documentInfo structure in a binary file
  */
 void WriteDocumentInfoInBinaryFile(DocumentInfo* info, FILE* file);
 

@@ -33,17 +33,17 @@ void FreeAndNull(void* pointer) {
 }
 
 bool EndOfFile(char character) {
-    if (character == '\0' || character == '\n' || character == '\r') {
+    if (character == '\0' || character == '\n' || character == '\r' || character == ' ' || character == '\t') {
         return true;
     } else {
         return false;
     }
 }
 
-float CalculateTf_idf(int frequency, int document_quantity, int word_appearance) {
+float CalculateTFIDF(int frequency, int documentQuantity, int wordAppearance) {
     float tf = frequency;
 
-    float x = (1 + document_quantity) / (1 + word_appearance);
+    float x = (1 + documentQuantity) / (1 + wordAppearance);
     float idf = log(x) + 1;
 
     return tf * idf;
@@ -55,7 +55,7 @@ void ClearTerminal() {
     }
 }
 
-int GetValidIntegerInput(int min_range, int max_range) {
+int GetValidIntegerInput(int minimumRange, int maximumRange) {
     while (ONLINE) {
         char* buffer = NULL;
         size_t len = 0;
@@ -68,7 +68,7 @@ int GetValidIntegerInput(int min_range, int max_range) {
             if (buffer[0] >= '0' && buffer[0] <= '9') {
                 int input = atoi(buffer);
 
-                if (input >= min_range && input <= max_range) {
+                if (input >= minimumRange && input <= maximumRange) {
                     FreeAndNull(buffer);
                     ClearTerminal();
                     DefaultText();
@@ -79,6 +79,7 @@ int GetValidIntegerInput(int min_range, int max_range) {
 
         RedText();
         printf("• ERROR: Invalid option. Try again: ");
+        FreeAndNull(buffer);
     }
 }
 
@@ -91,7 +92,7 @@ int SetUpMainMenu() {
     return GetValidIntegerInput(1, 5);
 }
 
-char** GetUserSearchInput(int* query_size) {
+char** GetUserSearchInput(int* querySize) {
     char* line = NULL;
     size_t len = 0;
     ssize_t read;
@@ -125,16 +126,16 @@ char** GetUserSearchInput(int* query_size) {
 
     FreeAndNull(line);
 
-    *query_size = spaces;
+    *querySize = spaces;
     return result;
 }
 
-void ResetUserSearchInput(char** input, int* input_size) {
-    for (int x = 0; x < *input_size; x++) {
+void ResetUserSearchInput(char** input, int* inputSize) {
+    for (int x = 0; x < *inputSize; x++) {
         FreeAndNull(input[x]);
     }
 
-    FreeAndNull(input_size);
+    FreeAndNull(inputSize);
     FreeAndNull(input);
 }
 

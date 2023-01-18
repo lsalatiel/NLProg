@@ -26,10 +26,10 @@ Indexes* ReadInfo(Indexes* indexes);
 /**
  * @brief reads the texts files and store the information in the inverted index struct
  */
-Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int document_index);
+Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int documentIndex);
 
 /**
- * @brief stores the tf_idf of each word of the inverted index in the indexes structure
+ * @brief stores the TFIDF of each word of the inverted index in the indexes structure
  */
 Indexes* StoreTFIDFFromIndexes(Indexes* indexes);
 

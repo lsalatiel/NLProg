@@ -11,12 +11,12 @@ InvertedIndex* AllocWord();
 /**
  * @brief allocates and initialize the information of a single inverted index
  */
-InvertedIndex** AllocWordInfoArray(InvertedIndex** words, int words_size);
+InvertedIndex** AllocWordInfoArray(InvertedIndex** words, int wordsSize);
 
 /**
  * @brief reallocates space for the information of an inverted index array
  */
-InvertedIndex** ReallocWords(InvertedIndex** words, int* words_alloc);
+InvertedIndex** ReallocWords(InvertedIndex** words, int* wordsAlloc);
 
 /**
  * @brief frees memory allocated for a single word
@@ -31,22 +31,22 @@ int GetWordIndex(InvertedIndex** words, char* word, int size);
 /**
  * @brief stores the word and the information of a single inverted index
  */
-InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int word_index, int document_index);
+InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int wordIndex, int documentIndex);
 
 /**
  * @brief stores information of a word that is already stored
  */
-InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int word_index, int document_index);
+InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int wordIndex, int documentIndex);
 
 /**
- * @brief stores tf_idf of each word of the inverted index
+ * @brief stores TFIDF of each word of the inverted index
  */
-InvertedIndex* StoreTf_idfFromfWord(InvertedIndex* word, int document_quantity);
+InvertedIndex* StoreTFIDFFromWord(InvertedIndex* word, int documentQuantity);
 
 /**
  * @brief checks if a certain word is in a specific document
  */
-bool WordInDocument(InvertedIndex* word, int document_index);
+bool WordInDocument(InvertedIndex* word, int documentIndex);
 
 /**
  * @brief returns the size of the word info array
@@ -66,12 +66,12 @@ InvertedIndex* ReadInvertedIndexFromBinaryFile(InvertedIndex* word, FILE* file);
 /**
  * @brief sorts words array based on alphabetical order
  */
-void SortWords(InvertedIndex** words, int words_size);
+void SortWords(InvertedIndex** words, int wordsSize);
 
 /**
  * @brief search an user given word in the InvertedIndex array
  */
-InvertedIndex** SearchWords(char* input, InvertedIndex** words, int words_size);
+InvertedIndex** SearchWords(char* input, InvertedIndex** words, int wordsSize);
 
 /**
  * @brief comparison function for qsort()

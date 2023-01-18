@@ -1,17 +1,17 @@
 #include "libraries.h"
 
 struct DocumentInfo {
-    int word_index;
-    int word_frequency;
-    float tf_idf;
+    int wordIndex;
+    int wordFrequency;
+    float TFIDF;
 };
 
 DocumentInfo* AllocDocumentInfo() {
     DocumentInfo* info = NULL;
     info = malloc(sizeof(DocumentInfo));
-    info->word_index = -1;
-    info->word_frequency = 0;
-    info->tf_idf = -1;
+    info->wordIndex = -1;
+    info->wordFrequency = 0;
+    info->TFIDF = -1;
 
     return info;
 }
@@ -20,37 +20,37 @@ void FreeDocumentInfo(DocumentInfo* info) {
     FreeAndNull(info);
 }
 
-DocumentInfo** ReallocDocumentInfoArray(DocumentInfo** info_array, int curr_size, int max_size) {
+DocumentInfo** ReallocDocumentInfoArray(DocumentInfo** infoArray, int currentSize, int maximumSize) {
     DocumentInfo** new;
-    new = realloc(info_array, max_size * sizeof(DocumentInfo*));
-    info_array = new;
+    new = realloc(infoArray, maximumSize * sizeof(DocumentInfo*));
+    infoArray = new;
 
-    for (int i = curr_size; i < max_size; i++) {
-        info_array[i] = AllocDocumentInfo();
+    for (int i = currentSize; i < maximumSize; i++) {
+        infoArray[i] = AllocDocumentInfo();
     }
 
-    return info_array;
+    return infoArray;
 }
 
-DocumentInfo** AddDocumentInfo(DocumentInfo** info_array, int info_size, int word_index) {
-    info_array[info_size]->word_index = word_index;
-    info_array[info_size]->word_frequency++;
+DocumentInfo** AddDocumentInfo(DocumentInfo** infoArray, int infoSize, int wordIndex) {
+    infoArray[infoSize]->wordIndex = wordIndex;
+    infoArray[infoSize]->wordFrequency++;
 
-    return info_array;
+    return infoArray;
 }
 
 int GetWordIndexInfo(DocumentInfo* info) {
-    return info->word_index;
+    return info->wordIndex;
 }
 
 DocumentInfo* AddWordFrequency(DocumentInfo* info) {
-    info->word_frequency++;
+    info->wordFrequency++;
 
     return info;
 }
 
-DocumentInfo* StoreTFIDFFromDocumentInfo(DocumentInfo* info, int document_quantity, int word_appearance) {
-    info->tf_idf = CalculateTf_idf(info->word_frequency, document_quantity, word_appearance);
+DocumentInfo* StoreTFIDFFromDocumentInfo(DocumentInfo* info, int documentQuantity, int wordAppearance) {
+    info->TFIDF = CalculateTFIDF(info->wordFrequency, documentQuantity, wordAppearance);
 
     return info;
 }
@@ -60,9 +60,9 @@ void WriteDocumentInfoInBinaryFile(DocumentInfo* info, FILE* file) {
         return;
     }
 
-    fwrite(&info->word_index, sizeof(int), 1, file);
-    fwrite(&info->word_frequency, sizeof(int), 1, file);
-    fwrite(&info->tf_idf, sizeof(float), 1, file);
+    fwrite(&info->wordIndex, sizeof(int), 1, file);
+    fwrite(&info->wordFrequency, sizeof(int), 1, file);
+    fwrite(&info->TFIDF, sizeof(float), 1, file);
 }
 
 void ReadDocumentInfoFromBinaryFile(DocumentInfo* info, FILE* file) {
@@ -70,7 +70,7 @@ void ReadDocumentInfoFromBinaryFile(DocumentInfo* info, FILE* file) {
         return;
     }
 
-    fread(&info->word_index, sizeof(int), 1, file);
-    fread(&info->word_frequency, sizeof(int), 1, file);
-    fread(&info->tf_idf, sizeof(float), 1, file);
+    fread(&info->wordIndex, sizeof(int), 1, file);
+    fread(&info->wordFrequency, sizeof(int), 1, file);
+    fread(&info->TFIDF, sizeof(float), 1, file);
 }
