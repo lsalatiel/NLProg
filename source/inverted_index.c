@@ -8,6 +8,10 @@ struct InvertedIndex {
     int infoAlloc;
 };
 
+void SortWordFrequencyInDocument(InvertedIndex* word) {
+    SortWordFrequencyInDocumentByInfo(word->info, word->infoSize);
+}
+
 InvertedIndex* AllocWord() {
     return calloc(sizeof(InvertedIndex), 1);
 }
@@ -157,10 +161,6 @@ InvertedIndex* ReadInvertedIndexFromBinaryFile(InvertedIndex* word, FILE* file) 
     return word;
 }
 
-void SortWords(InvertedIndex** words, int wordsSize) {
-    qsort(words, wordsSize, sizeof(InvertedIndex*), CompareWords);
-}
-
 InvertedIndex** SearchWords(char* input, InvertedIndex** words, int wordsSize) {
     InvertedIndex* search = malloc(sizeof(InvertedIndex));
     search->word = strdup(input);
@@ -176,6 +176,21 @@ InvertedIndex** SearchWords(char* input, InvertedIndex** words, int wordsSize) {
 int CompareWords(const void* a, const void* b) {
     const InvertedIndex** x = (const InvertedIndex**)a;
     const InvertedIndex** y = (const InvertedIndex**)b;
-
     return strcmp((*x)->word, (*y)->word);
+}
+
+void PrintWordFrequencyInDocuments(char* search, int frequency) {
+    GreenText();
+    if (frequency == 1) {
+        printf("The word '%s' appears in %d document.\n\n", search, frequency);
+    } else {
+        printf("The word '%s' appears in %d documents.\n\n", search, frequency);
+    }
+    DefaultText();
+}
+
+int CompareWordsIndex(const void* a, const void* b) {
+    InvertedIndex* ia = *(InvertedIndex**)a;
+    InvertedIndex* ib = *(InvertedIndex**)b;
+    return ia->index - ib->index;
 }

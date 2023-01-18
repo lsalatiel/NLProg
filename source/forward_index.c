@@ -10,6 +10,14 @@ struct ForwardIndex {
     float* sumTFIDF;
 };
 
+int CompareDocumentsIndex(const void* a, const void* b) {
+    return (*(ForwardIndex**)a)->index - (*(ForwardIndex**)b)->index;
+}
+
+char* GetDocumentClass(ForwardIndex* document) {
+    return document->class;
+}
+
 void AddTFIDFToSum(ForwardIndex* document, float add) {
     *document->sumTFIDF += add;
 }
@@ -169,14 +177,22 @@ ForwardIndex* ReadForwardIndexFromBinaryFile(ForwardIndex* document, FILE* file)
     return document;
 }
 
-void SortTFIDFs(ForwardIndex** documents, int documentsSize) {
-    qsort(documents, documentsSize, sizeof(ForwardIndex*), CompareTFIDFs);
-}
-
 void ResetTFIDFSums(ForwardIndex** documents, int documentsSize) {
     for (int x = 0; x < documentsSize; x++) {
         *documents[x]->sumTFIDF = 0.0;
     }
+}
+
+int GetDocumentsWithTFIDFNumber(ForwardIndex** documents, int documentsSize) {
+    int x = 0;
+
+    for (x = 0; x < documentsSize; x++) {
+        if (*documents[x]->sumTFIDF == 0.0) {
+            break;
+        }
+    }
+
+    return x;
 }
 
 int CompareTFIDFs(const void* a, const void* b) {
@@ -191,22 +207,28 @@ int CompareTFIDFs(const void* a, const void* b) {
         return 0;
 }
 
-void PrintNewsResults(ForwardIndex** documents) {
-    bool nothingPrinted = true;
-    printf("\n");
+void PrintNewsResults(ForwardIndex** documents, int results) {
+    GreenText();
+    if (results == 1) {
+        printf("1 news was found with the searched term:\n\n");
+    } else if (results <= 10) {
+        printf("%d news were found with the searched term:\n\n", results);
+    } else if (results > 10) {
+        printf("Showing the 10 most relevant news for the searched term:\n\n");
+    }
 
-    for (int x = 0; x < RESULTS_NUMBER; x++) {
-        if (*documents[x]->sumTFIDF != 0) {
-            printf("Document name: %s ∙ TF-IDF: %.2f\n", documents[x]->name, *documents[x]->sumTFIDF);
-            nothingPrinted = false;
+    for (int x = 0; x < MAX_RESULTS_NUMBER; x++) {
+        if (*documents[x]->sumTFIDF == 0.0) {
+            break;
         }
-    }
 
-    if (nothingPrinted) {
-        RedText();
-        printf("No news was found.\n");
-        DefaultText();
+        printf("Document name: %s ∙ TF-IDF: %.2f\n", documents[x]->name, *documents[x]->sumTFIDF);
     }
+    DefaultText();
+}
 
-    printf("\n");
+void PrintDocumentWordResults(ForwardIndex* document, int order) {
+    GreenText();
+    printf("%dº document with most appearances: %s\n", order, document->name);
+    DefaultText();
 }

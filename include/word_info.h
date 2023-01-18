@@ -53,4 +53,11 @@ void ReadWordInfoFromBinaryFile(WordInfo* info, FILE* file);
  */
 float GetTFIDFInfo(WordInfo* info);
 
+void SortWordFrequencyInDocumentByInfo(WordInfo** info, int infoSize);
+
+/**
+ * @brief comparison function for qsort() based on descending word appearance order
+ */
+int CompareWordFrequency(const void* a, const void* b);
+
 #endif

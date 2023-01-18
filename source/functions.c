@@ -12,6 +12,10 @@ void RedText() {
     printf("\033[1;31m");
 }
 
+void GreenText() {
+    printf("\033[1;32m");
+}
+
 void CheckDataFilesPath(int argc) {
     if (argc != 3) {
         RedText();
@@ -92,7 +96,7 @@ int SetUpMainMenu() {
     return GetValidIntegerInput(1, 5);
 }
 
-char** GetUserSearchInput(int* querySize) {
+char** GetUserSentenceInput(int* querySize) {
     char* line = NULL;
     size_t len = 0;
     ssize_t read;
@@ -124,9 +128,10 @@ char** GetUserSearchInput(int* querySize) {
         token = strtok(NULL, " ");
     }
 
-    FreeAndNull(line);
-
     *querySize = spaces;
+    FreeAndNull(line);
+    printf("\n");
+
     return result;
 }
 
@@ -137,6 +142,25 @@ void ResetUserSearchInput(char** input, int* inputSize) {
 
     FreeAndNull(inputSize);
     FreeAndNull(input);
+}
+
+char* GetUserWordInput() {
+    char* line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    read = getline(&line, &len, stdin);
+
+    if (read == -1) {
+        RedText();
+        printf("• ERROR: Invalid search. Try again: ");
+        DefaultText();
+        return NULL;
+    }
+
+    line[read - 1] = '\0';
+    printf("\n");
+
+    return line;
 }
 
 void PrintArtMenu() {

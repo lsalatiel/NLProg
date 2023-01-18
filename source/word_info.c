@@ -6,6 +6,14 @@ struct WordInfo {
     float TFIDF;
 };
 
+void SortWordFrequencyInDocumentByInfo(WordInfo** info, int infoSize) {
+    qsort(info, infoSize, sizeof(WordInfo*), CompareWordFrequency);
+}
+
+int CompareWordFrequency(const void* a, const void* b) {
+    return (*(const WordInfo**)b)->documentFrequency - (*(const WordInfo**)a)->documentFrequency;
+}
+
 WordInfo* AllocWordInfo() {
     WordInfo* info = NULL;
 

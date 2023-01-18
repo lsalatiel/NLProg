@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
 
                 break;
             case 3:
-
+                GenerateWordRelatory(indexes);
                 break;
             case 4:
 

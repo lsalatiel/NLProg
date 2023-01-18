@@ -182,7 +182,7 @@ void WriteIndexesInBinaryFile(Indexes* indexes, char* fileName) {
         WriteInvertedIndexInBinaryFile(indexes->words[i], file);
     }
 
-    BoldText();
+    GreenText();
     printf("The binary file '%s' for the main program has been created in the folder 'binary' successfully.\n", fileName);
     DefaultText();
 
@@ -238,38 +238,83 @@ Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* fileName) {
 }
 
 void SearchAndSortNews(Indexes* indexes) {
-    int* querySize = NULL;
-    querySize = malloc(sizeof(int));
+    int* querySize = malloc(sizeof(int));
     char** queryWords = NULL;
 
     BoldText();
-    printf("• Enter your search: ");
+    printf("• Enter the search: ");
     DefaultText();
 
-    do {
-        queryWords = GetUserSearchInput(querySize);
-    } while (queryWords == NULL);
+    do queryWords = GetUserSentenceInput(querySize);
+    while (queryWords == NULL);
 
-    SortWords(indexes->words, *indexes->wordsSize);
-
-    for (int i = 0; i < *querySize; i++) {
-        InvertedIndex** wordIndex = SearchWords(queryWords[i], indexes->words, *indexes->wordsSize);
-
+    bool somethingFound = false;
+    qsort(indexes->words, *indexes->wordsSize, sizeof(InvertedIndex*), CompareWords);
+    for (int x = 0; x < *querySize; x++) {
+        InvertedIndex** wordIndex = SearchWords(queryWords[x], indexes->words, *indexes->wordsSize);
         if (wordIndex != NULL) {
+            somethingFound = true;
             int infoSize = GetWordInfoSize(wordIndex[0]);
-
-            for (int j = 0; j < infoSize; j++) {
-                int documentIndex = GetDocumentIndexFromWord(wordIndex[0], j);
-                AddTFIDFToSum(indexes->documents[documentIndex], GetTFIDFFromWord(wordIndex[0], j));
+            for (int y = 0; y < infoSize; y++) {
+                int documentIndex = GetDocumentIndexFromWord(wordIndex[0], y);
+                AddTFIDFToSum(indexes->documents[documentIndex], GetTFIDFFromWord(wordIndex[0], y));
             }
         }
     }
 
-    SortTFIDFs(indexes->documents, *indexes->documentsSize);
-
-    PrintNewsResults(indexes->documents);
-
-    ResetTFIDFSums(indexes->documents, *indexes->documentsSize);
+    if (somethingFound) {
+        qsort(indexes->documents, *indexes->documentsSize, sizeof(ForwardIndex*), CompareTFIDFs);
+        PrintNewsResults(indexes->documents, GetDocumentsWithTFIDFNumber(indexes->documents, *indexes->documentsSize));
+        ResetTFIDFSums(indexes->documents, *indexes->documentsSize);
+    } else {
+        RedText();
+        printf("No news was found.\n");
+        DefaultText();
+    }
 
     ResetUserSearchInput(queryWords, querySize);
+    ResetIndexesArrayOrder(indexes);
+    printf("\n");
+}
+
+void GenerateWordRelatory(Indexes* indexes) {
+    BoldText();
+    printf("• Enter the word: ");
+    DefaultText();
+
+    char* search = GetUserWordInput();
+
+    qsort(indexes->words, *indexes->wordsSize, sizeof(InvertedIndex*), CompareWords);
+    InvertedIndex** word = SearchWords(search, indexes->words, *indexes->wordsSize);
+
+    if (word != NULL) {
+        int frequency = GetWordInfoSize(word[0]);
+
+        PrintWordFrequencyInDocuments(search, frequency);
+        SortWordFrequencyInDocument(word[0]);
+
+        Classes** classes = AllocClasses();
+        for (int x = 0; x < frequency; x++) {
+            int documentIndex = GetDocumentIndexFromWord(word[0], x);
+            char* documentClass = GetDocumentClass(indexes->documents[documentIndex]);
+
+            if (x < 10) PrintDocumentWordResults(indexes->documents[documentIndex], x + 1);
+            ReadClasses(classes, documentClass);
+        }
+        qsort(classes, MAX_CLASSES_NUMBER, sizeof(Classes*), CompareClasses);
+        PrintClasses(classes);
+        FreeClasses(classes);
+    } else {
+        RedText();
+        printf("The word '%s' does not appear in any documents.\n\n", search);
+        DefaultText();
+    }
+
+    ResetIndexesArrayOrder(indexes);
+    FreeAndNull(search);
+}
+
+void ResetIndexesArrayOrder(Indexes* indexes) {
+    qsort(indexes->documents, *indexes->documentsSize, sizeof(ForwardIndex*), CompareDocumentsIndex);
+    qsort(indexes->words, *indexes->wordsSize, sizeof(InvertedIndex*), CompareWordsIndex);
 }

@@ -64,17 +64,12 @@ void WriteInvertedIndexInBinaryFile(InvertedIndex* word, FILE* file);
 InvertedIndex* ReadInvertedIndexFromBinaryFile(InvertedIndex* word, FILE* file);
 
 /**
- * @brief sorts words array based on alphabetical order
- */
-void SortWords(InvertedIndex** words, int wordsSize);
-
-/**
  * @brief search an user given word in the InvertedIndex array
  */
 InvertedIndex** SearchWords(char* input, InvertedIndex** words, int wordsSize);
 
 /**
- * @brief comparison function for qsort()
+ * @brief comparison function for qsort() based on alphabetical order
  */
 int CompareWords(const void* a, const void* b);
 
@@ -87,5 +82,14 @@ int GetDocumentIndexFromWord(InvertedIndex* word, int j);
  * @brief returns the tf-idf from a word
  */
 float GetTFIDFFromWord(InvertedIndex* word, int j);
+
+void SortWordFrequencyInDocument(InvertedIndex* word);
+
+void PrintWordFrequencyInDocuments(char* search, int frequency);
+
+/**
+ * @brief comparison function for qsort() based on ascending words index order
+ */
+int CompareWordsIndex(const void* a, const void* b);
 
 #endif

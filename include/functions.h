@@ -17,6 +17,11 @@ void DefaultText();
 void RedText();
 
 /**
+ * @brief changes text colour to green
+ */
+void GreenText();
+
+/**
  * @brief checks if arguments were correctly sent by command line
  */
 void CheckDataFilesPath(int argc);
@@ -62,10 +67,10 @@ int SetUpMainMenu();
 /**
  * @brief reads a sentence and put every single word in an individual array
  */
-char** GetUserSearchInput(int* querySize);
+char** GetUserSentenceInput(int* querySize);
 
 /**
- * @brief frees every pointer used in GetUserSearchInput() function
+ * @brief frees every pointer used in GetUserSentenceInput() function
  */
 void ResetUserSearchInput(char** input, int* inputSize);
 
@@ -73,5 +78,7 @@ void ResetUserSearchInput(char** input, int* inputSize);
  * @brief prints an ascii art for better exhibition
  */
 void PrintArtMenu();
+
+char* GetUserWordInput();
 
 #endif

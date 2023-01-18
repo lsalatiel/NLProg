@@ -54,12 +54,7 @@ void WriteForwardIndexInBinaryFile(ForwardIndex* document, FILE* file);
 ForwardIndex* ReadForwardIndexFromBinaryFile(ForwardIndex* document, FILE* file);
 
 /**
- * @brief sorts documents array based on TF-IDF with qsort()
- */
-void SortTFIDFs(ForwardIndex** documents, int documentsSize);
-
-/**
- * @brief comparison function to qsort()
+ * @brief comparison function to qsort() based on descending TF-IDFs order
  */
 int CompareTFIDFs(const void* a, const void* b);
 
@@ -71,11 +66,20 @@ void AddTFIDFToSum(ForwardIndex* document, float add);
 /**
  * @brief print the most relevant news based on user given sentence
  */
-void PrintNewsResults(ForwardIndex** documents);
+void PrintNewsResults(ForwardIndex** documents, int results);
 
 /**
  * @brief sets all documents TF-IDFS to zero for a new search
  */
 void ResetTFIDFSums(ForwardIndex** documents, int documentsSize);
+
+int GetDocumentsWithTFIDFNumber(ForwardIndex** documents, int documentsSize);
+char* GetDocumentClass(ForwardIndex* document);
+void PrintDocumentWordResults(ForwardIndex* document, int order);
+
+/**
+ * @brief comparison function for qsort() based on ascending documents index order
+ */
+int CompareDocumentsIndex(const void* a, const void* b);
 
 #endif

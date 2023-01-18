@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "classes.h"
 #include "document_info.h"
 #include "forward_index.h"
 #include "functions.h"
@@ -18,7 +19,8 @@
 #define STARTER_ALLOC 16
 #define MAX_FILE_PATH_LENGTH 256
 #define MAX_WORD_LENGTH 256
-#define RESULTS_NUMBER 10
+#define MAX_RESULTS_NUMBER 10
+#define MAX_CLASSES_NUMBER 10
 #define ONLINE 1
 
 #endif
