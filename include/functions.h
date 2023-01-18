@@ -79,6 +79,9 @@ void ResetUserSearchInput(char** input, int* inputSize);
  */
 void PrintArtMenu();
 
+/**
+ * @brief returns a word given by user
+ */
 char* GetUserWordInput();
 
 #endif

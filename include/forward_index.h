@@ -73,8 +73,19 @@ void PrintNewsResults(ForwardIndex** documents, int results);
  */
 void ResetTFIDFSums(ForwardIndex** documents, int documentsSize);
 
+/**
+ * @brief returns documents number that has TF-IDF sum in it
+ */
 int GetDocumentsWithTFIDFNumber(ForwardIndex** documents, int documentsSize);
+
+/**
+ * @brief returns the class of a document
+ */
 char* GetDocumentClass(ForwardIndex* document);
+
+/**
+ * @brief prints words appearances on documents
+ */
 void PrintDocumentWordResults(ForwardIndex* document, int order);
 
 /**

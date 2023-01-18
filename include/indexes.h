@@ -48,8 +48,14 @@ Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* fileName);
  */
 void SearchAndSortNews(Indexes* indexes);
 
+/**
+ * @brief shows informations about a given word by the user
+ */
 void GenerateWordRelatory(Indexes* indexes);
 
+/**
+ * @brief reset indexes array to the original reading order
+ */
 void ResetIndexesArrayOrder(Indexes* indexes);
 
 #endif

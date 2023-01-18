@@ -174,9 +174,7 @@ InvertedIndex** SearchWords(char* input, InvertedIndex** words, int wordsSize) {
 }
 
 int CompareWords(const void* a, const void* b) {
-    const InvertedIndex** x = (const InvertedIndex**)a;
-    const InvertedIndex** y = (const InvertedIndex**)b;
-    return strcmp((*x)->word, (*y)->word);
+    return strcmp((*(const InvertedIndex**)a)->word, (*(const InvertedIndex**)b)->word);
 }
 
 void PrintWordFrequencyInDocuments(char* search, int frequency) {
@@ -190,7 +188,5 @@ void PrintWordFrequencyInDocuments(char* search, int frequency) {
 }
 
 int CompareWordsIndex(const void* a, const void* b) {
-    InvertedIndex* ia = *(InvertedIndex**)a;
-    InvertedIndex* ib = *(InvertedIndex**)b;
-    return ia->index - ib->index;
+    return (*(InvertedIndex**)a)->index - (*(InvertedIndex**)b)->index;
 }

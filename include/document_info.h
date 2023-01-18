@@ -9,7 +9,7 @@ typedef struct DocumentInfo DocumentInfo;
 DocumentInfo* AllocDocumentInfo();
 
 /**
- * @brief frees memory allocatd for a document info
+ * @brief frees memory allocated for a document info
  */
 void FreeDocumentInfo(DocumentInfo* info);
 

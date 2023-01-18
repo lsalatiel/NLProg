@@ -53,6 +53,9 @@ void ReadWordInfoFromBinaryFile(WordInfo* info, FILE* file);
  */
 float GetTFIDFInfo(WordInfo* info);
 
+/**
+ * @brief sorts an word info array based on appearance descending order
+ */
 void SortWordFrequencyInDocumentByInfo(WordInfo** info, int infoSize);
 
 /**

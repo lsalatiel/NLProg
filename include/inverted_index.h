@@ -83,8 +83,14 @@ int GetDocumentIndexFromWord(InvertedIndex* word, int j);
  */
 float GetTFIDFFromWord(InvertedIndex* word, int j);
 
+/**
+ * @brief sorts an word info array based on appearance descending order
+ */
 void SortWordFrequencyInDocument(InvertedIndex* word);
 
+/**
+ * @brief prints the information about a given word appearances on documents
+ */
 void PrintWordFrequencyInDocuments(char* search, int frequency);
 
 /**
