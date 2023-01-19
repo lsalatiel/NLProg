@@ -11,10 +11,34 @@ struct ForwardIndex {
     int* totalWords;
 };
 
-void AddTotalWordsNumber(ForwardIndex* document) {
-    for (int x = 0; x < *document->infoSize; x++) {
-        *document->totalWords += GetDocumentWordFrequency(document->info[x]);
+void AddTotalWordsNumber(ForwardIndex** documents, int documentsSize) {
+    for (int x = 0; x < documentsSize; x++) {
+        for (int y = 0; y < *documents[x]->infoSize; y++) {
+            *documents[x]->totalWords += GetDocumentWordFrequency(documents[x]->info[y]);
+        }
     }
+}
+
+void PrintLongerDocuments(ForwardIndex** documents, int documentsSize) {
+    qsort(documents, documentsSize, sizeof(ForwardIndex*), CompareDescendingTotalWords);
+
+    GreenText();
+    for (int x = 0; x < MAX_RESULTS_NUMBER; x++) {
+        printf("The %dº longest document is of class '%s' and has %d words.\n", x + 1, documents[x]->class, *documents[x]->totalWords);
+    }
+    DefaultText();
+    printf("\n");
+}
+
+void PrintShorterDocuments(ForwardIndex** documents, int documentsSize) {
+    qsort(documents, documentsSize, sizeof(ForwardIndex*), CompareAscendingTotalWords);
+
+    GreenText();
+    for (int x = 0; x < MAX_RESULTS_NUMBER; x++) {
+        printf("The %dº shortest document is of class '%s' and has %d words.\n", x + 1, documents[x]->class, *documents[x]->totalWords);
+    }
+    DefaultText();
+    printf("\n");
 }
 
 int GetTotalWordsNumber(ForwardIndex* document) {
@@ -209,12 +233,9 @@ int GetDocumentsWithTFIDFNumber(ForwardIndex** documents, int documentsSize) {
 }
 
 int CompareTFIDFs(const void* a, const void* b) {
-    float* sumTFIDFx = (*(const ForwardIndex**)a)->sumTFIDF;
-    float* sumTFIDFy = (*(const ForwardIndex**)b)->sumTFIDF;
-
-    if (*sumTFIDFx > *sumTFIDFy)
+    if (*((*(const ForwardIndex**)a)->sumTFIDF) > *((*(const ForwardIndex**)b)->sumTFIDF))
         return -1;
-    else if (*sumTFIDFx < *sumTFIDFy)
+    else if (*((*(const ForwardIndex**)a)->sumTFIDF) < *((*(const ForwardIndex**)b)->sumTFIDF))
         return 1;
     else
         return 0;
@@ -234,14 +255,21 @@ void PrintNewsResults(ForwardIndex** documents, int results) {
         if (*documents[x]->sumTFIDF == 0.0) {
             break;
         }
-
-        printf("Document name: %s ∙ TF-IDF: %.2f\n", documents[x]->name, *documents[x]->sumTFIDF);
+        printf("Document name '%s' with TF-IDF value of '%.2f'.\n", documents[x]->name, *documents[x]->sumTFIDF);
     }
     DefaultText();
 }
 
 void PrintDocumentWordResults(ForwardIndex* document, int order) {
     GreenText();
-    printf("%dº document with most appearances: %s\n", order, document->name);
+    printf("The %dº document with most appearances is '%s'.\n", order, document->name);
     DefaultText();
+}
+
+int CompareDescendingTotalWords(const void* a, const void* b) {
+    return (*((*(const ForwardIndex**)b)->totalWords) - *((*(const ForwardIndex**)a)->totalWords));
+}
+
+int CompareAscendingTotalWords(const void* a, const void* b) {
+    return (*((*(const ForwardIndex**)a)->totalWords) - *((*(const ForwardIndex**)b)->totalWords));
 }

@@ -93,8 +93,15 @@ void PrintDocumentWordResults(ForwardIndex* document, int order);
  */
 int CompareDocumentsIndex(const void* a, const void* b);
 
-void AddTotalWordsNumber(ForwardIndex* document);
+void AddTotalWordsNumber(ForwardIndex** documents, int documentsSize);
 
 int GetTotalWordsNumber(ForwardIndex* document);
+
+int CompareDescendingTotalWords(const void* a, const void* b);
+
+int CompareAscendingTotalWords(const void* a, const void* b);
+
+void PrintLongerDocuments(ForwardIndex** documents, int documentsSize);
+void PrintShorterDocuments(ForwardIndex** documents, int documentsSize);
 
 #endif

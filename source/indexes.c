@@ -289,7 +289,7 @@ void GenerateWordRelatory(Indexes* indexes) {
         ResetIndexesArrayOrder(indexes);
     } else {
         RedText();
-        printf("The word '%s' does not appear in any documents.\n\n", search);
+        printf("The word '%s' does not appear in any document.\n\n", search);
         DefaultText();
     }
     FreeAndNull(search);
@@ -301,8 +301,11 @@ void ResetIndexesArrayOrder(Indexes* indexes) {
 }
 
 void GenerateDocumentRelatory(Indexes* indexes) {
-    for (int x = 0; x < *indexes->documentsSize; x++) {
-        AddTotalWordsNumber(indexes->documents[x]);
-        printf("Document %d has %d words\n", x, GetTotalWordsNumber(indexes->documents[x]));
-    }
+    AddTotalWordsNumber(indexes->documents, *indexes->documentsSize);
+
+    PrintLongerDocuments(indexes->documents, *indexes->documentsSize);
+
+    PrintShorterDocuments(indexes->documents, *indexes->documentsSize);
+
+    ResetIndexesArrayOrder(indexes);
 }
