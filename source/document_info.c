@@ -6,6 +6,10 @@ struct DocumentInfo {
     float TFIDF;
 };
 
+int GetDocumentWordFrequency(DocumentInfo* info) {
+    return info->wordFrequency;
+}
+
 DocumentInfo* AllocDocumentInfo() {
     DocumentInfo* info = NULL;
     info = malloc(sizeof(DocumentInfo));

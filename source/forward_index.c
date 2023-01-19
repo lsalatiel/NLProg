@@ -8,7 +8,18 @@ struct ForwardIndex {
     int* infoSize;
     int* infoAlloc;
     float* sumTFIDF;
+    int* totalWords;
 };
+
+void AddTotalWordsNumber(ForwardIndex* document) {
+    for (int x = 0; x < *document->infoSize; x++) {
+        *document->totalWords += GetDocumentWordFrequency(document->info[x]);
+    }
+}
+
+int GetTotalWordsNumber(ForwardIndex* document) {
+    return *document->totalWords;
+}
 
 int CompareDocumentsIndex(const void* a, const void* b) {
     return (*(ForwardIndex**)a)->index - (*(ForwardIndex**)b)->index;
@@ -30,6 +41,7 @@ ForwardIndex* AllocDocument() {
     document->infoSize = calloc(sizeof(int), 1);
     document->infoAlloc = malloc(sizeof(int));
     document->sumTFIDF = calloc(sizeof(float), 1);
+    document->totalWords = calloc(sizeof(int), 1);
     *document->infoAlloc = STARTER_ALLOC;
 
     for (int x = 0; x < STARTER_ALLOC; x++) {
@@ -50,6 +62,7 @@ void FreeDocument(ForwardIndex* document) {
     FreeAndNull(document->infoSize);
     FreeAndNull(document->infoAlloc);
     FreeAndNull(document->sumTFIDF);
+    FreeAndNull(document->totalWords);
     FreeAndNull(document);
 }
 

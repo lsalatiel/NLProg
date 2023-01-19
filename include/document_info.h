@@ -3,6 +3,9 @@
 
 typedef struct DocumentInfo DocumentInfo;
 
+
+int GetDocumentWordFrequency(DocumentInfo* info);
+
 /**
  * @brief allocates space and initialize a document info structure
  */

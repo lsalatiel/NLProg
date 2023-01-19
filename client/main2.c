@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
                 GenerateWordRelatory(indexes);
                 break;
             case 4:
-
+                GenerateDocumentRelatory(indexes);
                 break;
             case 5:
                 FreeIndexes(indexes);

@@ -38,7 +38,6 @@ Indexes* ReadTrainFile(Indexes* indexes, char** argv) {
         PrintFileError();
         exit(1);
     }
-
     indexes->documents = ReadDocuments(indexes->documents, train, indexes->documentsSize, indexes->documentsAlloc);
 
     fclose(train);
@@ -50,11 +49,9 @@ void FreeIndexes(Indexes* indexes) {
     for (int x = 0; x < *indexes->documentsAlloc; x++) {
         FreeDocument(indexes->documents[x]);
     }
-
     for (int x = 0; x < *indexes->wordsAlloc; x++) {
         FreeWord(indexes->words[x]);
     }
-
     FreeAndNull(indexes->documents);
     FreeAndNull(indexes->documentsSize);
     FreeAndNull(indexes->documentsAlloc);
@@ -86,7 +83,6 @@ Indexes* ReadInfo(Indexes* indexes) {
 
         fclose(file);
     }
-
     indexes = StoreTFIDFFromIndexes(indexes);
 
     return indexes;
@@ -134,7 +130,6 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int documentIndex) 
         indexes->documents[documentIndex] = StoreWordInfoForwardIndex(indexes->documents[documentIndex], *indexes->wordsSize);
         (*indexes->wordsSize)++;
     }
-
     return indexes;
 }
 
@@ -147,7 +142,6 @@ Indexes* StoreTFIDFFromIndexes(Indexes* indexes) {
         wordAppearance = GetWordInfoSize(indexes->words[i]);
         indexes->documents = StoreTFIDFFromDocuments(indexes->documents, i, *indexes->documentsSize, wordAppearance);
     }
-
     return indexes;
 }
 
@@ -165,7 +159,6 @@ void WriteIndexesInBinaryFile(Indexes* indexes, char* fileName) {
         PrintFileError();
         exit(1);
     }
-
     // writing documents
     fwrite(indexes->documentsSize, sizeof(int), 1, file);
     fwrite(indexes->documentsAlloc, sizeof(int), 1, file);
@@ -173,7 +166,6 @@ void WriteIndexesInBinaryFile(Indexes* indexes, char* fileName) {
     for (int i = 0; i < *indexes->documentsSize; i++) {
         WriteForwardIndexInBinaryFile(indexes->documents[i], file);
     }
-
     // writing words
     fwrite(indexes->wordsSize, sizeof(int), 1, file);
     fwrite(indexes->wordsAlloc, sizeof(int), 1, file);
@@ -181,7 +173,6 @@ void WriteIndexesInBinaryFile(Indexes* indexes, char* fileName) {
     for (int i = 0; i < *indexes->wordsSize; i++) {
         WriteInvertedIndexInBinaryFile(indexes->words[i], file);
     }
-
     GreenText();
     printf("The binary file '%s' for the main program has been created in the folder 'binary' successfully.\n", fileName);
     DefaultText();
@@ -203,7 +194,6 @@ Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* fileName) {
         PrintFileError();
         exit(1);
     }
-
     // reading documents
     fread(indexes->documentsSize, sizeof(int), 1, file);
     fread(indexes->documentsAlloc, sizeof(int), 1, file);
@@ -214,10 +204,8 @@ Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* fileName) {
             alloc *= 2;
             indexes->documents = ReallocDocuments(indexes->documents, &alloc);
         }
-
         ReadForwardIndexFromBinaryFile(indexes->documents[i], file);
     }
-
     // reading words
     fread(indexes->wordsSize, sizeof(int), 1, file);
     fread(indexes->wordsAlloc, sizeof(int), 1, file);
@@ -228,10 +216,8 @@ Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* fileName) {
             alloc *= 2;
             indexes->words = ReallocWords(indexes->words, &alloc);
         }
-
         ReadInvertedIndexFromBinaryFile(indexes->words[i], file);
     }
-
     fclose(file);
 
     return indexes;
@@ -243,10 +229,9 @@ void SearchAndSortNews(Indexes* indexes) {
 
     BoldText();
     printf("• Enter the search: ");
-    DefaultText();
-
     do queryWords = GetUserSentenceInput(querySize);
     while (queryWords == NULL);
+    DefaultText();
 
     bool somethingFound = false;
     qsort(indexes->words, *indexes->wordsSize, sizeof(InvertedIndex*), CompareWords);
@@ -261,7 +246,6 @@ void SearchAndSortNews(Indexes* indexes) {
             }
         }
     }
-
     if (somethingFound) {
         qsort(indexes->documents, *indexes->documentsSize, sizeof(ForwardIndex*), CompareTFIDFs);
         PrintNewsResults(indexes->documents, GetDocumentsWithTFIDFNumber(indexes->documents, *indexes->documentsSize));
@@ -271,7 +255,6 @@ void SearchAndSortNews(Indexes* indexes) {
         printf("No news was found.\n");
         DefaultText();
     }
-
     ResetUserSearchInput(queryWords, querySize);
     ResetIndexesArrayOrder(indexes);
     printf("\n");
@@ -280,9 +263,8 @@ void SearchAndSortNews(Indexes* indexes) {
 void GenerateWordRelatory(Indexes* indexes) {
     BoldText();
     printf("• Enter the word: ");
-    DefaultText();
-
     char* search = GetUserWordInput();
+    DefaultText();
 
     qsort(indexes->words, *indexes->wordsSize, sizeof(InvertedIndex*), CompareWords);
     InvertedIndex** word = SearchWords(search, indexes->words, *indexes->wordsSize);
@@ -304,17 +286,23 @@ void GenerateWordRelatory(Indexes* indexes) {
         qsort(classes, MAX_CLASSES_NUMBER, sizeof(Classes*), CompareClasses);
         PrintClasses(classes);
         FreeClasses(classes);
+        ResetIndexesArrayOrder(indexes);
     } else {
         RedText();
         printf("The word '%s' does not appear in any documents.\n\n", search);
         DefaultText();
     }
-
-    ResetIndexesArrayOrder(indexes);
     FreeAndNull(search);
 }
 
 void ResetIndexesArrayOrder(Indexes* indexes) {
     qsort(indexes->documents, *indexes->documentsSize, sizeof(ForwardIndex*), CompareDocumentsIndex);
     qsort(indexes->words, *indexes->wordsSize, sizeof(InvertedIndex*), CompareWordsIndex);
+}
+
+void GenerateDocumentRelatory(Indexes* indexes) {
+    for (int x = 0; x < *indexes->documentsSize; x++) {
+        AddTotalWordsNumber(indexes->documents[x]);
+        printf("Document %d has %d words\n", x, GetTotalWordsNumber(indexes->documents[x]));
+    }
 }

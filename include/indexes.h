@@ -58,4 +58,9 @@ void GenerateWordRelatory(Indexes* indexes);
  */
 void ResetIndexesArrayOrder(Indexes* indexes);
 
+/**
+ * @brief shows informations about the documents
+ */
+void GenerateDocumentRelatory(Indexes* indexes);
+
 #endif
