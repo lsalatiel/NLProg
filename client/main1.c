@@ -11,7 +11,6 @@ int main(int argc, char** argv) {
     indexes = ReadTrainFile(indexes, argv);
     indexes = ReadInfo(indexes);
     WriteIndexesInBinaryFile(indexes, argv[2]);
-    GenerateDocumentRelatory(indexes);
     FreeIndexes(indexes);
 
     return EXIT_SUCCESS;

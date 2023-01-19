@@ -114,7 +114,7 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int documentIndex) 
         wordIndex = GetWordIndex(indexes->words, word, *indexes->wordsSize);  // returns -1 if word does not exist
         if (wordIndex != -1) {
             // se a palavra nao eh nova ela pode ter aparecido no documento ou nao
-            if (WordInDocument(indexes->words[wordIndex], documentIndex == true)) {
+            if (WordInDocument(indexes->words[wordIndex], documentIndex)) {
                 indexes->documents[documentIndex] = AddWordFrequencyToForwardIndex(indexes->documents[documentIndex], wordIndex);
             } else {
                 indexes->documents[documentIndex] = StoreWordInfoForwardIndex(indexes->documents[documentIndex], wordIndex);
