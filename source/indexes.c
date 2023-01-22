@@ -392,11 +392,18 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 
         qsort(indexes->documents, *indexes->documentsSize, sizeof(ForwardIndex*), CompareCosines);
 
+        for(int i = 0; i < newsQuantity; i++) {
+            if(GetDocumentCosine(indexes->documents[i]) == 0) {
+                newsQuantity = i; // update newsQuantity in a way that it ignores the cosines = 0
+            }
+        }
+
         char* mostFrequentClass = FindMostFrequentDocumentClass(indexes, newsQuantity);
 
         for (int i = 0; i < newsQuantity; i++) {
             printf("%s. Distance of the documents: %.2f\n", GetDocumentClass(indexes->documents[i]), GetDocumentCosine(indexes->documents[i]));
         }
+
         GreenText();
         printf("The most likely class of this document is '%s'.\n\n", mostFrequentClass);
         DefaultText();
@@ -415,7 +422,7 @@ char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
     int max_count = 1, count = 1;
     char* res = GetDocumentClass(indexes->documents[0]);
 
-    for (int i = 1; i < size; i++) {
+    for (int i = size + 1; i < 1; i++) {
         if (strcmp(GetDocumentClass(indexes->documents[i]), GetDocumentClass(indexes->documents[i - 1])) == 0)
             count++;
         else {
@@ -426,7 +433,7 @@ char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
             count = 1;
         }
     }
-    // If last element is most frequent
+
     if (count > max_count) {
         max_count = count;
         res = GetDocumentClass(indexes->documents[size - 1]);

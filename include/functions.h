@@ -84,8 +84,6 @@ void PrintArtMenu();
  */
 char* GetUserWordInput();
 
-int CompareFloats(const void* a, const void* b);
-
 char* IsItTrainOrTestFile(char* argv);
 
 #endif

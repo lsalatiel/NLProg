@@ -104,10 +104,30 @@ int CompareAscendingTotalWords(const void* a, const void* b);
 void PrintLongerDocuments(ForwardIndex** documents, int documentsSize);
 void PrintShorterDocuments(ForwardIndex** documents, int documentsSize);
 
+/**
+ * @brief stores the cosine of a document when compared with a text (functionality 2)
+ * 
+ * @param document 
+ * @param cosine 
+ * @return ForwardIndex* 
+ */
 ForwardIndex* StoreCosine(ForwardIndex* document, float cosine);
 
+/**
+ * @brief comparison function for qsort() based on the cosines of a document array
+ * 
+ * @param a 
+ * @param b 
+ * @return int 
+ */
 int CompareCosines(const void* a, const void* b);
 
+/**
+ * @brief returns the cosine of a document
+ * 
+ * @param document 
+ * @return float 
+ */
 float GetDocumentCosine(ForwardIndex* document);
 
 #endif
