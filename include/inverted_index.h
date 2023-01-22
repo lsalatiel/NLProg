@@ -98,4 +98,6 @@ void PrintWordFrequencyInDocuments(char* search, int frequency);
  */
 int CompareWordsIndex(const void* a, const void* b);
 
+float GetTFIDFInDocument(InvertedIndex* word, int documentIndex);
+
 #endif

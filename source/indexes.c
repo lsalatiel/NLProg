@@ -309,3 +309,121 @@ void GenerateDocumentRelatory(Indexes* indexes) {
 
     ResetIndexesArrayOrder(indexes);
 }
+
+void SortNews(Indexes* indexes, int newsQuantity) {
+    int* querySize = malloc(sizeof(int));
+    char** queryWords = NULL;
+
+    BoldText();
+    printf("• Enter the search: ");
+    do queryWords = GetUserSentenceInput(querySize);
+    while (queryWords == NULL);
+    DefaultText();
+
+    int textAlloc = *querySize;
+    int textSize = 0;
+    TextInfo** text = NULL;
+    text = AllocateTextInfoArray(text, textAlloc);
+
+    int wordIndex = 0;
+
+    for(int i = 0; i < textAlloc; i++) {
+        // if(textSize == textAlloc) {
+        //     textAlloc *= 2;
+        //     text = ReallocText(text, textAlloc);
+        // }
+
+        wordIndex = GetWordIndexInText(text, textSize, queryWords[i]);
+        if(wordIndex != -1)
+            text[i] = AddFrequencyTextInfo(text[wordIndex]);
+        else {
+            text[i] = StoreTextInfo(text[i], queryWords[i]);
+            textSize++;
+        }
+    }
+
+    ResetUserSearchInput(queryWords, querySize);
+
+    int wordAppearence = 0;
+    char* input;
+
+    qsort(indexes->words, *indexes->wordsSize, sizeof(InvertedIndex*), CompareWords);
+    for(int i = 0; i < textSize; i++) {
+        input = GetWordFromText(text[i]);
+        InvertedIndex** word = SearchWords(input, indexes->words, *indexes->wordsSize);
+        if(word != NULL) {
+            wordAppearence = GetWordInfoSize(word[0]);
+            text[i] = StoreTFIDFTextInfo(text[i], *indexes->documentsSize, wordAppearence);
+        }
+    }
+
+    float cosine = 0;
+
+    for(int i = 0; i < *indexes->documentsSize; i++) {
+        float tfidfProductSum = 0;
+        float tfidfSum1 = 0;
+        float tfidfSum2 = 0;
+        for(int j = 0; j < textSize; j++) {
+            input = GetWordFromText(text[j]);
+            InvertedIndex** word = SearchWords(input, indexes->words, *indexes->wordsSize);
+            if(word != NULL) {
+                float tfidf1 = GetTFIDFInDocument(word[0], i);
+                // if(tfidf1 == 0)
+                //     continue;
+                float tfidf2 = GetTFIDFTextInfo(text[j]);
+                tfidfProductSum += tfidf1 * tfidf2;
+                tfidfSum1 += pow(tfidf1, 2);
+                tfidfSum2 += pow(tfidf2, 2);
+            }
+        }
+        if(tfidfProductSum == 0) {
+            cosine = 0;
+            indexes->documents[i] = StoreCosine(indexes->documents[i], cosine);
+            continue;
+        }
+        cosine = tfidfProductSum / (sqrt(tfidfSum1) * sqrt(tfidfSum2));
+        indexes->documents[i] = StoreCosine(indexes->documents[i], cosine);
+    }
+
+    qsort(indexes->documents, *indexes->documentsSize, sizeof(ForwardIndex*), CompareCosines);
+
+    char* mostFrequentClass = FindMostFrequentDocumentClass(indexes, newsQuantity);
+
+    // for(int i = 0; i < newsQuantity; i++) {
+    //     printf("%s. Distance of the documents: %.2f\n", GetDocumentClass(indexes->documents[i]), GetDocumentCosine(indexes->documents[i]));
+    // }
+
+    printf("The most likely class of this document is %s\n\n", mostFrequentClass);
+
+    ResetIndexesArrayOrder(indexes);
+
+    for(int i = 0; i < textAlloc; i++) {
+        FreeTextInfo(text[i]);
+    }
+
+    FreeAndNull(text);
+}
+
+char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
+    int max_count = 1, count = 1; 
+    char* res = GetDocumentClass(indexes->documents[0]);
+
+    for (int i = 1; i < size; i++) { 
+        if (strcmp(GetDocumentClass(indexes->documents[i]), GetDocumentClass(indexes->documents[i - 1])) == 0) 
+            count++; 
+        else { 
+            if (count > max_count) { 
+                max_count = count; 
+                res = GetDocumentClass(indexes->documents[i - 1]); 
+            } 
+            count = 1; 
+        } 
+    }   
+    // If last element is most frequent 
+    if (count > max_count) 
+    { 
+        max_count = count; 
+        res = GetDocumentClass(indexes->documents[size - 1]); 
+    }   
+    return res;
+}

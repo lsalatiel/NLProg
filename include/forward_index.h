@@ -104,4 +104,10 @@ int CompareAscendingTotalWords(const void* a, const void* b);
 void PrintLongerDocuments(ForwardIndex** documents, int documentsSize);
 void PrintShorterDocuments(ForwardIndex** documents, int documentsSize);
 
+ForwardIndex* StoreCosine(ForwardIndex* document, float cosine);
+
+int CompareCosines(const void* a, const void* b);
+
+float GetDocumentCosine(ForwardIndex* document);
+
 #endif

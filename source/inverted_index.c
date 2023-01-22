@@ -190,3 +190,16 @@ void PrintWordFrequencyInDocuments(char* search, int frequency) {
 int CompareWordsIndex(const void* a, const void* b) {
     return (*(InvertedIndex**)a)->index - (*(InvertedIndex**)b)->index;
 }
+
+float GetTFIDFInDocument(InvertedIndex* word, int documentIndex) {
+    float tfidf = 0;
+    
+    for(int i = 0; i < word->infoSize; i++) {
+        if(GetDocumentIndexInfo(word->info[i]) == documentIndex) {
+            tfidf = GetTFIDFInfo(word->info[i]);
+            break;
+        }
+    }
+    
+    return tfidf;
+}

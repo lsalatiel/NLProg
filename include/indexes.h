@@ -63,4 +63,8 @@ void ResetIndexesArrayOrder(Indexes* indexes);
  */
 void GenerateDocumentRelatory(Indexes* indexes);
 
+void SortNews(Indexes* indexes, int newsQuantity);
+
+char* FindMostFrequentDocumentClass(Indexes* indexes, int size);
+
 #endif

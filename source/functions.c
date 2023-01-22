@@ -182,3 +182,7 @@ void PrintArtMenu() {
     printf(" ╚═══╝   ┴─┘└─┘┴ ┴ └┘ └─┘  ┴  ┴└─└─┘└─┘┴└─┴ ┴┴ ┴\n");
     DefaultText();
 }
+
+int CompareFloats(const void* a, const void* b) {
+    return *(float*)b - *(float*)a;
+}

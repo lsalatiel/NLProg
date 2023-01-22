@@ -14,6 +14,7 @@
 #include "indexes.h"
 #include "inverted_index.h"
 #include "word_info.h"
+#include "text_info.h"
 
 #define BUFFER_SIZE 128
 #define STARTER_ALLOC 16

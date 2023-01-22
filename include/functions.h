@@ -84,4 +84,6 @@ void PrintArtMenu();
  */
 char* GetUserWordInput();
 
+int CompareFloats(const void* a, const void* b);
+
 #endif

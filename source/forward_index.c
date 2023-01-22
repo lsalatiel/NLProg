@@ -9,6 +9,7 @@ struct ForwardIndex {
     int* infoAlloc;
     float* sumTFIDF;
     int* totalWords;
+    float cosine;
 };
 
 void AddTotalWordsNumber(ForwardIndex** documents, int documentsSize) {
@@ -272,4 +273,23 @@ int CompareDescendingTotalWords(const void* a, const void* b) {
 
 int CompareAscendingTotalWords(const void* a, const void* b) {
     return (*((*(const ForwardIndex**)a)->totalWords) - *((*(const ForwardIndex**)b)->totalWords));
+}
+
+ForwardIndex* StoreCosine(ForwardIndex* document, float cosine) {
+    document->cosine = cosine;
+
+    return document;
+}
+
+int CompareCosines(const void* a, const void* b) {
+    if ((*(const ForwardIndex**)a)->cosine > (*(const ForwardIndex**)b)->cosine)
+        return -1;
+    else if ((*(const ForwardIndex**)a)->cosine < (*(const ForwardIndex**)b)->cosine)
+        return 1;
+    else
+        return 0;
+}
+
+float GetDocumentCosine(ForwardIndex* document) {
+    return document->cosine;
 }

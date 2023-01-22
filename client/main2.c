@@ -2,6 +2,7 @@
 
 int main(int argc, char** argv) {
     argv[1] = "lulu.bin";
+    argv[2] = "10";
 
     ClearTerminal();
     Indexes* indexes = NULL;
@@ -14,7 +15,7 @@ int main(int argc, char** argv) {
                 SearchAndSortNews(indexes);
                 break;
             case 2:
-
+                SortNews(indexes, atoi(argv[2]));
                 break;
             case 3:
                 GenerateWordRelatory(indexes);
