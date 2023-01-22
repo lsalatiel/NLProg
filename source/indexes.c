@@ -31,8 +31,8 @@ Indexes* AllocateIndexes() {
     return indexes;
 }
 
-Indexes* ReadTrainFile(Indexes* indexes, char** argv) {
-    FILE* train = fopen(argv[1], "r");
+Indexes* ReadTrainFile(Indexes* indexes, char* argv) {
+    FILE* train = fopen(argv, "r");
     if (!train) {
         FreeAndNull(indexes);
         PrintFileError();
@@ -61,36 +61,32 @@ void FreeIndexes(Indexes* indexes) {
     FreeAndNull(indexes);
 }
 
-Indexes* ReadInfo(Indexes* indexes) {
-    FILE* file;
-
-    char* fileName;
-    char path[MAX_FILE_PATH_LENGTH];
+Indexes* ReadInfo(Indexes* indexes, char* argv) {
+    char* argvCopy = IsItTrainOrTestFile(argv);
 
     for (int i = 0; i < *indexes->documentsSize; i++) {
-        fileName = GetFileName(indexes->documents[i]);
-        // strcpy(fileName, GetFileName(indexes->documents[i]));
+        char* fileName = GetFileName(indexes->documents[i]);
+        size_t pathSize = strlen(argvCopy) + strlen(fileName) + 1;
+        char* path = malloc(sizeof(char) * pathSize);
 
-        sprintf(path, "datasets/tiny/%s", fileName);
+        sprintf(path, "%s%s", argvCopy, fileName);
 
-        file = fopen(path, "r");
+        FILE* file = fopen(path, "r");
+        FreeAndNull(path);
 
-        if (file == NULL) {
-            continue;
+        if (file != NULL) {
+            indexes = CreateIndexesFromFile(indexes, file, i);
+            fclose(file);
         }
-
-        indexes = CreateIndexesFromFile(indexes, file, i);
-
-        fclose(file);
     }
     indexes = StoreTFIDFFromIndexes(indexes);
+    FreeAndNull(argvCopy);
 
     return indexes;
 }
 
 Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int documentIndex) {
-    char word[1000];
-    word[0] = '\0';
+    char* word = malloc(BUFFER_SIZE * sizeof(char));
     int wordIndex = 0;
 
     if (file == NULL) {
@@ -130,6 +126,9 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int documentIndex) 
         indexes->documents[documentIndex] = StoreWordInfoForwardIndex(indexes->documents[documentIndex], *indexes->wordsSize);
         (*indexes->wordsSize)++;
     }
+
+    FreeAndNull(word);
+
     return indexes;
 }
 
@@ -145,11 +144,11 @@ Indexes* StoreTFIDFFromIndexes(Indexes* indexes) {
     return indexes;
 }
 
-void WriteIndexesInBinaryFile(Indexes* indexes, char* fileName) {
+void WriteIndexesInBinaryFile(Indexes* indexes, char* argv) {
     char* binaryFileName = NULL;
-    binaryFileName = malloc(sizeof(char) * (strlen(fileName) + 8));
+    binaryFileName = malloc(sizeof(char) * (strlen(argv) + 8));
     strcpy(binaryFileName, "binary/");
-    strcat(binaryFileName, fileName);
+    strcat(binaryFileName, argv);
 
     FILE* file = fopen(binaryFileName, "wb");
     FreeAndNull(binaryFileName);
@@ -174,7 +173,7 @@ void WriteIndexesInBinaryFile(Indexes* indexes, char* fileName) {
         WriteInvertedIndexInBinaryFile(indexes->words[i], file);
     }
     GreenText();
-    printf("The binary file '%s' for the main program has been created in the folder 'binary' successfully.\n", fileName);
+    printf("The binary file '%s' for the main program has been created in the folder 'binary' successfully.\n", argv);
     DefaultText();
 
     fclose(file);
@@ -280,7 +279,7 @@ void GenerateWordRelatory(Indexes* indexes) {
             int documentIndex = GetDocumentIndexFromWord(word[0], x);
             char* documentClass = GetDocumentClass(indexes->documents[documentIndex]);
 
-            if (x < 10) PrintDocumentWordResults(indexes->documents[documentIndex], x + 1);
+            if (x < MAX_RESULTS_NUMBER) PrintDocumentWordResults(indexes->documents[documentIndex], x + 1);
             ReadClasses(classes, documentClass);
         }
         qsort(classes, MAX_CLASSES_NUMBER, sizeof(Classes*), CompareClasses);
@@ -302,11 +301,8 @@ void ResetIndexesArrayOrder(Indexes* indexes) {
 
 void GenerateDocumentRelatory(Indexes* indexes) {
     AddTotalWordsNumber(indexes->documents, *indexes->documentsSize);
-
     PrintLongerDocuments(indexes->documents, *indexes->documentsSize);
-
     PrintShorterDocuments(indexes->documents, *indexes->documentsSize);
-
     ResetIndexesArrayOrder(indexes);
 }
 
@@ -327,14 +323,14 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 
     int wordIndex = 0;
 
-    for(int i = 0; i < textAlloc; i++) {
+    for (int i = 0; i < textAlloc; i++) {
         // if(textSize == textAlloc) {
         //     textAlloc *= 2;
         //     text = ReallocText(text, textAlloc);
         // }
 
         wordIndex = GetWordIndexInText(text, textSize, queryWords[i]);
-        if(wordIndex != -1)
+        if (wordIndex != -1)
             text[i] = AddFrequencyTextInfo(text[wordIndex]);
         else {
             text[i] = StoreTextInfo(text[i], queryWords[i]);
@@ -346,58 +342,69 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 
     int wordAppearence = 0;
     char* input;
+    bool wordFound = false;
 
     qsort(indexes->words, *indexes->wordsSize, sizeof(InvertedIndex*), CompareWords);
-    for(int i = 0; i < textSize; i++) {
+    for (int i = 0; i < textSize; i++) {
         input = GetWordFromText(text[i]);
         InvertedIndex** word = SearchWords(input, indexes->words, *indexes->wordsSize);
-        if(word != NULL) {
+        if (word != NULL) {
+            if (!wordFound)
+                wordFound = true;
             wordAppearence = GetWordInfoSize(word[0]);
             text[i] = StoreTFIDFTextInfo(text[i], *indexes->documentsSize, wordAppearence);
         }
     }
 
-    float cosine = 0;
+    if (!wordFound) {
+        RedText();
+        printf("No word found in the documents.\n\n");
+        DefaultText();
 
-    for(int i = 0; i < *indexes->documentsSize; i++) {
-        float tfidfProductSum = 0;
-        float tfidfSum1 = 0;
-        float tfidfSum2 = 0;
-        for(int j = 0; j < textSize; j++) {
-            input = GetWordFromText(text[j]);
-            InvertedIndex** word = SearchWords(input, indexes->words, *indexes->wordsSize);
-            if(word != NULL) {
-                float tfidf1 = GetTFIDFInDocument(word[0], i);
-                // if(tfidf1 == 0)
-                //     continue;
-                float tfidf2 = GetTFIDFTextInfo(text[j]);
-                tfidfProductSum += tfidf1 * tfidf2;
-                tfidfSum1 += pow(tfidf1, 2);
-                tfidfSum2 += pow(tfidf2, 2);
+    } else {
+        float cosine = 0;
+
+        for (int i = 0; i < *indexes->documentsSize; i++) {
+            float tfidfProductSum = 0;
+            float tfidfSum1 = 0;
+            float tfidfSum2 = 0;
+            for (int j = 0; j < textSize; j++) {
+                input = GetWordFromText(text[j]);
+                InvertedIndex** word = SearchWords(input, indexes->words, *indexes->wordsSize);
+                if (word != NULL) {
+                    float tfidf1 = GetTFIDFInDocument(word[0], i);
+                    // if(tfidf1 == 0)
+                    //     continue;
+                    float tfidf2 = GetTFIDFTextInfo(text[j]);
+                    tfidfProductSum += tfidf1 * tfidf2;
+                    tfidfSum1 += pow(tfidf1, 2);
+                    tfidfSum2 += pow(tfidf2, 2);
+                }
             }
-        }
-        if(tfidfProductSum == 0) {
-            cosine = 0;
+            if (tfidfProductSum == 0) {
+                cosine = 0;
+                indexes->documents[i] = StoreCosine(indexes->documents[i], cosine);
+                continue;
+            }
+            cosine = tfidfProductSum / (sqrt(tfidfSum1) * sqrt(tfidfSum2));
             indexes->documents[i] = StoreCosine(indexes->documents[i], cosine);
-            continue;
         }
-        cosine = tfidfProductSum / (sqrt(tfidfSum1) * sqrt(tfidfSum2));
-        indexes->documents[i] = StoreCosine(indexes->documents[i], cosine);
+
+        qsort(indexes->documents, *indexes->documentsSize, sizeof(ForwardIndex*), CompareCosines);
+
+        char* mostFrequentClass = FindMostFrequentDocumentClass(indexes, newsQuantity);
+
+        for (int i = 0; i < newsQuantity; i++) {
+            printf("%s. Distance of the documents: %.2f\n", GetDocumentClass(indexes->documents[i]), GetDocumentCosine(indexes->documents[i]));
+        }
+        GreenText();
+        printf("The most likely class of this document is '%s'.\n\n", mostFrequentClass);
+        DefaultText();
     }
-
-    qsort(indexes->documents, *indexes->documentsSize, sizeof(ForwardIndex*), CompareCosines);
-
-    char* mostFrequentClass = FindMostFrequentDocumentClass(indexes, newsQuantity);
-
-    // for(int i = 0; i < newsQuantity; i++) {
-    //     printf("%s. Distance of the documents: %.2f\n", GetDocumentClass(indexes->documents[i]), GetDocumentCosine(indexes->documents[i]));
-    // }
-
-    printf("The most likely class of this document is %s\n\n", mostFrequentClass);
 
     ResetIndexesArrayOrder(indexes);
 
-    for(int i = 0; i < textAlloc; i++) {
+    for (int i = 0; i < textAlloc; i++) {
         FreeTextInfo(text[i]);
     }
 
@@ -405,25 +412,24 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 }
 
 char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
-    int max_count = 1, count = 1; 
+    int max_count = 1, count = 1;
     char* res = GetDocumentClass(indexes->documents[0]);
 
-    for (int i = 1; i < size; i++) { 
-        if (strcmp(GetDocumentClass(indexes->documents[i]), GetDocumentClass(indexes->documents[i - 1])) == 0) 
-            count++; 
-        else { 
-            if (count > max_count) { 
-                max_count = count; 
-                res = GetDocumentClass(indexes->documents[i - 1]); 
-            } 
-            count = 1; 
-        } 
-    }   
-    // If last element is most frequent 
-    if (count > max_count) 
-    { 
-        max_count = count; 
-        res = GetDocumentClass(indexes->documents[size - 1]); 
-    }   
+    for (int i = 1; i < size; i++) {
+        if (strcmp(GetDocumentClass(indexes->documents[i]), GetDocumentClass(indexes->documents[i - 1])) == 0)
+            count++;
+        else {
+            if (count > max_count) {
+                max_count = count;
+                res = GetDocumentClass(indexes->documents[i - 1]);
+            }
+            count = 1;
+        }
+    }
+    // If last element is most frequent
+    if (count > max_count) {
+        max_count = count;
+        res = GetDocumentClass(indexes->documents[size - 1]);
+    }
     return res;
 }

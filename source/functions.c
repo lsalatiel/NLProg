@@ -186,3 +186,16 @@ void PrintArtMenu() {
 int CompareFloats(const void* a, const void* b) {
     return *(float*)b - *(float*)a;
 }
+
+char* IsItTrainOrTestFile(char* argv) {
+    char* argvCopy = strdup(argv);
+    size_t argvLen = strlen(argvCopy);
+    char testXtrain = argvCopy[argvLen - 5];
+
+    if (testXtrain == 't')
+        argvCopy[argvLen - 8] = '\0';
+    else if (testXtrain == 'n')
+        argvCopy[argvLen - 9] = '\0';
+
+    return argvCopy;
+}

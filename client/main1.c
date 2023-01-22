@@ -8,8 +8,8 @@ int main(int argc, char** argv) {
 
     Indexes* indexes = NULL;
     indexes = AllocateIndexes();
-    indexes = ReadTrainFile(indexes, argv);
-    indexes = ReadInfo(indexes);
+    indexes = ReadTrainFile(indexes, argv[1]);
+    indexes = ReadInfo(indexes, argv[1]);
     WriteIndexesInBinaryFile(indexes, argv[2]);
     FreeIndexes(indexes);
 

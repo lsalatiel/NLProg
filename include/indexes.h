@@ -6,7 +6,7 @@ typedef struct Indexes Indexes;
 /**
  * @brief reads main file which it contains the other files
  */
-Indexes* ReadTrainFile(Indexes* indexes, char** argv);
+Indexes* ReadTrainFile(Indexes* indexes, char* argv);
 
 /**
  * @brief allocates memory for the inverted and forward indexes
@@ -21,7 +21,7 @@ void FreeIndexes(Indexes* indexes);
 /**
  * @brief opens the texts files
  */
-Indexes* ReadInfo(Indexes* indexes);
+Indexes* ReadInfo(Indexes* indexes, char* argv);
 
 /**
  * @brief reads the texts files and store the information in the inverted index struct

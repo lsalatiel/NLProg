@@ -13,13 +13,11 @@
 #include "functions.h"
 #include "indexes.h"
 #include "inverted_index.h"
-#include "word_info.h"
 #include "text_info.h"
+#include "word_info.h"
 
 #define BUFFER_SIZE 128
 #define STARTER_ALLOC 16
-#define MAX_FILE_PATH_LENGTH 256
-#define MAX_WORD_LENGTH 256
 #define MAX_RESULTS_NUMBER 10
 #define MAX_CLASSES_NUMBER 10
 #define ONLINE 1
