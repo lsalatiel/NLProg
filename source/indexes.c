@@ -14,6 +14,7 @@ void GenerateOutputInfo(Indexes* indexes, char* argv) {
     for (int x = 0; x < *indexes->wordsSize; x++) {
         totalWords += GetWordInfoSize(indexes->words[x]);
     }
+    ClearTerminal();
     GreenText();
     printf("The binary file for the main program has been successfully created with the name '%s' in the 'binary' folder. It has %d documents and %d different words.\n", argv, *indexes->documentsSize, totalWords);
     DefaultText();
@@ -48,6 +49,12 @@ Indexes* ReadTrainFile(Indexes* indexes, char* argv) {
         PrintFileError();
         exit(1);
     }
+
+    ClearTerminal();
+    GreenText();
+    printf("Reading files, please wait.\n");
+    DefaultText();
+
     indexes->documents = ReadDocuments(indexes->documents, train, indexes->documentsSize, indexes->documentsAlloc);
 
     fclose(train);
@@ -184,14 +191,13 @@ void WriteIndexesInBinaryFile(Indexes* indexes, char* argv) {
     fclose(file);
 }
 
-Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* fileName) {
-    char* binaryFileName = NULL;
-    binaryFileName = malloc(sizeof(char) * (strlen(fileName) + 8));
-    strcpy(binaryFileName, "binary/");
-    strcat(binaryFileName, fileName);
-
+Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* argv) {
+    char* binaryFileName = malloc(sizeof(char) * (strlen(argv) + 8));
+    sprintf(binaryFileName, "binary/%s", argv);
     FILE* file = fopen(binaryFileName, "rb");
     FreeAndNull(binaryFileName);
+
+    // FILE* file = fopen(argv, "rb"); // use this line and remove above 4 lines in case of hardcode issues
 
     if (file == NULL) {
         FreeAndNull(indexes);
@@ -424,8 +430,8 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 }
 
 char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
-    int max_count = 1, count = 1;
-    float multiplier = 0, max_multiplier = 0;
+    int maxCount = 1, count = 1;
+    float multiplier = 0, maxMultiplier = 0;
     char* res = GetDocumentClass(indexes->documents[0]);
 
     qsort(indexes->documents, size, sizeof(ForwardIndex*), CompareDocumentClasses);  // sort the array by class
@@ -439,13 +445,13 @@ char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
         }
 
         else {
-            if (count > max_count) {
-                max_count = count;
-                max_multiplier = multiplier;
+            if (count > maxCount) {
+                maxCount = count;
+                maxMultiplier = multiplier;
                 res = GetDocumentClass(indexes->documents[i - 1]);
-            } else if (count == max_count) {
-                if (multiplier > max_multiplier) {
-                    max_multiplier = multiplier;
+            } else if (count == maxCount) {
+                if (multiplier > maxMultiplier) {
+                    maxMultiplier = multiplier;
                     res = GetDocumentClass(indexes->documents[i - 1]);
                 }
             }
@@ -454,8 +460,8 @@ char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
         }
     }
 
-    if (count > max_count) {
-        max_count = count;
+    if (count > maxCount) {
+        maxCount = count;
         res = GetDocumentClass(indexes->documents[size - 1]);
     }
     return res;

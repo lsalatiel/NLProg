@@ -3,13 +3,13 @@
 struct TextInfo {
     char* word;
     int frequency;
-    float tf_idf;
+    float tfidf;
 };
 
 TextInfo* AllocText(TextInfo* textInfo) {
     textInfo = calloc(sizeof(TextInfo), 1);
     textInfo->frequency = 0;
-    textInfo->tf_idf = -1;
+    textInfo->tfidf = -1;
 
     return textInfo;
 }
@@ -39,8 +39,8 @@ TextInfo* AddFrequencyTextInfo(TextInfo* textInfo) {
     return textInfo;
 }
 
-int GetWordIndexInText(TextInfo** text, int text_size, char* word) {
-    for(int i = 0; i < text_size; i++) {
+int GetWordIndexInText(TextInfo** text, int textSize, char* word) {
+    for(int i = 0; i < textSize; i++) {
         if(strcmp(text[i]->word, word) == 0)
             return i;
     }
@@ -53,7 +53,7 @@ char* GetWordFromText(TextInfo* textInfo) {
 }
 
 TextInfo* StoreTFIDFTextInfo(TextInfo* textInfo, int documentQuantity, int wordAppearence) {
-    textInfo->tf_idf = CalculateTFIDF(textInfo->frequency, documentQuantity, wordAppearence);
+    textInfo->tfidf = CalculateTFIDF(textInfo->frequency, documentQuantity, wordAppearence);
 
     return textInfo;
 }
@@ -74,5 +74,5 @@ void FreeTextInfo(TextInfo* textInfo) {
 }
 
 float GetTFIDFTextInfo(TextInfo* textInfo) {
-    return textInfo->tf_idf;
+    return textInfo->tfidf;
 }

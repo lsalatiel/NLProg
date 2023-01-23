@@ -3,7 +3,7 @@
 struct WordInfo {
     int documentIndex;
     int documentFrequency;
-    float TFIDF;
+    float tfidf;
 };
 
 void SortWordFrequencyInDocumentByInfo(WordInfo** info, int infoSize) {
@@ -20,7 +20,7 @@ WordInfo* AllocWordInfo() {
     info = malloc(sizeof(WordInfo));
     info->documentIndex = -1;
     info->documentFrequency = 0;
-    info->TFIDF = -1;
+    info->tfidf = -1;
 
     return info;
 }
@@ -59,11 +59,11 @@ int GetDocumentIndexInfo(WordInfo* info) {
 }
 
 float GetTFIDFInfo(WordInfo* info) {
-    return info->TFIDF;
+    return info->tfidf;
 }
 
 WordInfo* StoreTFIDFFromInfo(WordInfo* info, int documentQuantity, int wordAppearance) {  // wordAppearance = how many documents the word showed up
-    info->TFIDF = CalculateTFIDF(info->documentFrequency, documentQuantity, wordAppearance);
+    info->tfidf = CalculateTFIDF(info->documentFrequency, documentQuantity, wordAppearance);
 
     return info;
 }
@@ -75,7 +75,7 @@ void WriteWordInfoInBinaryFile(WordInfo* info, FILE* file) {
 
     fwrite(&info->documentIndex, sizeof(int), 1, file);
     fwrite(&info->documentFrequency, sizeof(int), 1, file);
-    fwrite(&info->TFIDF, sizeof(float), 1, file);
+    fwrite(&info->tfidf, sizeof(float), 1, file);
 }
 
 void ReadWordInfoFromBinaryFile(WordInfo* info, FILE* file) {
@@ -85,5 +85,5 @@ void ReadWordInfoFromBinaryFile(WordInfo* info, FILE* file) {
 
     fread(&info->documentIndex, sizeof(int), 1, file);
     fread(&info->documentFrequency, sizeof(int), 1, file);
-    fread(&info->TFIDF, sizeof(float), 1, file);
+    fread(&info->tfidf, sizeof(float), 1, file);
 }

@@ -50,11 +50,11 @@ TextInfo* AddFrequencyTextInfo(TextInfo* textInfo);
  * @brief returns the index of a word in a textInfo array
  * 
  * @param text 
- * @param text_size 
+ * @param textSize 
  * @param word 
  * @return int 
  */
-int GetWordIndexInText(TextInfo** text, int text_size, char* word);
+int GetWordIndexInText(TextInfo** text, int textSize, char* word);
 
 /**
  * @brief returns the word of a textInfo structure

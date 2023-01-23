@@ -3,7 +3,7 @@
 struct DocumentInfo {
     int wordIndex;
     int wordFrequency;
-    float TFIDF;
+    float tfidf;
 };
 
 int GetDocumentWordFrequency(DocumentInfo* info) {
@@ -15,7 +15,7 @@ DocumentInfo* AllocDocumentInfo() {
     info = malloc(sizeof(DocumentInfo));
     info->wordIndex = -1;
     info->wordFrequency = 0;
-    info->TFIDF = -1;
+    info->tfidf = -1;
 
     return info;
 }
@@ -54,7 +54,7 @@ DocumentInfo* AddWordFrequency(DocumentInfo* info) {
 }
 
 DocumentInfo* StoreTFIDFFromDocumentInfo(DocumentInfo* info, int documentQuantity, int wordAppearance) {
-    info->TFIDF = CalculateTFIDF(info->wordFrequency, documentQuantity, wordAppearance);
+    info->tfidf = CalculateTFIDF(info->wordFrequency, documentQuantity, wordAppearance);
 
     return info;
 }
@@ -66,7 +66,7 @@ void WriteDocumentInfoInBinaryFile(DocumentInfo* info, FILE* file) {
 
     fwrite(&info->wordIndex, sizeof(int), 1, file);
     fwrite(&info->wordFrequency, sizeof(int), 1, file);
-    fwrite(&info->TFIDF, sizeof(float), 1, file);
+    fwrite(&info->tfidf, sizeof(float), 1, file);
 }
 
 void ReadDocumentInfoFromBinaryFile(DocumentInfo* info, FILE* file) {
@@ -76,5 +76,5 @@ void ReadDocumentInfoFromBinaryFile(DocumentInfo* info, FILE* file) {
 
     fread(&info->wordIndex, sizeof(int), 1, file);
     fread(&info->wordFrequency, sizeof(int), 1, file);
-    fread(&info->TFIDF, sizeof(float), 1, file);
+    fread(&info->tfidf, sizeof(float), 1, file);
 }

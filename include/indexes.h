@@ -36,12 +36,12 @@ Indexes* StoreTFIDFFromIndexes(Indexes* indexes);
 /**
  * @brief writes indexes in a binary file
  */
-void WriteIndexesInBinaryFile(Indexes* indexes, char* fileName);
+void WriteIndexesInBinaryFile(Indexes* indexes, char* argv);
 
 /**
  * @brief reads indexes in a binary file
  */
-Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* fileName);
+Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* argv);
 
 /**
  * @brief shows the most relevant documents from user given words
