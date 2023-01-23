@@ -405,9 +405,9 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 
         char* mostFrequentClass = FindMostFrequentDocumentClass(indexes, newsQuantity);
 
-        for (int i = 0; i < newsQuantity; i++) {
-            printf("%s. Distance of the documents: %.2f\n", GetDocumentClass(indexes->documents[i]), GetDocumentCosine(indexes->documents[i]));
-        }
+        // for (int i = 0; i < newsQuantity; i++) {
+        //     printf("%s. Distance of the documents: %.2f\n", GetDocumentClass(indexes->documents[i]), GetDocumentCosine(indexes->documents[i]));
+        // }
 
         GreenText();
         printf("The most likely class of this document is '%s'.\n\n", mostFrequentClass);
@@ -428,7 +428,7 @@ char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
     float multiplier = 0, max_multiplier = 0;
     char* res = GetDocumentClass(indexes->documents[0]);
 
-    qsort(indexes->documents, size, sizeof(ForwardIndex*), CompareDocumentClasses);
+    qsort(indexes->documents, size, sizeof(ForwardIndex*), CompareDocumentClasses);  // sort the array by class
 
     for (int i = 1; i < size; i++) {
         if (strcmp(GetDocumentClass(indexes->documents[i]), GetDocumentClass(indexes->documents[i - 1])) == 0) {
@@ -443,13 +443,13 @@ char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
                 max_count = count;
                 max_multiplier = multiplier;
                 res = GetDocumentClass(indexes->documents[i - 1]);
-            }
-            else if (count == max_count) {
+            } else if (count == max_count) {
                 if (multiplier > max_multiplier) {
                     max_multiplier = multiplier;
                     res = GetDocumentClass(indexes->documents[i - 1]);
                 }
             }
+            multiplier = 0;
             count = 1;
         }
     }
