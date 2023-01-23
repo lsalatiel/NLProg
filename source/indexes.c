@@ -9,6 +9,16 @@ struct Indexes {
     int* wordsAlloc;
 };
 
+void GenerateOutputInfo(Indexes* indexes, char* argv) {
+    int totalWords = 0;
+    for (int x = 0; x < *indexes->wordsSize; x++) {
+        totalWords += GetWordInfoSize(indexes->words[x]);
+    }
+    GreenText();
+    printf("The binary file for the main program has been successfully created with the name '%s' in the 'binary' folder. It has %d documents and %d different words.\n", argv, *indexes->documentsSize, totalWords);
+    DefaultText();
+}
+
 Indexes* AllocateIndexes() {
     Indexes* indexes = NULL;
     indexes = malloc(sizeof(Indexes));
@@ -145,13 +155,12 @@ Indexes* StoreTFIDFFromIndexes(Indexes* indexes) {
 }
 
 void WriteIndexesInBinaryFile(Indexes* indexes, char* argv) {
-    char* binaryFileName = NULL;
-    binaryFileName = malloc(sizeof(char) * (strlen(argv) + 8));
-    strcpy(binaryFileName, "binary/");
-    strcat(binaryFileName, argv);
-
+    char* binaryFileName = malloc(sizeof(char) * (strlen(argv) + 8));
+    sprintf(binaryFileName, "binary/%s", argv);
     FILE* file = fopen(binaryFileName, "wb");
     FreeAndNull(binaryFileName);
+
+    // FILE* file = fopen(argv, "wb"); // use this line and remove above 4 lines in case of hardcode issues
 
     if (file == NULL) {
         FreeAndNull(indexes);
@@ -172,10 +181,6 @@ void WriteIndexesInBinaryFile(Indexes* indexes, char* argv) {
     for (int i = 0; i < *indexes->wordsSize; i++) {
         WriteInvertedIndexInBinaryFile(indexes->words[i], file);
     }
-    GreenText();
-    printf("The binary file '%s' for the main program has been created in the folder 'binary' successfully.\n", argv);
-    DefaultText();
-
     fclose(file);
 }
 
@@ -392,9 +397,9 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 
         qsort(indexes->documents, *indexes->documentsSize, sizeof(ForwardIndex*), CompareCosines);
 
-        for(int i = 0; i < newsQuantity; i++) {
-            if(GetDocumentCosine(indexes->documents[i]) == 0) {
-                newsQuantity = i; // update newsQuantity in a way that it ignores the cosines = 0
+        for (int i = 0; i < newsQuantity; i++) {
+            if (GetDocumentCosine(indexes->documents[i]) == 0) {
+                newsQuantity = i;  // update newsQuantity in a way that it ignores the cosines = 0
             }
         }
 

@@ -80,4 +80,6 @@ void SortNews(Indexes* indexes, int newsQuantity);
  */
 char* FindMostFrequentDocumentClass(Indexes* indexes, int size);
 
+void GenerateOutputInfo(Indexes* indexes, char* argv);
+
 #endif
