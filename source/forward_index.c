@@ -290,6 +290,10 @@ int CompareCosines(const void* a, const void* b) {
         return 0;
 }
 
+int CompareDocumentClasses(const void* a, const void* b) {
+    return strcmp((*(const ForwardIndex**)a)->class, (*(const ForwardIndex**)b)->class);
+}
+
 float GetDocumentCosine(ForwardIndex* document) {
     return document->cosine;
 }

@@ -130,4 +130,13 @@ int CompareCosines(const void* a, const void* b);
  */
 float GetDocumentCosine(ForwardIndex* document);
 
+/**
+ * @brief comparison function for qsort() based on the classes of a document array
+ * 
+ * @param a 
+ * @param b 
+ * @return int 
+ */
+int CompareDocumentClasses(const void* a, const void* b);
+
 #endif

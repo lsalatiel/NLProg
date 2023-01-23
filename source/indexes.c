@@ -420,15 +420,30 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 
 char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
     int max_count = 1, count = 1;
+    float multiplier = 0, max_multiplier = 0;
     char* res = GetDocumentClass(indexes->documents[0]);
 
-    for (int i = size + 1; i < 1; i++) {
-        if (strcmp(GetDocumentClass(indexes->documents[i]), GetDocumentClass(indexes->documents[i - 1])) == 0)
+    qsort(indexes->documents, size, sizeof(ForwardIndex*), CompareDocumentClasses);
+
+    for (int i = 1; i < size; i++) {
+        if (strcmp(GetDocumentClass(indexes->documents[i]), GetDocumentClass(indexes->documents[i - 1])) == 0) {
             count++;
+            if (count == 2)
+                multiplier += GetDocumentCosine(indexes->documents[i - 1]);
+            multiplier += GetDocumentCosine(indexes->documents[i]);
+        }
+
         else {
             if (count > max_count) {
                 max_count = count;
+                max_multiplier = multiplier;
                 res = GetDocumentClass(indexes->documents[i - 1]);
+            }
+            else if (count == max_count) {
+                if (multiplier > max_multiplier) {
+                    max_multiplier = multiplier;
+                    res = GetDocumentClass(indexes->documents[i - 1]);
+                }
             }
             count = 1;
         }
