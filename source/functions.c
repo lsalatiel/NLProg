@@ -17,9 +17,10 @@ void GreenText() {
 }
 
 void CheckDataFilesPath(int argc) {
+    ClearTerminal();
     if (argc != 3) {
         RedText();
-        printf("• ERROR: Invalid number of command line arguments.\n");
+        printf("ERROR: Invalid number of command line arguments.\n");
         DefaultText();
         exit(1);
     }
@@ -27,7 +28,7 @@ void CheckDataFilesPath(int argc) {
 
 void PrintFileError() {
     RedText();
-    printf("• ERROR: File not found.\n");
+    printf("ERROR: File not found.\n");
     DefaultText();
 }
 

@@ -21,19 +21,18 @@ void GenerateOutputInfo(Indexes* indexes, char* argv) {
 }
 
 Indexes* AllocateIndexes() {
-    Indexes* indexes = NULL;
-    indexes = malloc(sizeof(Indexes));
+    Indexes* indexes = malloc(sizeof(Indexes));
 
-    indexes->documents = malloc(STARTER_ALLOC * sizeof(ForwardIndex*));
     indexes->documentsSize = calloc(sizeof(int), 1);
     indexes->documentsAlloc = malloc(sizeof(int));
     *indexes->documentsAlloc = STARTER_ALLOC;
 
-    indexes->words = malloc(STARTER_ALLOC * sizeof(InvertedIndex*));
     indexes->wordsSize = calloc(sizeof(int), 1);
     indexes->wordsAlloc = malloc(sizeof(int));
     *indexes->wordsAlloc = STARTER_ALLOC;
 
+    indexes->documents = malloc(STARTER_ALLOC * sizeof(ForwardIndex*));
+    indexes->words = malloc(STARTER_ALLOC * sizeof(InvertedIndex*));
     for (int x = 0; x < STARTER_ALLOC; x++) {
         indexes->documents[x] = AllocDocument();
         indexes->words[x] = AllocWord();
@@ -50,7 +49,6 @@ Indexes* ReadTrainFile(Indexes* indexes, char* argv) {
         exit(1);
     }
 
-    ClearTerminal();
     GreenText();
     printf("Reading files, please wait.\n");
     DefaultText();
@@ -70,11 +68,11 @@ void FreeIndexes(Indexes* indexes) {
         FreeWord(indexes->words[x]);
     }
     FreeAndNull(indexes->documents);
-    FreeAndNull(indexes->documentsSize);
-    FreeAndNull(indexes->documentsAlloc);
     FreeAndNull(indexes->words);
-    FreeAndNull(indexes->wordsSize);
+    FreeAndNull(indexes->documentsAlloc);
     FreeAndNull(indexes->wordsAlloc);
+    FreeAndNull(indexes->documentsSize);
+    FreeAndNull(indexes->wordsSize);
     FreeAndNull(indexes);
 }
 
@@ -192,12 +190,7 @@ void WriteIndexesInBinaryFile(Indexes* indexes, char* argv) {
 }
 
 Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* argv) {
-    char* binaryFileName = malloc(sizeof(char) * (strlen(argv) + 8));
-    sprintf(binaryFileName, "binary/%s", argv);
-    FILE* file = fopen(binaryFileName, "rb");
-    FreeAndNull(binaryFileName);
-
-    // FILE* file = fopen(argv, "rb"); // use this line and remove above 4 lines in case of hardcode issues
+    FILE* file = fopen(argv, "rb");
 
     if (file == NULL) {
         FreeAndNull(indexes);
@@ -262,7 +255,7 @@ void SearchAndSortNews(Indexes* indexes) {
         ResetTFIDFSums(indexes->documents, *indexes->documentsSize);
     } else {
         RedText();
-        printf("No news was found.\n");
+        printf("No results were found.\n");
         DefaultText();
     }
     ResetUserSearchInput(queryWords, querySize);
@@ -299,7 +292,7 @@ void GenerateWordRelatory(Indexes* indexes) {
         ResetIndexesArrayOrder(indexes);
     } else {
         RedText();
-        printf("The word '%s' does not appear in any document.\n\n", search);
+        printf("No results were found in the documents.\n\n");
         DefaultText();
     }
     FreeAndNull(search);
@@ -314,6 +307,7 @@ void GenerateDocumentRelatory(Indexes* indexes) {
     AddTotalWordsNumber(indexes->documents, *indexes->documentsSize);
     PrintLongerDocuments(indexes->documents, *indexes->documentsSize);
     PrintShorterDocuments(indexes->documents, *indexes->documentsSize);
+    ResetTotalWordsNumber(indexes->documents, *indexes->documentsSize);
     ResetIndexesArrayOrder(indexes);
 }
 
@@ -369,9 +363,8 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 
     if (!wordFound) {
         RedText();
-        printf("No word found in the documents.\n\n");
+        printf("No results were found in the documents.\n\n");
         DefaultText();
-
     } else {
         float cosine = 0;
 

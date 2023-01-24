@@ -20,6 +20,12 @@ void AddTotalWordsNumber(ForwardIndex** documents, int documentsSize) {
     }
 }
 
+void ResetTotalWordsNumber(ForwardIndex** documents, int documentsSize) {
+    for (int x = 0; x < documentsSize; x++) {
+        *documents[x]->totalWords = 0;
+    }
+}
+
 void PrintLongerDocuments(ForwardIndex** documents, int documentsSize) {
     qsort(documents, documentsSize, sizeof(ForwardIndex*), CompareDescendingTotalWords);
 
@@ -59,16 +65,15 @@ void AddTFIDFToSum(ForwardIndex* document, float add) {
 }
 
 ForwardIndex* AllocDocument() {
-    ForwardIndex* document = NULL;
+    ForwardIndex* document = calloc(sizeof(ForwardIndex), 1);
 
-    document = calloc(sizeof(ForwardIndex), 1);
-    document->info = malloc(STARTER_ALLOC * sizeof(DocumentInfo*));
     document->infoSize = calloc(sizeof(int), 1);
-    document->infoAlloc = malloc(sizeof(int));
     document->sumTFIDF = calloc(sizeof(float), 1);
     document->totalWords = calloc(sizeof(int), 1);
+    document->infoAlloc = malloc(sizeof(int));
     *document->infoAlloc = STARTER_ALLOC;
 
+    document->info = malloc(STARTER_ALLOC * sizeof(DocumentInfo*));
     for (int x = 0; x < STARTER_ALLOC; x++) {
         document->info[x] = AllocDocumentInfo();
     }

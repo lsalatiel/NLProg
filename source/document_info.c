@@ -11,8 +11,8 @@ int GetDocumentWordFrequency(DocumentInfo* info) {
 }
 
 DocumentInfo* AllocDocumentInfo() {
-    DocumentInfo* info = NULL;
-    info = malloc(sizeof(DocumentInfo));
+    DocumentInfo* info = malloc(sizeof(DocumentInfo));
+    
     info->wordIndex = -1;
     info->wordFrequency = 0;
     info->tfidf = -1;

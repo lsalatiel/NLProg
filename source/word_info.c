@@ -15,9 +15,8 @@ int CompareWordFrequency(const void* a, const void* b) {
 }
 
 WordInfo* AllocWordInfo() {
-    WordInfo* info = NULL;
+    WordInfo* info = malloc(sizeof(WordInfo));
 
-    info = malloc(sizeof(WordInfo));
     info->documentIndex = -1;
     info->documentFrequency = 0;
     info->tfidf = -1;

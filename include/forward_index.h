@@ -94,6 +94,7 @@ void PrintDocumentWordResults(ForwardIndex* document, int order);
 int CompareDocumentsIndex(const void* a, const void* b);
 
 void AddTotalWordsNumber(ForwardIndex** documents, int documentsSize);
+void ResetTotalWordsNumber(ForwardIndex** documents, int documentsSize);
 
 int GetTotalWordsNumber(ForwardIndex* document);
 

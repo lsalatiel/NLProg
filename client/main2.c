@@ -1,12 +1,12 @@
 #include "libraries.h"
 
 int main(int argc, char** argv) {
-    argv[1] = "lulu.bin";
+    // CheckDataFilesPath(argc);
+
+    argv[1] = "binary/lulu.bin";
     argv[2] = "10";
 
-    ClearTerminal();
-    Indexes* indexes = NULL;
-    indexes = AllocateIndexes();
+    Indexes* indexes = AllocateIndexes();
     indexes = ReadIndexesFromBinaryFile(indexes, argv[1]);
 
     while (ONLINE) {
