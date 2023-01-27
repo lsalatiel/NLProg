@@ -1,10 +1,17 @@
 #include "libraries.h"
 
-void CheckDataFilesPath(int argc) {
-    ClearTerminal();
+void CheckDataFilesPath1(int argc) {
+    CLEAR_TERMINAL;
     if (argc != 3) {
-        printf(BOLD RED "ERROR: Invalid number of command line arguments.\n" DEFAULT);
+        printf(BOLD RED "Please run the program like: ./nlprog1 [path to train.txt] [binary file name to be created].\n\n" DEFAULT);
+        exit(1);
+    }
+}
 
+void CheckDataFilesPath2(int argc) {
+    CLEAR_TERMINAL;
+    if (argc != 3) {
+        printf(BOLD RED "Please run the program like: ./nlprog2 [binary file name created in program 1] [number of news to be searched].\n\n" DEFAULT);
         exit(1);
     }
 }
@@ -19,26 +26,18 @@ void FreeAndNull(void* pointer) {
 }
 
 bool EndOfFile(char character) {
-    if (character == '\0' || character == '\n' || character == '\r' || character == ' ' || character == '\t') {
+    if (character == '\0' || character == '\n' || character == '\r' || character == ' ' || character == '\t')
         return true;
-    } else {
+    else
         return false;
-    }
 }
 
 float CalculateTFIDF(int frequency, int documentQuantity, int wordAppearance) {
     float tf = frequency;
-
     float x = (1 + documentQuantity) / (1 + wordAppearance);
     float idf = log(x) + 1;
 
     return tf * idf;
-}
-
-void ClearTerminal() {
-    while (system("clear") == 0) {
-        break;
-    }
 }
 
 int GetValidIntegerInput(int minimumRange, int maximumRange) {
@@ -56,19 +55,19 @@ int GetValidIntegerInput(int minimumRange, int maximumRange) {
 
                 if (input >= minimumRange && input <= maximumRange) {
                     FreeAndNull(buffer);
-                    ClearTerminal();
+                    CLEAR_TERMINAL;
                     return input;
                 }
             }
         }
 
         printf(BOLD RED "• ERROR: Invalid option. Try again: " DEFAULT);
+        FreeAndNull(buffer);
     }
 }
 
 int SetUpMainMenu() {
     PrintArtMenu();
-
     printf(BOLD "\n• Enter an option: " DEFAULT);
 
     return GetValidIntegerInput(1, 5);
@@ -82,7 +81,6 @@ char** GetUserSentenceInput(int* querySize) {
 
     if (read == -1) {
         printf(BOLD RED "• ERROR: Invalid search. Try again: " DEFAULT);
-
         return NULL;
     }
 
@@ -96,7 +94,6 @@ char** GetUserSentenceInput(int* querySize) {
 
         if (result == NULL) {
             printf(BOLD RED "• ERROR: Invalid search. Try again: " DEFAULT);
-
             return NULL;
         }
 
@@ -112,9 +109,8 @@ char** GetUserSentenceInput(int* querySize) {
 }
 
 void ResetUserSearchInput(char** input, int* inputSize) {
-    for (int x = 0; x < *inputSize; x++) {
+    for (int x = 0; x < *inputSize; x++)
         FreeAndNull(input[x]);
-    }
 
     FreeAndNull(inputSize);
     FreeAndNull(input);
@@ -128,7 +124,6 @@ char* GetUserWordInput() {
 
     if (read == -1) {
         printf(BOLD RED "• ERROR: Invalid search. Try again: " DEFAULT);
-
         return NULL;
     }
 

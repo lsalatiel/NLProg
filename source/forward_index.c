@@ -63,26 +63,24 @@ void AddTFIDFToSum(ForwardIndex* document, float add) {
 }
 
 ForwardIndex* AllocDocument() {
-    ForwardIndex* document = calloc(sizeof(ForwardIndex), 1);
+    ForwardIndex* document = calloc(1, sizeof(ForwardIndex));
 
-    document->infoSize = calloc(sizeof(int), 1);
-    document->sumTFIDF = calloc(sizeof(float), 1);
-    document->totalWords = calloc(sizeof(int), 1);
+    document->infoSize = calloc(1, sizeof(int));
+    document->sumTFIDF = calloc(1, sizeof(float));
+    document->totalWords = calloc(1, sizeof(int));
     document->infoAlloc = malloc(sizeof(int));
     *document->infoAlloc = STARTER_ALLOC;
 
     document->info = malloc(STARTER_ALLOC * sizeof(DocumentInfo*));
-    for (int x = 0; x < STARTER_ALLOC; x++) {
+    for (int x = 0; x < STARTER_ALLOC; x++)
         document->info[x] = AllocDocumentInfo();
-    }
 
     return document;
 }
 
 void FreeDocument(ForwardIndex* document) {
-    for (int x = 0; x < *document->infoAlloc; x++) {
+    for (int x = 0; x < *document->infoAlloc; x++)
         FreeDocumentInfo(document->info[x]);
-    }
 
     FreeAndNull(document->name);
     FreeAndNull(document->class);
@@ -120,9 +118,8 @@ ForwardIndex** ReallocDocuments(ForwardIndex** documents, int* documentsAlloc) {
     new = realloc(documents, *documentsAlloc * sizeof(ForwardIndex*));
     documents = new;
 
-    for (int x = *documentsAlloc / 2; x < *documentsAlloc; x++) {
+    for (int x = *documentsAlloc / 2; x < *documentsAlloc; x++)
         documents[x] = AllocDocument();
-    }
 
     return documents;
 }
@@ -171,9 +168,8 @@ ForwardIndex** StoreTFIDFFromDocuments(ForwardIndex** documents, int wordIndex, 
 }
 
 void WriteForwardIndexInBinaryFile(ForwardIndex* document, FILE* file) {
-    if (file == NULL) {
+    if (file == NULL)
         return;
-    }
 
     fwrite(&document->index, sizeof(int), 1, file);
     int nameSize = strlen(document->name) + 1;
@@ -185,15 +181,13 @@ void WriteForwardIndexInBinaryFile(ForwardIndex* document, FILE* file) {
     fwrite(document->infoSize, sizeof(int), 1, file);
     fwrite(document->infoAlloc, sizeof(int), 1, file);
 
-    for (int i = 0; i < *document->infoSize; i++) {
+    for (int i = 0; i < *document->infoSize; i++)
         WriteDocumentInfoInBinaryFile(document->info[i], file);
-    }
 }
 
 ForwardIndex* ReadForwardIndexFromBinaryFile(ForwardIndex* document, FILE* file) {
-    if (file == NULL) {
+    if (file == NULL)
         return NULL;
-    }
 
     fread(&document->index, sizeof(int), 1, file);
     int nameSize;
@@ -207,30 +201,26 @@ ForwardIndex* ReadForwardIndexFromBinaryFile(ForwardIndex* document, FILE* file)
     fread(document->infoSize, sizeof(int), 1, file);
     fread(document->infoAlloc, sizeof(int), 1, file);
 
-    if (*document->infoAlloc > STARTER_ALLOC) {
+    if (*document->infoAlloc > STARTER_ALLOC)
         document->info = ReallocDocumentInfoArray(document->info, STARTER_ALLOC, *document->infoAlloc);
-    }
 
-    for (int i = 0; i < *document->infoSize; i++) {
+    for (int i = 0; i < *document->infoSize; i++)
         ReadDocumentInfoFromBinaryFile(document->info[i], file);
-    }
 
     return document;
 }
 
 void ResetTFIDFSums(ForwardIndex** documents, int documentsSize) {
-    for (int x = 0; x < documentsSize; x++) {
+    for (int x = 0; x < documentsSize; x++)
         *documents[x]->sumTFIDF = 0.0;
-    }
 }
 
 int GetDocumentsWithTFIDFNumber(ForwardIndex** documents, int documentsSize) {
     int x = 0;
 
     for (x = 0; x < documentsSize; x++) {
-        if (*documents[x]->sumTFIDF == 0.0) {
+        if (*documents[x]->sumTFIDF == 0.0)
             break;
-        }
     }
 
     return x;
@@ -246,18 +236,17 @@ int CompareTFIDFs(const void* a, const void* b) {
 }
 
 void PrintNewsResults(ForwardIndex** documents, int results) {
-    if (results == 1) {
+    if (results == 1)
         printf(GREEN "1 news was found with the searched term:\n\n" DEFAULT);
-    } else if (results <= 10) {
+    else if (results <= 10)
         printf(GREEN "%d news were found with the searched term:\n\n" DEFAULT, results);
-    } else if (results > 10) {
+    else if (results > 10)
         printf(GREEN "Showing the 10 most relevant news for the searched term:\n\n" DEFAULT);
-    }
 
     for (int x = 0; x < MAX_RESULTS_NUMBER; x++) {
-        if (*documents[x]->sumTFIDF == 0.0) {
+        if (*documents[x]->sumTFIDF == 0.0)
             break;
-        }
+
         printf(GREEN "Document name '%s' with TF-IDF value of '%.2f'.\n" DEFAULT, documents[x]->name, *documents[x]->sumTFIDF);
     }
 }
