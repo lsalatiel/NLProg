@@ -3,7 +3,6 @@
 
 typedef struct DocumentInfo DocumentInfo;
 
-
 int GetDocumentWordFrequency(DocumentInfo* info);
 
 /**

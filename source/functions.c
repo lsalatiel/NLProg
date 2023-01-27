@@ -1,35 +1,16 @@
 #include "libraries.h"
 
-void BoldText() {
-    printf("\e[1m");
-}
-
-void DefaultText() {
-    printf("\033[0m");
-}
-
-void RedText() {
-    printf("\033[1;31m");
-}
-
-void GreenText() {
-    printf("\033[1;32m");
-}
-
 void CheckDataFilesPath(int argc) {
     ClearTerminal();
     if (argc != 3) {
-        RedText();
-        printf("ERROR: Invalid number of command line arguments.\n");
-        DefaultText();
+        printf(BOLD RED "ERROR: Invalid number of command line arguments.\n" DEFAULT);
+
         exit(1);
     }
 }
 
 void PrintFileError() {
-    RedText();
-    printf("ERROR: File not found.\n");
-    DefaultText();
+    printf(BOLD RED "ERROR: File not found.\n" DEFAULT);
 }
 
 void FreeAndNull(void* pointer) {
@@ -76,23 +57,19 @@ int GetValidIntegerInput(int minimumRange, int maximumRange) {
                 if (input >= minimumRange && input <= maximumRange) {
                     FreeAndNull(buffer);
                     ClearTerminal();
-                    DefaultText();
                     return input;
                 }
             }
         }
 
-        RedText();
-        printf("• ERROR: Invalid option. Try again: ");
-        FreeAndNull(buffer);
+        printf(BOLD RED "• ERROR: Invalid option. Try again: " DEFAULT);
     }
 }
 
 int SetUpMainMenu() {
     PrintArtMenu();
-    BoldText();
-    printf("\n• Enter an option: ");
-    DefaultText();
+
+    printf(BOLD "\n• Enter an option: " DEFAULT);
 
     return GetValidIntegerInput(1, 5);
 }
@@ -104,9 +81,8 @@ char** GetUserSentenceInput(int* querySize) {
     read = getline(&line, &len, stdin);
 
     if (read == -1) {
-        RedText();
-        printf("• ERROR: Invalid search. Try again: ");
-        DefaultText();
+        printf(BOLD RED "• ERROR: Invalid search. Try again: " DEFAULT);
+
         return NULL;
     }
 
@@ -119,9 +95,8 @@ char** GetUserSentenceInput(int* querySize) {
         result = realloc(result, sizeof(char*) * ++spaces);
 
         if (result == NULL) {
-            RedText();
-            printf("• ERROR: Invalid search. Try again: ");
-            DefaultText();
+            printf(BOLD RED "• ERROR: Invalid search. Try again: " DEFAULT);
+
             return NULL;
         }
 
@@ -152,9 +127,8 @@ char* GetUserWordInput() {
     read = getline(&line, &len, stdin);
 
     if (read == -1) {
-        RedText();
-        printf("• ERROR: Invalid search. Try again: ");
-        DefaultText();
+        printf(BOLD RED "• ERROR: Invalid search. Try again: " DEFAULT);
+
         return NULL;
     }
 
@@ -165,7 +139,6 @@ char* GetUserWordInput() {
 }
 
 void PrintArtMenu() {
-    BoldText();
     printf(" ╔═══╗   ┌─┐┌─┐┌─┐┬─┐┌─┐┬ ┬  ┌┐┌┌─┐┬ ┬┌─┐\n");
     printf(" █ 1 █   └─┐├┤ ├─┤├┬┘│  ├─┤  │││├┤ │││└─┐\n");
     printf(" ╚═══╝   └─┘└─┘┴ ┴┴└─└─┘┴ ┴  ┘└┘└─┘└┴┘└─┘\n");
@@ -181,7 +154,6 @@ void PrintArtMenu() {
     printf(" ╔═══╗   ┬  ┌─┐┌─┐┬  ┬┌─┐  ┌─┐┬─┐┌─┐┌─┐┬─┐┌─┐┌┬┐\n");
     printf(" █ 5 █   │  ├┤ ├─┤└┐┌┘├┤   ├─┘├┬┘│ ││ ┬├┬┘├─┤│││\n");
     printf(" ╚═══╝   ┴─┘└─┘┴ ┴ └┘ └─┘  ┴  ┴└─└─┘└─┘┴└─┴ ┴┴ ┴\n");
-    DefaultText();
 }
 
 char* IsItTrainOrTestFile(char* argv) {

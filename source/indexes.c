@@ -15,9 +15,8 @@ void GenerateOutputInfo(Indexes* indexes, char* argv) {
         totalWords += GetWordInfoSize(indexes->words[x]);
     }
     ClearTerminal();
-    GreenText();
-    printf("The binary file for the main program has been successfully created with the name '%s' in the 'binary' folder. It has %d documents and %d different words.\n", argv, *indexes->documentsSize, totalWords);
-    DefaultText();
+
+    printf(GREEN "The binary file for the main program has been successfully created with the name '%s' in the 'binary' folder. It has %d documents and %d different words.\n" DEFAULT, argv, *indexes->documentsSize, totalWords);
 }
 
 Indexes* AllocateIndexes() {
@@ -49,9 +48,7 @@ Indexes* ReadTrainFile(Indexes* indexes, char* argv) {
         exit(1);
     }
 
-    GreenText();
-    printf("Reading files, please wait.\n");
-    DefaultText();
+    printf(GREEN "Reading files, please wait.\n" DEFAULT);
 
     indexes->documents = ReadDocuments(indexes->documents, train, indexes->documentsSize, indexes->documentsAlloc);
 
@@ -230,11 +227,9 @@ void SearchAndSortNews(Indexes* indexes) {
     int* querySize = malloc(sizeof(int));
     char** queryWords = NULL;
 
-    BoldText();
-    printf("• Enter the search: ");
+    printf(BOLD "• Enter the search: " DEFAULT);
     do queryWords = GetUserSentenceInput(querySize);
     while (queryWords == NULL);
-    DefaultText();
 
     bool somethingFound = false;
     qsort(indexes->words, *indexes->wordsSize, sizeof(InvertedIndex*), CompareWords);
@@ -254,9 +249,7 @@ void SearchAndSortNews(Indexes* indexes) {
         PrintNewsResults(indexes->documents, GetDocumentsWithTFIDFNumber(indexes->documents, *indexes->documentsSize));
         ResetTFIDFSums(indexes->documents, *indexes->documentsSize);
     } else {
-        RedText();
-        printf("No results were found.\n");
-        DefaultText();
+        printf(BOLD RED "No results were found.\n" DEFAULT);
     }
     ResetUserSearchInput(queryWords, querySize);
     ResetIndexesArrayOrder(indexes);
@@ -264,10 +257,8 @@ void SearchAndSortNews(Indexes* indexes) {
 }
 
 void GenerateWordRelatory(Indexes* indexes) {
-    BoldText();
-    printf("• Enter the word: ");
+    printf(BOLD "• Enter the word: " DEFAULT);
     char* search = GetUserWordInput();
-    DefaultText();
 
     qsort(indexes->words, *indexes->wordsSize, sizeof(InvertedIndex*), CompareWords);
     InvertedIndex** word = SearchWords(search, indexes->words, *indexes->wordsSize);
@@ -291,9 +282,7 @@ void GenerateWordRelatory(Indexes* indexes) {
         FreeClasses(classes);
         ResetIndexesArrayOrder(indexes);
     } else {
-        RedText();
-        printf("No results were found in the documents.\n\n");
-        DefaultText();
+        printf(BOLD RED "No results were found in the documents.\n\n" DEFAULT);
     }
     FreeAndNull(search);
 }
@@ -315,11 +304,9 @@ void SortNews(Indexes* indexes, int newsQuantity) {
     int* querySize = malloc(sizeof(int));
     char** queryWords = NULL;
 
-    BoldText();
-    printf("• Enter the search: ");
+    printf(BOLD "• Enter the search: " DEFAULT);
     do queryWords = GetUserSentenceInput(querySize);
     while (queryWords == NULL);
-    DefaultText();
 
     int textAlloc = *querySize;
     int textSize = 0;
@@ -362,9 +349,8 @@ void SortNews(Indexes* indexes, int newsQuantity) {
     }
 
     if (!wordFound) {
-        RedText();
-        printf("No results were found in the documents.\n\n");
-        DefaultText();
+        printf(BOLD RED "No results were found in the documents.\n\n" DEFAULT);
+
     } else {
         float cosine = 0;
 
@@ -408,9 +394,7 @@ void SortNews(Indexes* indexes, int newsQuantity) {
         //     printf("%s. Distance of the documents: %.2f\n", GetDocumentClass(indexes->documents[i]), GetDocumentCosine(indexes->documents[i]));
         // }
 
-        GreenText();
-        printf("The most likely class of this document is '%s'.\n\n", mostFrequentClass);
-        DefaultText();
+        printf(GREEN "The most likely class of this document is '%s'.\n\n" DEFAULT, mostFrequentClass);
     }
 
     ResetIndexesArrayOrder(indexes);

@@ -178,13 +178,11 @@ int CompareWords(const void* a, const void* b) {
 }
 
 void PrintWordFrequencyInDocuments(char* search, int frequency) {
-    GreenText();
     if (frequency == 1) {
-        printf("The word '%s' appears in %d document.\n\n", search, frequency);
+        printf(GREEN "The word '%s' appears in %d document.\n\n" DEFAULT, search, frequency);
     } else {
-        printf("The word '%s' appears in %d documents.\n\n", search, frequency);
+        printf(GREEN "The word '%s' appears in %d documents.\n\n" DEFAULT, search, frequency);
     }
-    DefaultText();
 }
 
 int CompareWordsIndex(const void* a, const void* b) {
@@ -193,13 +191,13 @@ int CompareWordsIndex(const void* a, const void* b) {
 
 float GetTFIDFInDocument(InvertedIndex* word, int documentIndex) {
     float tfidf = 0;
-    
-    for(int i = 0; i < word->infoSize; i++) {
-        if(GetDocumentIndexInfo(word->info[i]) == documentIndex) {
+
+    for (int i = 0; i < word->infoSize; i++) {
+        if (GetDocumentIndexInfo(word->info[i]) == documentIndex) {
             tfidf = GetTFIDFInfo(word->info[i]);
             break;
         }
     }
-    
+
     return tfidf;
 }

@@ -98,13 +98,8 @@ void PrintWordFrequencyInDocuments(char* search, int frequency);
  */
 int CompareWordsIndex(const void* a, const void* b);
 
-
 /**
  * @brief returns the TFIDF of a word in a specific document (returns 0 if not found)
- * 
- * @param word 
- * @param documentIndex 
- * @return float 
  */
 float GetTFIDFInDocument(InvertedIndex* word, int documentIndex);
 

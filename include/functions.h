@@ -2,26 +2,6 @@
 #define FUNCTIONS_H
 
 /**
- * @brief changes text to bold form
- */
-void BoldText();
-
-/**
- * @brief changes text colour to default
- */
-void DefaultText();
-
-/**
- * @brief changes text colour to red
- */
-void RedText();
-
-/**
- * @brief changes text colour to green
- */
-void GreenText();
-
-/**
  * @brief checks if arguments were correctly sent by command line
  */
 void CheckDataFilesPath(int argc);

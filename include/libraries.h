@@ -16,6 +16,10 @@
 #include "text_info.h"
 #include "word_info.h"
 
+#define RED "\e[31m"
+#define BOLD "\e[1m"
+#define GREEN "\e[32m"
+#define DEFAULT "\e[0m"
 #define BUFFER_SIZE 128
 #define STARTER_ALLOC 16
 #define MAX_RESULTS_NUMBER 10

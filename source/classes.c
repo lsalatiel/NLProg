@@ -49,14 +49,14 @@ int CompareClasses(const void* a, const void* b) {
 
 void PrintClasses(Classes** classes) {
     printf("\n");
-    GreenText();
+
     for (int x = 0; x < MAX_CLASSES_NUMBER; x++) {
         if (classes[x]->count == 0) {
             break;
         }
-        printf("In class '%s' appearances: %d\n", classes[x]->class, classes[x]->count);
+        printf(GREEN "In class '%s' appearances: %d\n" DEFAULT, classes[x]->class, classes[x]->count);
     }
-    DefaultText();
+
     printf("\n");
 }
 

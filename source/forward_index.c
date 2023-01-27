@@ -29,22 +29,20 @@ void ResetTotalWordsNumber(ForwardIndex** documents, int documentsSize) {
 void PrintLongerDocuments(ForwardIndex** documents, int documentsSize) {
     qsort(documents, documentsSize, sizeof(ForwardIndex*), CompareDescendingTotalWords);
 
-    GreenText();
     for (int x = 0; x < MAX_RESULTS_NUMBER; x++) {
-        printf("The %dº longest document is of class '%s' and has %d words.\n", x + 1, documents[x]->class, *documents[x]->totalWords);
+        printf(GREEN "The %dº longest document is of class '%s' and has %d words.\n" DEFAULT, x + 1, documents[x]->class, *documents[x]->totalWords);
     }
-    DefaultText();
+
     printf("\n");
 }
 
 void PrintShorterDocuments(ForwardIndex** documents, int documentsSize) {
     qsort(documents, documentsSize, sizeof(ForwardIndex*), CompareAscendingTotalWords);
 
-    GreenText();
     for (int x = 0; x < MAX_RESULTS_NUMBER; x++) {
-        printf("The %dº shortest document is of class '%s' and has %d words.\n", x + 1, documents[x]->class, *documents[x]->totalWords);
+        printf(GREEN "The %dº shortest document is of class '%s' and has %d words.\n" DEFAULT, x + 1, documents[x]->class, *documents[x]->totalWords);
     }
-    DefaultText();
+
     printf("\n");
 }
 
@@ -248,28 +246,24 @@ int CompareTFIDFs(const void* a, const void* b) {
 }
 
 void PrintNewsResults(ForwardIndex** documents, int results) {
-    GreenText();
     if (results == 1) {
-        printf("1 news was found with the searched term:\n\n");
+        printf(GREEN "1 news was found with the searched term:\n\n" DEFAULT);
     } else if (results <= 10) {
-        printf("%d news were found with the searched term:\n\n", results);
+        printf(GREEN "%d news were found with the searched term:\n\n" DEFAULT, results);
     } else if (results > 10) {
-        printf("Showing the 10 most relevant news for the searched term:\n\n");
+        printf(GREEN "Showing the 10 most relevant news for the searched term:\n\n" DEFAULT);
     }
 
     for (int x = 0; x < MAX_RESULTS_NUMBER; x++) {
         if (*documents[x]->sumTFIDF == 0.0) {
             break;
         }
-        printf("Document name '%s' with TF-IDF value of '%.2f'.\n", documents[x]->name, *documents[x]->sumTFIDF);
+        printf(GREEN "Document name '%s' with TF-IDF value of '%.2f'.\n" DEFAULT, documents[x]->name, *documents[x]->sumTFIDF);
     }
-    DefaultText();
 }
 
 void PrintDocumentWordResults(ForwardIndex* document, int order) {
-    GreenText();
-    printf("The %dº document with most appearances is '%s'.\n", order, document->name);
-    DefaultText();
+    printf(GREEN "The %dº document with most appearances is '%s'.\n" DEFAULT, order, document->name);
 }
 
 int CompareDescendingTotalWords(const void* a, const void* b) {
