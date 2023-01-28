@@ -336,9 +336,9 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 
         wordIndex = GetWordIndexInText(text, textSize, queryWords[i]);
         if (wordIndex != -1)
-            text[i] = AddFrequencyTextInfo(text[wordIndex]);
+            text[wordIndex] = AddFrequencyTextInfo(text[wordIndex]);
         else {
-            text[i] = StoreTextInfo(text[i], queryWords[i]);
+            text[textSize] = StoreTextInfo(text[textSize], queryWords[i]);
             textSize++;
         }
     }
@@ -361,6 +361,8 @@ void SortNews(Indexes* indexes, int newsQuantity) {
         }
     }
 
+    ResetIndexesArrayOrder(indexes);
+
     if (!wordFound) {
         RedText();
         printf("No results were found in the documents.\n\n");
@@ -372,17 +374,28 @@ void SortNews(Indexes* indexes, int newsQuantity) {
             float tfidfProductSum = 0;
             float tfidfSum1 = 0;
             float tfidfSum2 = 0;
+            // getting the tfidf from words from the text
             for (int j = 0; j < textSize; j++) {
                 input = GetWordFromText(text[j]);
-                InvertedIndex** word = SearchWords(input, indexes->words, *indexes->wordsSize);
-                if (word != NULL) {
-                    float tfidf1 = GetTFIDFInDocument(word[0], i);
-                    // if(tfidf1 == 0)
-                    //     continue;
+                //InvertedIndex** word = SearchWords(input, indexes->words, *indexes->wordsSize);
+                wordIndex = GetWordIndex(indexes->words, input, *indexes->wordsSize);
+                //if (word != NULL) {
+                    //float tfidf1 = GetTFIDFInDocument(word[0], i);
+                if(wordIndex != -1) {
+                    float tfidf1 = GetTFIDFInDocument(indexes->words[wordIndex], i);
                     float tfidf2 = GetTFIDFTextInfo(text[j]);
                     tfidfProductSum += tfidf1 * tfidf2;
                     tfidfSum1 += pow(tfidf1, 2);
                     tfidfSum2 += pow(tfidf2, 2);
+                }
+            }
+            // getting the tfidf from words that are in the document but not in the text
+            for (int k = 0; k < GetInfoSizeDocument(indexes->documents[i]); k++) {
+                wordIndex = GetWordIndexFromDocument(indexes->documents[i], k);
+                input = GetWordByInvertedIndex(indexes->words[wordIndex]);
+                if(GetWordIndexInText(text, textSize, input) == -1) { // checks if input is not in the text
+                    float tfidf1 = GetTFIDFInDocument(indexes->words[wordIndex], i);
+                    tfidfSum1 += pow(tfidf1, 2);
                 }
             }
             if (tfidfProductSum == 0) {
@@ -404,9 +417,9 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 
         char* mostFrequentClass = FindMostFrequentDocumentClass(indexes, newsQuantity);
 
-        // for (int i = 0; i < newsQuantity; i++) {
-        //     printf("%s. Distance of the documents: %.2f\n", GetDocumentClass(indexes->documents[i]), GetDocumentCosine(indexes->documents[i]));
-        // }
+        for (int i = 0; i < newsQuantity; i++) {
+            printf("%s. Distance of the documents: %.2f\n", GetDocumentClass(indexes->documents[i]), GetDocumentCosine(indexes->documents[i]));
+        }
 
         GreenText();
         printf("The most likely class of this document is '%s'.\n\n", mostFrequentClass);

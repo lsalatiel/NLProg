@@ -194,12 +194,18 @@ int CompareWordsIndex(const void* a, const void* b) {
 float GetTFIDFInDocument(InvertedIndex* word, int documentIndex) {
     float tfidf = 0;
     
-    for(int i = 0; i < word->infoSize; i++) {
-        if(GetDocumentIndexInfo(word->info[i]) == documentIndex) {
-            tfidf = GetTFIDFInfo(word->info[i]);
-            break;
+    for(int i = 0; i < word->infoAlloc; i++) {
+        if(word->info[i] != NULL) {
+            if(GetDocumentIndexInfo(word->info[i]) == documentIndex) {
+                tfidf = GetTFIDFInfo(word->info[i]);
+                break;
+            }
         }
     }
     
     return tfidf;
+}
+
+char* GetWordByInvertedIndex(InvertedIndex* word) {
+    return word->word;
 }

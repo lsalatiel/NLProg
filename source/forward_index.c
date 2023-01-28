@@ -302,3 +302,13 @@ int CompareDocumentClasses(const void* a, const void* b) {
 float GetDocumentCosine(ForwardIndex* document) {
     return document->cosine;
 }
+
+int  GetInfoSizeDocument(ForwardIndex* document) {
+    return *document->infoSize;
+}
+
+int GetWordIndexFromDocument(ForwardIndex* document, int i) {
+    int wordIndex = GetWordIndexInfo(document->info[i]);
+
+    return wordIndex;
+}

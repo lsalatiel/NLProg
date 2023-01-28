@@ -140,4 +140,8 @@ float GetDocumentCosine(ForwardIndex* document);
  */
 int CompareDocumentClasses(const void* a, const void* b);
 
+int  GetInfoSizeDocument(ForwardIndex* document);
+
+int GetWordIndexFromDocument(ForwardIndex* document, int i);
+
 #endif

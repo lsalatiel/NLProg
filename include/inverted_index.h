@@ -108,4 +108,6 @@ int CompareWordsIndex(const void* a, const void* b);
  */
 float GetTFIDFInDocument(InvertedIndex* word, int documentIndex);
 
+char* GetWordByInvertedIndex(InvertedIndex* word);
+
 #endif
