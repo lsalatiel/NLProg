@@ -29,9 +29,8 @@ WordInfo** ReallocWordInfoArray(WordInfo** infoArray, int currentSize, int maxim
     new = realloc(infoArray, maximumSize * sizeof(WordInfo*));
     infoArray = new;
 
-    for (int i = currentSize; i < maximumSize; i++) {
+    for (int i = currentSize; i < maximumSize; i++)
         infoArray[i] = AllocWordInfo();
-    }
 
     return infoArray;
 }
@@ -68,9 +67,8 @@ WordInfo* StoreTFIDFFromInfo(WordInfo* info, int documentQuantity, int wordAppea
 }
 
 void WriteWordInfoInBinaryFile(WordInfo* info, FILE* file) {
-    if (file == NULL) {
+    if (file == NULL)
         return;
-    }
 
     fwrite(&info->documentIndex, sizeof(int), 1, file);
     fwrite(&info->documentFrequency, sizeof(int), 1, file);
@@ -78,9 +76,8 @@ void WriteWordInfoInBinaryFile(WordInfo* info, FILE* file) {
 }
 
 void ReadWordInfoFromBinaryFile(WordInfo* info, FILE* file) {
-    if (file == NULL) {
+    if (file == NULL)
         return;
-    }
 
     fread(&info->documentIndex, sizeof(int), 1, file);
     fread(&info->documentFrequency, sizeof(int), 1, file);

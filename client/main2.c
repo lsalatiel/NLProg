@@ -1,10 +1,7 @@
 #include "libraries.h"
 
 int main(int argc, char** argv) {
-    // CheckDataFilesPath(argc);
-
-    argv[1] = "binary/lulu.bin";
-    argv[2] = "10";
+    CheckDataFilesPath2(argc);
 
     Indexes* indexes = AllocateIndexes();
     indexes = ReadIndexesFromBinaryFile(indexes, argv[1]);

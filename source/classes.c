@@ -8,9 +8,8 @@ struct Classes {
 Classes** AllocClasses() {
     Classes** classes = malloc(MAX_CLASSES_NUMBER * sizeof(Classes*));
 
-    for (int x = 0; x < MAX_CLASSES_NUMBER; x++) {
-        classes[x] = calloc(sizeof(Classes), 1);
-    }
+    for (int x = 0; x < MAX_CLASSES_NUMBER; x++)
+        classes[x] = calloc(1, sizeof(Classes));
 
     classes[0]->class = strdup("pot");
     classes[1]->class = strdup("at2");
@@ -49,14 +48,14 @@ int CompareClasses(const void* a, const void* b) {
 
 void PrintClasses(Classes** classes) {
     printf("\n");
-    GreenText();
+
     for (int x = 0; x < MAX_CLASSES_NUMBER; x++) {
-        if (classes[x]->count == 0) {
+        if (classes[x]->count == 0)
             break;
-        }
-        printf("In class '%s' appearances: %d\n", classes[x]->class, classes[x]->count);
+
+        printf(GREEN "In class '%s' appearances: %d\n" DEFAULT, classes[x]->class, classes[x]->count);
     }
-    DefaultText();
+
     printf("\n");
 }
 

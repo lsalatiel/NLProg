@@ -11,23 +11,22 @@ struct Indexes {
 
 void GenerateOutputInfo(Indexes* indexes, char* argv) {
     int totalWords = 0;
-    for (int x = 0; x < *indexes->wordsSize; x++) {
+
+    for (int x = 0; x < *indexes->wordsSize; x++)
         totalWords += GetWordInfoSize(indexes->words[x]);
-    }
-    ClearTerminal();
-    GreenText();
-    printf("The binary file for the main program has been successfully created with the name '%s' in the 'binary' folder. It has %d documents and %d different words.\n", argv, *indexes->documentsSize, totalWords);
-    DefaultText();
+
+    CLEAR_TERMINAL;
+    printf(GREEN "The binary file for the main program has been successfully created with the name '%s' in the 'binary' folder. It has %d documents and %d different words.\n\n" DEFAULT, argv, *indexes->documentsSize, totalWords);
 }
 
 Indexes* AllocateIndexes() {
     Indexes* indexes = malloc(sizeof(Indexes));
 
-    indexes->documentsSize = calloc(sizeof(int), 1);
+    indexes->documentsSize = calloc(1, sizeof(int));
     indexes->documentsAlloc = malloc(sizeof(int));
     *indexes->documentsAlloc = STARTER_ALLOC;
 
-    indexes->wordsSize = calloc(sizeof(int), 1);
+    indexes->wordsSize = calloc(1, sizeof(int));
     indexes->wordsAlloc = malloc(sizeof(int));
     *indexes->wordsAlloc = STARTER_ALLOC;
 
@@ -49,24 +48,20 @@ Indexes* ReadTrainFile(Indexes* indexes, char* argv) {
         exit(1);
     }
 
-    GreenText();
-    printf("Reading files, please wait.\n");
-    DefaultText();
-
+    printf(GREEN "Reading files, please wait.\n" DEFAULT);
     indexes->documents = ReadDocuments(indexes->documents, train, indexes->documentsSize, indexes->documentsAlloc);
-
     fclose(train);
 
     return indexes;
 }
 
 void FreeIndexes(Indexes* indexes) {
-    for (int x = 0; x < *indexes->documentsAlloc; x++) {
+    for (int x = 0; x < *indexes->documentsAlloc; x++)
         FreeDocument(indexes->documents[x]);
-    }
-    for (int x = 0; x < *indexes->wordsAlloc; x++) {
+
+    for (int x = 0; x < *indexes->wordsAlloc; x++)
         FreeWord(indexes->words[x]);
-    }
+
     FreeAndNull(indexes->documents);
     FreeAndNull(indexes->words);
     FreeAndNull(indexes->documentsAlloc);
@@ -94,6 +89,7 @@ Indexes* ReadInfo(Indexes* indexes, char* argv) {
             fclose(file);
         }
     }
+
     indexes = StoreTFIDFFromIndexes(indexes);
     FreeAndNull(argvCopy);
 
@@ -104,9 +100,8 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int documentIndex) 
     char* word = malloc(BUFFER_SIZE * sizeof(char));
     int wordIndex = 0;
 
-    if (file == NULL) {
+    if (file == NULL)
         return NULL;
-    }
 
     while (!feof(file)) {
         if (*indexes->wordsSize == *indexes->wordsAlloc) {
@@ -118,18 +113,16 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int documentIndex) 
 
         fscanf(file, "%s", word);
 
-        if (EndOfFile(word[0])) {
+        if (EndOfFile(word[0]))
             continue;
-        }
 
         wordIndex = GetWordIndex(indexes->words, word, *indexes->wordsSize);  // returns -1 if word does not exist
         if (wordIndex != -1) {
             // se a palavra nao eh nova ela pode ter aparecido no documento ou nao
-            if (WordInDocument(indexes->words[wordIndex], documentIndex)) {
+            if (WordInDocument(indexes->words[wordIndex], documentIndex))
                 indexes->documents[documentIndex] = AddWordFrequencyToForwardIndex(indexes->documents[documentIndex], wordIndex);
-            } else {
+            else
                 indexes->documents[documentIndex] = StoreWordInfoForwardIndex(indexes->documents[documentIndex], wordIndex);
-            }
 
             indexes->words = AddDocumentFrequencyToInvertedIndex(indexes->words, wordIndex, documentIndex);
             continue;
@@ -143,7 +136,6 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int documentIndex) 
     }
 
     FreeAndNull(word);
-
     return indexes;
 }
 
@@ -156,6 +148,7 @@ Indexes* StoreTFIDFFromIndexes(Indexes* indexes) {
         wordAppearance = GetWordInfoSize(indexes->words[i]);
         indexes->documents = StoreTFIDFFromDocuments(indexes->documents, i, *indexes->documentsSize, wordAppearance);
     }
+
     return indexes;
 }
 
@@ -168,33 +161,40 @@ void WriteIndexesInBinaryFile(Indexes* indexes, char* argv) {
     // FILE* file = fopen(argv, "wb"); // use this line and remove above 4 lines in case of hardcode issues
 
     if (file == NULL) {
+        CLEAR_TERMINAL;
         FreeAndNull(indexes);
-        PrintFileError();
+        printf(BOLD RED "ERROR: Please make sure the 'binary' folder exists in the root of the program. To be sure, use 'make' command and run the program again.\n\n" DEFAULT);
         exit(1);
     }
     // writing documents
     fwrite(indexes->documentsSize, sizeof(int), 1, file);
     fwrite(indexes->documentsAlloc, sizeof(int), 1, file);
 
-    for (int i = 0; i < *indexes->documentsSize; i++) {
+    for (int i = 0; i < *indexes->documentsSize; i++)
         WriteForwardIndexInBinaryFile(indexes->documents[i], file);
-    }
+
     // writing words
     fwrite(indexes->wordsSize, sizeof(int), 1, file);
     fwrite(indexes->wordsAlloc, sizeof(int), 1, file);
 
-    for (int i = 0; i < *indexes->wordsSize; i++) {
+    for (int i = 0; i < *indexes->wordsSize; i++)
         WriteInvertedIndexInBinaryFile(indexes->words[i], file);
-    }
+
     fclose(file);
 }
 
 Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* argv) {
-    FILE* file = fopen(argv, "rb");
+    char* binaryFileName = malloc(sizeof(char) * (strlen(argv) + 8));
+    sprintf(binaryFileName, "binary/%s", argv);
+    FILE* file = fopen(binaryFileName, "rb");
+    FreeAndNull(binaryFileName);
+
+    // FILE* file = fopen(argv, "rb"); // use this line and remove above 4 lines in case of hardcode issues
 
     if (file == NULL) {
+        CLEAR_TERMINAL;
         FreeAndNull(indexes);
-        PrintFileError();
+        printf(BOLD RED "Please make sure the '%s' file exists in the 'binary' folder. To be sure, use 'make' command and run the first program again.\n\n" DEFAULT, argv);
         exit(1);
     }
     // reading documents
@@ -221,8 +221,8 @@ Indexes* ReadIndexesFromBinaryFile(Indexes* indexes, char* argv) {
         }
         ReadInvertedIndexFromBinaryFile(indexes->words[i], file);
     }
-    fclose(file);
 
+    fclose(file);
     return indexes;
 }
 
@@ -230,11 +230,9 @@ void SearchAndSortNews(Indexes* indexes) {
     int* querySize = malloc(sizeof(int));
     char** queryWords = NULL;
 
-    BoldText();
-    printf("• Enter the search: ");
+    printf(BOLD "• Enter the search: " DEFAULT);
     do queryWords = GetUserSentenceInput(querySize);
     while (queryWords == NULL);
-    DefaultText();
 
     bool somethingFound = false;
     qsort(indexes->words, *indexes->wordsSize, sizeof(InvertedIndex*), CompareWords);
@@ -254,20 +252,17 @@ void SearchAndSortNews(Indexes* indexes) {
         PrintNewsResults(indexes->documents, GetDocumentsWithTFIDFNumber(indexes->documents, *indexes->documentsSize));
         ResetTFIDFSums(indexes->documents, *indexes->documentsSize);
     } else {
-        RedText();
-        printf("No results were found.\n");
-        DefaultText();
+        printf(BOLD RED "No results were found.\n" DEFAULT);
     }
+
     ResetUserSearchInput(queryWords, querySize);
     ResetIndexesArrayOrder(indexes);
     printf("\n");
 }
 
 void GenerateWordRelatory(Indexes* indexes) {
-    BoldText();
-    printf("• Enter the word: ");
+    printf(BOLD "• Enter the word: " DEFAULT);
     char* search = GetUserWordInput();
-    DefaultText();
 
     qsort(indexes->words, *indexes->wordsSize, sizeof(InvertedIndex*), CompareWords);
     InvertedIndex** word = SearchWords(search, indexes->words, *indexes->wordsSize);
@@ -283,7 +278,9 @@ void GenerateWordRelatory(Indexes* indexes) {
             int documentIndex = GetDocumentIndexFromWord(word[0], x);
             char* documentClass = GetDocumentClass(indexes->documents[documentIndex]);
 
-            if (x < MAX_RESULTS_NUMBER) PrintDocumentWordResults(indexes->documents[documentIndex], x + 1);
+            if (x < MAX_RESULTS_NUMBER)
+                PrintDocumentWordResults(indexes->documents[documentIndex], x + 1);
+
             ReadClasses(classes, documentClass);
         }
         qsort(classes, MAX_CLASSES_NUMBER, sizeof(Classes*), CompareClasses);
@@ -291,10 +288,9 @@ void GenerateWordRelatory(Indexes* indexes) {
         FreeClasses(classes);
         ResetIndexesArrayOrder(indexes);
     } else {
-        RedText();
-        printf("No results were found in the documents.\n\n");
-        DefaultText();
+        printf(BOLD RED "No results were found in the documents.\n\n" DEFAULT);
     }
+
     FreeAndNull(search);
 }
 
@@ -315,11 +311,9 @@ void SortNews(Indexes* indexes, int newsQuantity) {
     int* querySize = malloc(sizeof(int));
     char** queryWords = NULL;
 
-    BoldText();
-    printf("• Enter the search: ");
+    printf(BOLD "• Enter the search: " DEFAULT);
     do queryWords = GetUserSentenceInput(querySize);
     while (queryWords == NULL);
-    DefaultText();
 
     int textAlloc = *querySize;
     int textSize = 0;
@@ -356,6 +350,7 @@ void SortNews(Indexes* indexes, int newsQuantity) {
         if (word != NULL) {
             if (!wordFound)
                 wordFound = true;
+
             wordAppearence = GetWordInfoSize(word[0]);
             text[i] = StoreTFIDFTextInfo(text[i], *indexes->documentsSize, wordAppearence);
         }
@@ -364,9 +359,7 @@ void SortNews(Indexes* indexes, int newsQuantity) {
     ResetIndexesArrayOrder(indexes);
 
     if (!wordFound) {
-        RedText();
-        printf("No results were found in the documents.\n\n");
-        DefaultText();
+        printf(BOLD RED "No results were found in the documents.\n\n" DEFAULT);
     } else {
         float cosine = 0;
 
@@ -410,9 +403,8 @@ void SortNews(Indexes* indexes, int newsQuantity) {
         qsort(indexes->documents, *indexes->documentsSize, sizeof(ForwardIndex*), CompareCosines);
 
         for (int i = 0; i < newsQuantity; i++) {
-            if (GetDocumentCosine(indexes->documents[i]) == 0) {
+            if (GetDocumentCosine(indexes->documents[i]) == 0)
                 newsQuantity = i;  // update newsQuantity in a way that it ignores the cosines = 0
-            }
         }
 
         char* mostFrequentClass = FindMostFrequentDocumentClass(indexes, newsQuantity);
@@ -421,16 +413,13 @@ void SortNews(Indexes* indexes, int newsQuantity) {
             printf("%s. Distance of the documents: %.2f\n", GetDocumentClass(indexes->documents[i]), GetDocumentCosine(indexes->documents[i]));
         }
 
-        GreenText();
-        printf("The most likely class of this document is '%s'.\n\n", mostFrequentClass);
-        DefaultText();
+        printf(GREEN "The most likely class of this document is '%s'.\n\n" DEFAULT, mostFrequentClass);
     }
 
     ResetIndexesArrayOrder(indexes);
 
-    for (int i = 0; i < textAlloc; i++) {
+    for (int i = 0; i < textAlloc; i++)
         FreeTextInfo(text[i]);
-    }
 
     FreeAndNull(text);
 }
@@ -445,12 +434,12 @@ char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
     for (int i = 1; i < size; i++) {
         if (strcmp(GetDocumentClass(indexes->documents[i]), GetDocumentClass(indexes->documents[i - 1])) == 0) {
             count++;
+
             if (count == 2)
                 multiplier += GetDocumentCosine(indexes->documents[i - 1]);
-            multiplier += GetDocumentCosine(indexes->documents[i]);
-        }
 
-        else {
+            multiplier += GetDocumentCosine(indexes->documents[i]);
+        } else {
             if (count > maxCount) {
                 maxCount = count;
                 maxMultiplier = multiplier;
@@ -461,6 +450,7 @@ char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
                     res = GetDocumentClass(indexes->documents[i - 1]);
                 }
             }
+
             multiplier = 0;
             count = 1;
         }
@@ -470,5 +460,6 @@ char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
         maxCount = count;
         res = GetDocumentClass(indexes->documents[size - 1]);
     }
+
     return res;
 }

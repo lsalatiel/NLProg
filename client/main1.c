@@ -1,10 +1,7 @@
 #include "libraries.h"
 
 int main(int argc, char** argv) {
-    // CheckDataFilesPath(argc);
-
-    argv[1] = "datasets/tiny/train.txt";
-    argv[2] = "lulu.bin";
+    CheckDataFilesPath1(argc);
 
     Indexes* indexes = AllocateIndexes();
     indexes = ReadTrainFile(indexes, argv[1]);

@@ -1,6 +1,6 @@
 #include "libraries.h"
 
 int main() {
-    printf("prog3\n");
+    printf(RED "faltou fazer o programa 3.\n" DEFAULT);
     return 0;
 }

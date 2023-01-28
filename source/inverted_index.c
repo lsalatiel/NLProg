@@ -13,7 +13,7 @@ void SortWordFrequencyInDocument(InvertedIndex* word) {
 }
 
 InvertedIndex* AllocWord() {
-    return calloc(sizeof(InvertedIndex), 1);
+    return calloc(1, sizeof(InvertedIndex));
 }
 
 InvertedIndex** AllocWordInfoArray(InvertedIndex** words, int wordsSize) {
@@ -21,17 +21,15 @@ InvertedIndex** AllocWordInfoArray(InvertedIndex** words, int wordsSize) {
     words[wordsSize]->infoAlloc = STARTER_ALLOC;
     words[wordsSize]->info = malloc(STARTER_ALLOC * sizeof(WordInfo*));
 
-    for (int i = 0; i < STARTER_ALLOC; i++) {
+    for (int i = 0; i < STARTER_ALLOC; i++)
         words[wordsSize]->info[i] = AllocWordInfo();
-    }
 
     return words;
 }
 
 void FreeWord(InvertedIndex* word) {
-    for (int i = 0; i < word->infoAlloc; i++) {
+    for (int i = 0; i < word->infoAlloc; i++)
         FreeWordInfo(word->info[i]);
-    }
 
     FreeAndNull(word->info);
     FreeAndNull(word->word);
@@ -43,9 +41,8 @@ InvertedIndex** ReallocWords(InvertedIndex** words, int* wordsAlloc) {
     new = realloc(words, *wordsAlloc * sizeof(InvertedIndex*));
     words = new;
 
-    for (int x = *wordsAlloc / 2; x < *wordsAlloc; x++) {
+    for (int x = *wordsAlloc / 2; x < *wordsAlloc; x++)
         words[x] = AllocWord();
-    }
 
     return words;
 }
@@ -54,7 +51,6 @@ InvertedIndex** StoreWordInvertedIndex(InvertedIndex** words, char* word, int wo
     words[wordIndex]->word = strdup(word);
     words[wordIndex]->info = AddWordInfo(words[wordIndex]->info, words[wordIndex]->infoSize, documentIndex);
     words[wordIndex]->index = wordIndex;
-
     words[wordIndex]->infoSize++;
 
     return words;
@@ -90,9 +86,8 @@ InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int w
 }
 
 InvertedIndex* StoreTFIDFFromWord(InvertedIndex* word, int documentQuantity) {
-    for (int i = 0; i < word->infoSize; i++) {
+    for (int i = 0; i < word->infoSize; i++)
         word->info[i] = StoreTFIDFFromInfo(word->info[i], documentQuantity, word->infoSize);  // infoSize = somatorio dos frequency;
-    }
 
     return word;
 }
@@ -119,9 +114,8 @@ int GetWordInfoSize(InvertedIndex* word) {
 }
 
 void WriteInvertedIndexInBinaryFile(InvertedIndex* word, FILE* file) {
-    if (file == NULL) {
+    if (file == NULL)
         return;
-    }
 
     fwrite(&word->index, sizeof(int), 1, file);
     int wordSize = strlen(word->word) + 1;
@@ -130,15 +124,13 @@ void WriteInvertedIndexInBinaryFile(InvertedIndex* word, FILE* file) {
     fwrite(&word->infoSize, sizeof(int), 1, file);
     fwrite(&word->infoAlloc, sizeof(int), 1, file);
 
-    for (int i = 0; i < word->infoSize; i++) {
+    for (int i = 0; i < word->infoSize; i++)
         WriteWordInfoInBinaryFile(word->info[i], file);
-    }
 }
 
 InvertedIndex* ReadInvertedIndexFromBinaryFile(InvertedIndex* word, FILE* file) {
-    if (file == NULL) {
+    if (file == NULL)
         return NULL;
-    }
 
     fread(&word->index, sizeof(int), 1, file);
     int wordSize = 0;
@@ -150,13 +142,11 @@ InvertedIndex* ReadInvertedIndexFromBinaryFile(InvertedIndex* word, FILE* file) 
 
     word->info = malloc(word->infoAlloc * sizeof(WordInfo*));
 
-    for (int i = 0; i < word->infoAlloc; i++) {
+    for (int i = 0; i < word->infoAlloc; i++)
         word->info[i] = AllocWordInfo();
-    }
 
-    for (int i = 0; i < word->infoSize; i++) {
+    for (int i = 0; i < word->infoSize; i++)
         ReadWordInfoFromBinaryFile(word->info[i], file);
-    }
 
     return word;
 }
@@ -178,13 +168,10 @@ int CompareWords(const void* a, const void* b) {
 }
 
 void PrintWordFrequencyInDocuments(char* search, int frequency) {
-    GreenText();
-    if (frequency == 1) {
-        printf("The word '%s' appears in %d document.\n\n", search, frequency);
-    } else {
-        printf("The word '%s' appears in %d documents.\n\n", search, frequency);
-    }
-    DefaultText();
+    if (frequency == 1)
+        printf(GREEN "The word '%s' appears in %d document.\n\n" DEFAULT, search, frequency);
+    else
+        printf(GREEN "The word '%s' appears in %d documents.\n\n" DEFAULT, search, frequency);
 }
 
 int CompareWordsIndex(const void* a, const void* b) {
@@ -193,16 +180,16 @@ int CompareWordsIndex(const void* a, const void* b) {
 
 float GetTFIDFInDocument(InvertedIndex* word, int documentIndex) {
     float tfidf = 0;
-    
-    for(int i = 0; i < word->infoAlloc; i++) {
-        if(word->info[i] != NULL) {
-            if(GetDocumentIndexInfo(word->info[i]) == documentIndex) {
+
+    for (int i = 0; i < word->infoAlloc; i++) {
+        if (word->info[i] != NULL) {
+            if (GetDocumentIndexInfo(word->info[i]) == documentIndex) {
                 tfidf = GetTFIDFInfo(word->info[i]);
                 break;
             }
         }
     }
-    
+
     return tfidf;
 }
 

@@ -2,29 +2,14 @@
 #define FUNCTIONS_H
 
 /**
- * @brief changes text to bold form
+ * @brief checks if arguments were correctly sent by command line
  */
-void BoldText();
-
-/**
- * @brief changes text colour to default
- */
-void DefaultText();
-
-/**
- * @brief changes text colour to red
- */
-void RedText();
-
-/**
- * @brief changes text colour to green
- */
-void GreenText();
+void CheckDataFilesPath1(int argc);
 
 /**
  * @brief checks if arguments were correctly sent by command line
  */
-void CheckDataFilesPath(int argc);
+void CheckDataFilesPath2(int argc);
 
 /**
  * @brief prints an error message for not opening a file
@@ -45,11 +30,6 @@ bool EndOfFile(char character);
  * @brief calculates the TFIDF of each word in a specific document
  */
 float CalculateTFIDF(int frequency, int documentQuantity, int wordAppearance);
-
-/**
- * @brief clear the terminal for a better exhibition
- */
-void ClearTerminal();
 
 /**
  * @brief reads an integer and checks if it's in an interval defined by parameters

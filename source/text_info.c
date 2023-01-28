@@ -7,7 +7,7 @@ struct TextInfo {
 };
 
 TextInfo* AllocText(TextInfo* textInfo) {
-    textInfo = calloc(sizeof(TextInfo), 1);
+    textInfo = calloc(1, sizeof(TextInfo));
     textInfo->frequency = 0;
     textInfo->tfidf = -1;
 
@@ -40,11 +40,11 @@ TextInfo* AddFrequencyTextInfo(TextInfo* textInfo) {
 }
 
 int GetWordIndexInText(TextInfo** text, int textSize, char* word) {
-    for(int i = 0; i < textSize; i++) {
-        if(strcmp(text[i]->word, word) == 0)
+    for (int i = 0; i < textSize; i++) {
+        if (strcmp(text[i]->word, word) == 0)
             return i;
     }
-    
+
     return -1;
 }
 
@@ -61,9 +61,8 @@ TextInfo* StoreTFIDFTextInfo(TextInfo* textInfo, int documentQuantity, int wordA
 TextInfo** AllocateTextInfoArray(TextInfo** text, int textAlloc) {
     text = malloc(textAlloc * sizeof(TextInfo*));
 
-    for(int i = 0; i < textAlloc; i++) {
+    for (int i = 0; i < textAlloc; i++)
         text[i] = AllocText(text[i]);
-    }
 
     return text;
 }

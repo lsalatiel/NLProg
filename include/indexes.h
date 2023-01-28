@@ -65,18 +65,11 @@ void GenerateDocumentRelatory(Indexes* indexes);
 
 /**
  * @brief shows the most probably class of a text
- * 
- * @param indexes 
- * @param newsQuantity 
  */
 void SortNews(Indexes* indexes, int newsQuantity);
 
 /**
  * @brief returns the most frequent class of a document array
- * 
- * @param indexes 
- * @param size 
- * @return char* 
  */
 char* FindMostFrequentDocumentClass(Indexes* indexes, int size);
 

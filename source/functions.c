@@ -1,35 +1,23 @@
 #include "libraries.h"
 
-void BoldText() {
-    printf("\e[1m");
-}
-
-void DefaultText() {
-    printf("\033[0m");
-}
-
-void RedText() {
-    printf("\033[1;31m");
-}
-
-void GreenText() {
-    printf("\033[1;32m");
-}
-
-void CheckDataFilesPath(int argc) {
-    ClearTerminal();
+void CheckDataFilesPath1(int argc) {
+    CLEAR_TERMINAL;
     if (argc != 3) {
-        RedText();
-        printf("ERROR: Invalid number of command line arguments.\n");
-        DefaultText();
+        printf(BOLD RED "Please run the program like: ./nlprog1 [path to train.txt] [binary file name to be created].\n\n" DEFAULT);
+        exit(1);
+    }
+}
+
+void CheckDataFilesPath2(int argc) {
+    CLEAR_TERMINAL;
+    if (argc != 3) {
+        printf(BOLD RED "Please run the program like: ./nlprog2 [binary file name created in program 1] [number of news to be searched].\n\n" DEFAULT);
         exit(1);
     }
 }
 
 void PrintFileError() {
-    RedText();
-    printf("ERROR: File not found.\n");
-    DefaultText();
+    printf(BOLD RED "ERROR: File not found.\n" DEFAULT);
 }
 
 void FreeAndNull(void* pointer) {
@@ -38,11 +26,10 @@ void FreeAndNull(void* pointer) {
 }
 
 bool EndOfFile(char character) {
-    if (character == '\0' || character == '\n' || character == '\r' || character == ' ' || character == '\t') {
+    if (character == '\0' || character == '\n' || character == '\r' || character == ' ' || character == '\t')
         return true;
-    } else {
+    else
         return false;
-    }
 }
 
 float CalculateTFIDF(int frequency, int documentQuantity, int wordAppearance) {
@@ -52,12 +39,6 @@ float CalculateTFIDF(int frequency, int documentQuantity, int wordAppearance) {
     float idf = log(x) + 1;
 
     return tf * idf;
-}
-
-void ClearTerminal() {
-    while (system("clear") == 0) {
-        break;
-    }
 }
 
 int GetValidIntegerInput(int minimumRange, int maximumRange) {
@@ -75,24 +56,20 @@ int GetValidIntegerInput(int minimumRange, int maximumRange) {
 
                 if (input >= minimumRange && input <= maximumRange) {
                     FreeAndNull(buffer);
-                    ClearTerminal();
-                    DefaultText();
+                    CLEAR_TERMINAL;
                     return input;
                 }
             }
         }
 
-        RedText();
-        printf("• ERROR: Invalid option. Try again: ");
+        printf(BOLD RED "• ERROR: Invalid option. Try again: " DEFAULT);
         FreeAndNull(buffer);
     }
 }
 
 int SetUpMainMenu() {
     PrintArtMenu();
-    BoldText();
-    printf("\n• Enter an option: ");
-    DefaultText();
+    printf(BOLD "\n• Enter an option: " DEFAULT);
 
     return GetValidIntegerInput(1, 5);
 }
@@ -104,9 +81,7 @@ char** GetUserSentenceInput(int* querySize) {
     read = getline(&line, &len, stdin);
 
     if (read == -1) {
-        RedText();
-        printf("• ERROR: Invalid search. Try again: ");
-        DefaultText();
+        printf(BOLD RED "• ERROR: Invalid search. Try again: " DEFAULT);
         return NULL;
     }
 
@@ -119,9 +94,7 @@ char** GetUserSentenceInput(int* querySize) {
         result = realloc(result, sizeof(char*) * ++spaces);
 
         if (result == NULL) {
-            RedText();
-            printf("• ERROR: Invalid search. Try again: ");
-            DefaultText();
+            printf(BOLD RED "• ERROR: Invalid search. Try again: " DEFAULT);
             return NULL;
         }
 
@@ -137,9 +110,8 @@ char** GetUserSentenceInput(int* querySize) {
 }
 
 void ResetUserSearchInput(char** input, int* inputSize) {
-    for (int x = 0; x < *inputSize; x++) {
+    for (int x = 0; x < *inputSize; x++)
         FreeAndNull(input[x]);
-    }
 
     FreeAndNull(inputSize);
     FreeAndNull(input);
@@ -152,9 +124,7 @@ char* GetUserWordInput() {
     read = getline(&line, &len, stdin);
 
     if (read == -1) {
-        RedText();
-        printf("• ERROR: Invalid search. Try again: ");
-        DefaultText();
+        printf(BOLD RED "• ERROR: Invalid search. Try again: " DEFAULT);
         return NULL;
     }
 
@@ -165,7 +135,6 @@ char* GetUserWordInput() {
 }
 
 void PrintArtMenu() {
-    BoldText();
     printf(" ╔═══╗   ┌─┐┌─┐┌─┐┬─┐┌─┐┬ ┬  ┌┐┌┌─┐┬ ┬┌─┐\n");
     printf(" █ 1 █   └─┐├┤ ├─┤├┬┘│  ├─┤  │││├┤ │││└─┐\n");
     printf(" ╚═══╝   └─┘└─┘┴ ┴┴└─└─┘┴ ┴  ┘└┘└─┘└┴┘└─┘\n");
@@ -181,7 +150,6 @@ void PrintArtMenu() {
     printf(" ╔═══╗   ┬  ┌─┐┌─┐┬  ┬┌─┐  ┌─┐┬─┐┌─┐┌─┐┬─┐┌─┐┌┬┐\n");
     printf(" █ 5 █   │  ├┤ ├─┤└┐┌┘├┤   ├─┘├┬┘│ ││ ┬├┬┘├─┤│││\n");
     printf(" ╚═══╝   ┴─┘└─┘┴ ┴ └┘ └─┘  ┴  ┴└─└─┘└─┘┴└─┴ ┴┴ ┴\n");
-    DefaultText();
 }
 
 char* IsItTrainOrTestFile(char* argv) {
