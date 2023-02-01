@@ -64,6 +64,9 @@ void PrintArtMenu();
  */
 char* GetUserWordInput();
 
+/**
+ * @brief fixes the string according to train or test .txt file
+ */
 char* IsItTrainOrTestFile(char* argv);
 
 #endif

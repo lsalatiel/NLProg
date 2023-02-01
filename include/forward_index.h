@@ -93,12 +93,39 @@ void PrintDocumentWordResults(ForwardIndex* document, int order);
  */
 int CompareDocumentsIndex(const void* a, const void* b);
 
+/**
+ * @brief adds the number of words of the document
+ */
 void AddTotalWordsNumber(ForwardIndex** documents, int documentsSize);
+
+/**
+ * @brief resets the number of words of the document back to zero
+ */
 void ResetTotalWordsNumber(ForwardIndex** documents, int documentsSize);
+
+/**
+ * @brief the number of words of the document
+ */
 int GetTotalWordsNumber(ForwardIndex* document);
+
+/**
+ * @brief comparison function for qsort() based on descending total words order
+ */
 int CompareDescendingTotalWords(const void* a, const void* b);
+
+/**
+ * @brief comparison function for qsort() based on ascending total words order
+ */
 int CompareAscendingTotalWords(const void* a, const void* b);
+
+/**
+ * @brief prints the longer documents file name in descending order
+ */
 void PrintLongerDocuments(ForwardIndex** documents, int documentsSize);
+
+/**
+ * @brief prints the longer documents file name in ascending order
+ */
 void PrintShorterDocuments(ForwardIndex** documents, int documentsSize);
 
 /**
@@ -121,8 +148,14 @@ float GetDocumentCosine(ForwardIndex* document);
  */
 int CompareDocumentClasses(const void* a, const void* b);
 
-int  GetInfoSizeDocument(ForwardIndex* document);
+/**
+ * @brief returns DocumentInfo structs number
+ */
+int GetInfoSizeDocument(ForwardIndex* document);
 
+/**
+ * @brief get the word index from document object
+ */
 int GetWordIndexFromDocument(ForwardIndex* document, int i);
 
 #endif

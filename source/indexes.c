@@ -32,6 +32,7 @@ Indexes* AllocateIndexes() {
 
     indexes->documents = malloc(STARTER_ALLOC * sizeof(ForwardIndex*));
     indexes->words = malloc(STARTER_ALLOC * sizeof(InvertedIndex*));
+
     for (int x = 0; x < STARTER_ALLOC; x++) {
         indexes->documents[x] = AllocDocument();
         indexes->words[x] = AllocWord();
@@ -42,6 +43,7 @@ Indexes* AllocateIndexes() {
 
 Indexes* ReadTrainFile(Indexes* indexes, char* argv) {
     FILE* train = fopen(argv, "r");
+
     if (!train) {
         FreeAndNull(indexes);
         PrintFileError();
@@ -90,8 +92,8 @@ Indexes* ReadInfo(Indexes* indexes, char* argv) {
         }
     }
 
-    indexes = StoreTFIDFFromIndexes(indexes);
     FreeAndNull(argvCopy);
+    indexes = StoreTFIDFFromIndexes(indexes);
 
     return indexes;
 }
@@ -144,7 +146,6 @@ Indexes* StoreTFIDFFromIndexes(Indexes* indexes) {
 
     for (int i = 0; i < *indexes->wordsSize; i++) {
         indexes->words[i] = StoreTFIDFFromWord(indexes->words[i], *indexes->documentsSize);
-
         wordAppearance = GetWordInfoSize(indexes->words[i]);
         indexes->documents = StoreTFIDFFromDocuments(indexes->documents, i, *indexes->documentsSize, wordAppearance);
     }
@@ -370,11 +371,11 @@ void SortNews(Indexes* indexes, int newsQuantity) {
             // getting the tfidf from words from the text
             for (int j = 0; j < textSize; j++) {
                 input = GetWordFromText(text[j]);
-                //InvertedIndex** word = SearchWords(input, indexes->words, *indexes->wordsSize);
+                // InvertedIndex** word = SearchWords(input, indexes->words, *indexes->wordsSize);
                 wordIndex = GetWordIndex(indexes->words, input, *indexes->wordsSize);
-                //if (word != NULL) {
-                    //float tfidf1 = GetTFIDFInDocument(word[0], i);
-                if(wordIndex != -1) {
+                // if (word != NULL) {
+                // float tfidf1 = GetTFIDFInDocument(word[0], i);
+                if (wordIndex != -1) {
                     float tfidf1 = GetTFIDFInDocument(indexes->words[wordIndex], i);
                     float tfidf2 = GetTFIDFTextInfo(text[j]);
                     tfidfProductSum += tfidf1 * tfidf2;
@@ -386,7 +387,7 @@ void SortNews(Indexes* indexes, int newsQuantity) {
             for (int k = 0; k < GetInfoSizeDocument(indexes->documents[i]); k++) {
                 wordIndex = GetWordIndexFromDocument(indexes->documents[i], k);
                 input = GetWordByInvertedIndex(indexes->words[wordIndex]);
-                if(GetWordIndexInText(text, textSize, input) == -1) { // checks if input is not in the text
+                if (GetWordIndexInText(text, textSize, input) == -1) {  // checks if input is not in the text
                     float tfidf1 = GetTFIDFInDocument(indexes->words[wordIndex], i);
                     tfidfSum1 += pow(tfidf1, 2);
                 }

@@ -73,6 +73,9 @@ void SortNews(Indexes* indexes, int newsQuantity);
  */
 char* FindMostFrequentDocumentClass(Indexes* indexes, int size);
 
+/**
+ * @brief generates the output message info for program 1
+ */
 void GenerateOutputInfo(Indexes* indexes, char* argv);
 
 #endif

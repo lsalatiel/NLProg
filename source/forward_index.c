@@ -286,7 +286,7 @@ float GetDocumentCosine(ForwardIndex* document) {
     return document->cosine;
 }
 
-int  GetInfoSizeDocument(ForwardIndex* document) {
+int GetInfoSizeDocument(ForwardIndex* document) {
     return *document->infoSize;
 }
 

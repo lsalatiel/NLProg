@@ -34,7 +34,6 @@ bool EndOfFile(char character) {
 
 float CalculateTFIDF(int frequency, int documentQuantity, int wordAppearance) {
     float tf = frequency;
-
     float x = (1 + (float)documentQuantity) / (1 + (float)wordAppearance);
     float idf = log(x) + 1;
 

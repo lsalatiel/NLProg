@@ -103,6 +103,9 @@ int CompareWordsIndex(const void* a, const void* b);
  */
 float GetTFIDFInDocument(InvertedIndex* word, int documentIndex);
 
+/**
+ * @brief gets a specific word
+ */
 char* GetWordByInvertedIndex(InvertedIndex* word);
 
 #endif
