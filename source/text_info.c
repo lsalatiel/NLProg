@@ -14,18 +14,6 @@ TextInfo* AllocText(TextInfo* textInfo) {
     return textInfo;
 }
 
-// TextInfo** ReallocText(TextInfo** text, int textAlloc) {
-//     TextInfo** new = NULL;
-//     new = realloc(text, textAlloc * sizeof(TextInfo*));
-//     text = new;
-
-//     for (int x = textAlloc / 2; x < textAlloc; x++) {
-//         text[x] = AllocText(text[x]);
-//     }
-
-//     return text;
-// }
-
 TextInfo* StoreTextInfo(TextInfo* textInfo, char* word) {
     textInfo->word = strdup(word);
     textInfo->frequency++;

@@ -129,7 +129,6 @@ char* GetFileName(ForwardIndex* document) {
 }
 
 ForwardIndex* StoreWordInfoForwardIndex(ForwardIndex* document, int wordIndex) {
-    // cada palavra nova eh uma posicao nova do array de info
     if (*document->infoSize == *document->infoAlloc) {
         *document->infoAlloc *= 2;
         document->info = ReallocDocumentInfoArray(document->info, *document->infoSize, *document->infoAlloc);

@@ -13,8 +13,6 @@ TextInfo** AllocateTextInfoArray(TextInfo** text, int textAlloc);
  */
 TextInfo* AllocText(TextInfo* textInfo);
 
-// TextInfo** ReallocText(TextInfo** text, int textAlloc);
-
 /**
  * @brief frees memory allocated for a single textInfo structure
  */

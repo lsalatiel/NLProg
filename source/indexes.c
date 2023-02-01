@@ -120,7 +120,6 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int documentIndex) 
 
         wordIndex = GetWordIndex(indexes->words, word, *indexes->wordsSize);  // returns -1 if word does not exist
         if (wordIndex != -1) {
-            // se a palavra nao eh nova ela pode ter aparecido no documento ou nao
             if (WordInDocument(indexes->words[wordIndex], documentIndex))
                 indexes->documents[documentIndex] = AddWordFrequencyToForwardIndex(indexes->documents[documentIndex], wordIndex);
             else
@@ -132,7 +131,7 @@ Indexes* CreateIndexesFromFile(Indexes* indexes, FILE* file, int documentIndex) 
         // allocates space for the word info array (only for new words)
         indexes->words = AllocWordInfoArray(indexes->words, *indexes->wordsSize);
         indexes->words = StoreWordInvertedIndex(indexes->words, word, *indexes->wordsSize, documentIndex);
-        // p essa funcao o *indexes->wordsSize vai servir como indice da word
+        // *indexes->wordsSize works as the current index of the word
         indexes->documents[documentIndex] = StoreWordInfoForwardIndex(indexes->documents[documentIndex], *indexes->wordsSize);
         (*indexes->wordsSize)++;
     }
@@ -324,11 +323,6 @@ void SortNews(Indexes* indexes, int newsQuantity) {
     int wordIndex = 0;
 
     for (int i = 0; i < textAlloc; i++) {
-        // if(textSize == textAlloc) {
-        //     textAlloc *= 2;
-        //     text = ReallocText(text, textAlloc);
-        // }
-
         wordIndex = GetWordIndexInText(text, textSize, queryWords[i]);
         if (wordIndex != -1)
             text[wordIndex] = AddFrequencyTextInfo(text[wordIndex]);
@@ -371,10 +365,7 @@ void SortNews(Indexes* indexes, int newsQuantity) {
             // getting the tfidf from words from the text
             for (int j = 0; j < textSize; j++) {
                 input = GetWordFromText(text[j]);
-                // InvertedIndex** word = SearchWords(input, indexes->words, *indexes->wordsSize);
                 wordIndex = GetWordIndex(indexes->words, input, *indexes->wordsSize);
-                // if (word != NULL) {
-                // float tfidf1 = GetTFIDFInDocument(word[0], i);
                 if (wordIndex != -1) {
                     float tfidf1 = GetTFIDFInDocument(indexes->words[wordIndex], i);
                     float tfidf2 = GetTFIDFTextInfo(text[j]);
@@ -410,10 +401,6 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 
         char* mostFrequentClass = FindMostFrequentDocumentClass(indexes, newsQuantity);
 
-        for (int i = 0; i < newsQuantity; i++) {
-            printf("%s. Distance of the documents: %.2f\n", GetDocumentClass(indexes->documents[i]), GetDocumentCosine(indexes->documents[i]));
-        }
-
         printf(GREEN "The most likely class of this document is '%s'.\n\n" DEFAULT, mostFrequentClass);
     }
 
@@ -427,7 +414,7 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 
 char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
     int maxCount = 1, count = 1;
-    float multiplier = 0, maxMultiplier = 0;
+    float multiplier = 0, maxMultiplier = 0; // variables to be used in case of at least two document with equal maxCounts (tie-breaker)
     char* res = GetDocumentClass(indexes->documents[0]);
 
     qsort(indexes->documents, size, sizeof(ForwardIndex*), CompareDocumentClasses);  // sort the array by class

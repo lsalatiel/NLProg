@@ -87,7 +87,7 @@ InvertedIndex** AddDocumentFrequencyToInvertedIndex(InvertedIndex** words, int w
 
 InvertedIndex* StoreTFIDFFromWord(InvertedIndex* word, int documentQuantity) {
     for (int i = 0; i < word->infoSize; i++)
-        word->info[i] = StoreTFIDFFromInfo(word->info[i], documentQuantity, word->infoSize);  // infoSize = somatorio dos frequency;
+        word->info[i] = StoreTFIDFFromInfo(word->info[i], documentQuantity, word->infoSize);  // words->infoSize = how many documents the word showed up
 
     return word;
 }
