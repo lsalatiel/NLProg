@@ -3,6 +3,9 @@
 
 typedef struct DocumentInfo DocumentInfo;
 
+/**
+ * @brief returns the frequency of a given word in a document
+ */
 int GetDocumentWordFrequency(DocumentInfo* info);
 
 /**

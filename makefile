@@ -2,7 +2,7 @@
 CC = gcc
 CFLAGS = -O0 -g -Wall -Wextra -Werror -lm
 
-# Define the directory paths for source, include, client, binary, and objects
+# Define the directory paths for source, include, client, binary, objects and library
 SOURCEDIR = source
 INCLUDEDIR = include
 CLIENTDIR = client
@@ -20,13 +20,13 @@ OBJECTS = $(patsubst $(SOURCEDIR)/%.c, $(OBJECTDIR)/%.o, $(wildcard $(SOURCEDIR)
 EXECUTABLE1 = nlprog1
 EXECUTABLE2 = nlprog2
 
-all: directories nlprog.a $(EXECUTABLE1) $(EXECUTABLE2)
+all: directories library $(EXECUTABLE1) $(EXECUTABLE2)
 
 # Create the directories for binary and objects if they do not exist
 directories:
 	mkdir -p $(BINARYDIR) $(OBJECTDIR) $(LIBDIR)
 
-nlprog.a: $(OBJECTS)
+library: $(OBJECTS)
 	ar rcs $(LIBDIR)/nlprog.a $(OBJECTS)
 
 # Link the object files for each executable
@@ -49,4 +49,4 @@ $(OBJECTDIR)/main2.o: $(CLIENTDIR)/main2.c
 
 # Clean up the project
 clean:
-	rm -rf $(BINARYDIR) $(OBJECTDIR) $(EXECUTABLE1) $(EXECUTABLE2) $(LIBDIR)
+	rm -rf $(BINARYDIR) $(OBJECTDIR) $(LIBDIR) $(EXECUTABLE1) $(EXECUTABLE2)
