@@ -362,7 +362,7 @@ void SortNews(Indexes* indexes, int newsQuantity) {
             float tfidfProductSum = 0;
             float tfidfSum1 = 0;
             float tfidfSum2 = 0;
-            // getting the tfidf from words from the text
+            // getting the tfidf from words from the text and calculating the tfidf product
             for (int j = 0; j < textSize; j++) {
                 input = GetWordFromText(text[j]);
                 wordIndex = GetWordIndex(indexes->words, input, *indexes->wordsSize);
@@ -370,18 +370,15 @@ void SortNews(Indexes* indexes, int newsQuantity) {
                     float tfidf1 = GetTFIDFInDocument(indexes->words[wordIndex], i);
                     float tfidf2 = GetTFIDFTextInfo(text[j]);
                     tfidfProductSum += tfidf1 * tfidf2;
-                    tfidfSum1 += pow(tfidf1, 2);
                     tfidfSum2 += pow(tfidf2, 2);
                 }
             }
-            // getting the tfidf from words that are in the document but not in the text
+            // getting the tfidf from words from the document[i]
             for (int k = 0; k < GetInfoSizeDocument(indexes->documents[i]); k++) {
                 wordIndex = GetWordIndexFromDocument(indexes->documents[i], k);
                 input = GetWordByInvertedIndex(indexes->words[wordIndex]);
-                if (GetWordIndexInText(text, textSize, input) == -1) {  // checks if input is not in the text
-                    float tfidf1 = GetTFIDFInDocument(indexes->words[wordIndex], i);
-                    tfidfSum1 += pow(tfidf1, 2);
-                }
+                float tfidf1 = GetTFIDFInDocument(indexes->words[wordIndex], i);
+                tfidfSum1 += pow(tfidf1, 2);
             }
             if (tfidfProductSum == 0) {
                 cosine = 0;
@@ -397,6 +394,10 @@ void SortNews(Indexes* indexes, int newsQuantity) {
         for (int i = 0; i < newsQuantity; i++) {
             if (GetDocumentCosine(indexes->documents[i]) == 0)
                 newsQuantity = i;  // update newsQuantity in a way that it ignores the cosines = 0
+        }
+
+        for(int i = 0; i < newsQuantity; i++) {
+            printf("Cosine: %.2f\n", GetDocumentCosine(indexes->documents[i]));
         }
 
         char* mostFrequentClass = FindMostFrequentDocumentClass(indexes, newsQuantity);
