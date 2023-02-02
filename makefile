@@ -8,6 +8,7 @@ INCLUDEDIR = include
 CLIENTDIR = client
 BINARYDIR = binary
 OBJECTDIR = objects
+LIBDIR = library
 
 # Find all the source files in the source and client directories
 SOURCES = $(wildcard $(SOURCEDIR)/*.c $(CLIENTDIR)/*.c)
@@ -19,21 +20,21 @@ OBJECTS = $(patsubst $(SOURCEDIR)/%.c, $(OBJECTDIR)/%.o, $(wildcard $(SOURCEDIR)
 EXECUTABLE1 = nlprog1
 EXECUTABLE2 = nlprog2
 
-all: directories libnlprog.a $(EXECUTABLE1) $(EXECUTABLE2)
+all: directories nlprog.a $(EXECUTABLE1) $(EXECUTABLE2)
 
 # Create the directories for binary and objects if they do not exist
 directories:
-	mkdir -p $(BINARYDIR) $(OBJECTDIR)
+	mkdir -p $(BINARYDIR) $(OBJECTDIR) $(LIBDIR)
 
-libnlprog.a: $(OBJECTS)
-	ar rcs libnlprog.a $(OBJECTS)
+nlprog.a: $(OBJECTS)
+	ar rcs $(LIBDIR)/nlprog.a $(OBJECTS)
 
 # Link the object files for each executable
-$(EXECUTABLE1): $(OBJECTDIR)/main1.o libnlprog.a
-	$(CC) $(OBJECTDIR)/main1.o -o $(EXECUTABLE1) -L. -lnlprog $(CFLAGS)
+$(EXECUTABLE1): $(OBJECTDIR)/main1.o $(LIBDIR)/nlprog.a
+	$(CC) $(OBJECTDIR)/main1.o -o $(EXECUTABLE1) -L. $(LIBDIR)/nlprog.a $(CFLAGS)
 
-$(EXECUTABLE2): $(OBJECTDIR)/main2.o libnlprog.a
-	$(CC) $(OBJECTDIR)/main2.o -o $(EXECUTABLE2) -L. -lnlprog $(CFLAGS)
+$(EXECUTABLE2): $(OBJECTDIR)/main2.o $(LIBDIR)/nlprog.a
+	$(CC) $(OBJECTDIR)/main2.o -o $(EXECUTABLE2) -L. $(LIBDIR)/nlprog.a $(CFLAGS)
 
 # Compile the object files for each source file in the source directory
 $(OBJECTDIR)/%.o: $(SOURCEDIR)/%.c
@@ -48,4 +49,4 @@ $(OBJECTDIR)/main2.o: $(CLIENTDIR)/main2.c
 
 # Clean up the project
 clean:
-	rm -rf $(BINARYDIR) $(OBJECTDIR) $(EXECUTABLE1) $(EXECUTABLE2) libnlprog.a
+	rm -rf $(BINARYDIR) $(OBJECTDIR) $(EXECUTABLE1) $(EXECUTABLE2) $(LIBDIR)
