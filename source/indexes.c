@@ -10,13 +10,8 @@ struct Indexes {
 };
 
 void GenerateOutputInfo(Indexes* indexes, char* argv) {
-    int totalWords = 0;
-
-    for (int x = 0; x < *indexes->wordsSize; x++)
-        totalWords += GetWordInfoSize(indexes->words[x]);
-
     CLEAR_TERMINAL;
-    printf(GREEN "The binary file for the main program has been successfully created with the name '%s' in the 'binary' folder. It has %d documents and %d different words.\n\n" DEFAULT, argv, *indexes->documentsSize, totalWords);
+    printf(GREEN "The binary file for the main program has been successfully created with the name '%s' in the 'binary' folder. It has %d documents and %d different words.\n\n" DEFAULT, argv, *indexes->documentsSize, *indexes->wordsSize);
 }
 
 Indexes* AllocateIndexes() {
@@ -411,7 +406,7 @@ void SortNews(Indexes* indexes, int newsQuantity) {
 
 char* FindMostFrequentDocumentClass(Indexes* indexes, int size) {
     int maxCount = 1, count = 1;
-    float multiplier = 0, maxMultiplier = 0; // variables to be used in case of at least two document with equal maxCounts (tie-breaker)
+    float multiplier = 0, maxMultiplier = 0;  // variables to be used in case of at least two document with equal maxCounts (tie-breaker)
     char* res = GetDocumentClass(indexes->documents[0]);
 
     qsort(indexes->documents, size, sizeof(ForwardIndex*), CompareDocumentClasses);  // sort the array by class
