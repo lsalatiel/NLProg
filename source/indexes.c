@@ -391,6 +391,10 @@ void SortNews(Indexes* indexes, int newsQuantity) {
                 newsQuantity = i;  // update newsQuantity in a way that it ignores the cosines = 0
         }
 
+        // for (int i = 0; i < newsQuantity; i++) {
+        //     printf("Class: %s; Cosine: %.2f\n", GetDocumentClass(indexes->documents[i]), GetDocumentCosine(indexes->documents[i]));
+        // }
+
         char* mostFrequentClass = FindMostFrequentDocumentClass(indexes, newsQuantity);
 
         printf(GREEN "The most likely class of this document is '%s'.\n\n" DEFAULT, mostFrequentClass);
